@@ -1,0 +1,242 @@
+object FImpex: TFImpex
+  Left = 666
+  Height = 321
+  Top = 95
+  Width = 598
+  Align = alLeft
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Importation et exportation de contacts'
+  ClientHeight = 321
+  ClientWidth = 598
+  OnActivate = FormActivate
+  Position = poMainFormCenter
+  LCLVersion = '2.0.2.0'
+  object PnlTop: TPanel
+    Left = 0
+    Height = 35
+    Top = 0
+    Width = 598
+    Align = alTop
+    BevelInner = bvLowered
+    ClientHeight = 35
+    ClientWidth = 598
+    TabOrder = 0
+    object RBImport: TRadioButton
+      Left = 16
+      Height = 19
+      Top = 8
+      Width = 83
+      Caption = 'Importation'
+      Checked = True
+      TabOrder = 0
+      TabStop = True
+    end
+    object RBExport: TRadioButton
+      Left = 109
+      Height = 19
+      Top = 8
+      Width = 81
+      Caption = 'Exportation'
+      OnChange = RBImpexChange
+      TabOrder = 1
+    end
+    object CBType: TComboBox
+      Left = 224
+      Height = 23
+      Top = 7
+      Width = 136
+      ItemHeight = 15
+      ItemIndex = 0
+      Items.Strings = (
+        'CSV'
+        'jContacts '
+        'vCard'
+      )
+      OnChange = CBTypeChange
+      TabOrder = 2
+      Text = 'CSV'
+    end
+    object LSepar: TLabel
+      Left = 376
+      Height = 15
+      Top = 11
+      Width = 64
+      AutoSize = False
+      Caption = 'Séparateur'
+      ParentColor = False
+    end
+    object ESepar: TEdit
+      Left = 440
+      Height = 23
+      Top = 7
+      Width = 32
+      Alignment = taCenter
+      TabOrder = 3
+      Text = ','
+    end
+    object LDelim: TLabel
+      Left = 488
+      Height = 15
+      Top = 11
+      Width = 64
+      AutoSize = False
+      Caption = 'Délimiteur'
+      ParentColor = False
+    end
+    object EDelim: TEdit
+      Left = 552
+      Height = 23
+      Top = 7
+      Width = 32
+      Alignment = taCenter
+      TabOrder = 4
+      Text = '"'
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 40
+    Top = 281
+    Width = 598
+    Align = alBottom
+    BevelInner = bvLowered
+    ClientHeight = 40
+    ClientWidth = 598
+    TabOrder = 1
+    object BtnOK: TButton
+      Left = 312
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'OK'
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object BtnCancel: TButton
+      Left = 488
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'BtnCancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+    object BtnImpex: TButton
+      Left = 400
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'Import'
+      TabOrder = 2
+    end
+  end
+  object EFilename: TEdit
+    Left = 88
+    Height = 23
+    Top = 41
+    Width = 272
+    ReadOnly = True
+    TabOrder = 2
+  end
+  object LFilename: TLabel
+    Left = 16
+    Height = 15
+    Top = 44
+    Width = 72
+    AutoSize = False
+    Caption = 'Fichier'
+    ParentColor = False
+  end
+  object SBFileOpen: TSpeedButton
+    Left = 368
+    Height = 24
+    Top = 41
+    Width = 24
+    NumGlyphs = 2
+    OnClick = SBFileOpenClick
+  end
+  object LCode: TLabel
+    Left = 410
+    Height = 15
+    Top = 44
+    Width = 48
+    AutoSize = False
+    Caption = 'Codage'
+    ParentColor = False
+  end
+  object CBCode: TComboBox
+    Left = 480
+    Height = 23
+    Top = 40
+    Width = 100
+    ItemHeight = 15
+    ItemIndex = 0
+    Items.Strings = (
+      'Auto'
+      'ASCII 7 bits'
+      'ANSI'
+      'UTF-8'
+      'UTF-16 LE'
+      'UTF-16 BE'
+    )
+    TabOrder = 3
+    Text = 'Auto'
+  end
+  object LBImpex: TListBox
+    Left = 16
+    Height = 200
+    Top = 72
+    Width = 150
+    ItemHeight = 0
+    MultiSelect = True
+    TabOrder = 4
+  end
+  object SGImpex: TStringGrid
+    Left = 176
+    Height = 200
+    Top = 72
+    Width = 290
+    AutoFillColumns = True
+    ColCount = 2
+    Columns = <    
+      item
+        Alignment = taLeftJustify
+        SizePriority = 0
+        Title.Alignment = taCenter
+        Title.Caption = 'Champ'
+        Width = 143
+      end    
+      item
+        Alignment = taCenter
+        Title.Alignment = taCenter
+        Title.Caption = 'Données'
+        Width = 143
+      end>
+    FixedCols = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+    RowCount = 1
+    TabOrder = 5
+    ColWidths = (
+      143
+      143
+    )
+    Cells = (
+      2
+      0
+      0
+      'Champ'
+      1
+      0
+      'Données'
+    )
+  end
+  object OD1: TOpenDialog
+    left = 16
+    top = 288
+  end
+  object SD1: TSaveDialog
+    left = 56
+    top = 288
+  end
+end

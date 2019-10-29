@@ -1,0 +1,187 @@
+contact_manager.jar history
+
+Version 0.5.0.0 - 04/03/2015
+- First functional version
+
+Version 0.5.0.5 - 06/03/2015
+- Aded locate on map
+- Corrected bug on cancel change
+
+
+Version 0.5.0.6 - 06/03/2015
+- Added geolocalisation
+
+Version 0.5.0.7 - 06/03/2015
+- Added successive backups of the xml data file
+
+Version 0.5.0.8 - 07/03/2015
+- Added exe creation for Windows
+- Changed google geolocalisation url
+
+Version 0.6.0.2 - 07/03/2015
+- Changed geolocalisation routine by home made
+- Disabled import button which is not functional
+- Cleaned and documented the geolocation routine
+
+Version 0.6.0.6 - 08/03/2015
+- Can add or delete image contact display
+- Changed code to store only image filename W/O path in data file
+- Corrected bug for proper deletion of contact images
+
+Version 0.6.0.7 - 09/03/2015
+- Moved some general functions to bb.utils 
+- Corrected minor bugs
+
+Version 0.6.0.8 - 09/03/2015
+- Replaced name with action command to detect buttons action
+- Added settings button (disabled)
+- Note: contact images are copies of the original images chosen. Addition or deletion affect only the copies.
+  So the original is not affected and is not needed when transfering contacts data to another machine.
+- Severe code cleaning
+- Added settings dialog (experimental and limited)
+
+Version 0.6.0.9 - 10/03/2015
+- Refined settings dialog operation
+- Settings dialog localized (en and fr)
+- Check updates function implemented 
+
+Version 0.6.0.10 - 10/03/2015
+- Added "launch at windows startup, minimized or not
+- Next step : import vcard files
+ 
+Version 0.6.0.11 - 11/03/2015
+- Permuted about and settings icons
+- Changed class name of carrayList to contactlist and moved contactlist and contact_data to mains package
+
+
+Version 0.6.0.12 - 11/03/2015
+- Begin implementation of import/export functions. Do nothing for the moment
+
+Version 0.6.0.13 - 12/03/2015
+- vCard parser completed (single vCard file or file containing multiple vCards)
+- Will be used for import later. Import button disabled
+
+Version 0.6.0.14 - 14/03/2015
+- Import dialog functional for vCard file contacts. 
+- added some alerts when selecting non functional items
+- Contacts sort ignore case
+
+Version 0.6.0.15 - 14/03/2015
+- corrected bug on surname parse in vcard parser (v2.1 and v3.0 compatibility)
+- moved some functions to bbutils
+- corrected exception in import copy image
+- moved import in separate method instead button in event processing 
+
+Version 0.6.0.16 - 14/03/2015
+- Changed some variables to comply with future export methods
+- corrected bug preventing selection of previous contact after import
+
+Version 0.6.0.17 - 14/03/2015
+- Corrected bug after abortion of image selection
+- Add translation of order panel title
+- Added language selection in settings
+
+Version 0.6.0.18 - 15/03/2015
+- Cleaned some code in config dialog
+- Corrected some bugs
+
+Version 0.6.0.19 - 16/03/2015
+- Changes to impex dialog to prepare csv import
+- Updated Eclipse to Luna
+
+Version 0.7.0.1 - 17/03/2015
+- Added separator and delimiter for csv
+- Process details fields and list enabling related to import type
+- Csv import implemented (please test and report bugs !)
+  The details pane on the right are those of the first line of the csv (frequently fields description)
+  To set fields, select proper item in the combo of each field, or <none> at the end of combo list
+  Then select the contact(s) to import and click OK.
+  
+Version 0.7.0.2 - 18/03/2015
+- CSV export function implemented
+- Add method in contact_data class to create blank contact
+
+Version 0.7.0.3 - 19/03/2015
+- Added separator detection in csv import
+- Added charset encoding selection
+- Refined csv import method to cope with incomplete data
+- vCard import List sorted on name - surname (as csv 1st line is often description line, no sort on csv
+- vCard export partially implemented (image processing will follow)
+
+Version 0.7.0.4 - 19/03/2015
+- Some bugs corrected
+- Auto charset detection used for import. Uses guessencoding library from Guillaume Laforge.
+  Select "Auto" in the encoder combo list
+
+Version 0.7.0.5 - 20/03/15
+- Append proper file extension in save dialog 
+- Added other phone field in import dialog
+- export vCards with photos done
+
+Version 0.7.0.6 - 21/03/2015
+- Simplified some routines in csv read/write
+- Changed list display to avoid invalid index error
+- Added tooltip with all contact details in import list
+- Changed ant build script to get all infos from version property file 
+
+Version 0.7.0.7 - 22/03/2015
+- Changed b64 conversions
+
+Version 0.7.0.8 - 22/03/2015
+- Dinstinguish UTF-16 versions in import/export dialog
+- Added contextual menu in the list for contact specific operations
+
+Version 0.7.0.9 - 23/03/2015
+- Changed charset detection
+- Added cut, copy, paste menus in text fields
+- Streamlined code for common textfield properties
+- Enabled change contact image
+- Added copy contact data to the list menu
+
+Version 0.7.0.10 - 24/03/2015
+- Added search function
+- Search depends of sort type selected in the bottom panel
+- Corrected bug : sort type not saved
+
+ Version 0.8.0.1 - 25/03/2015
+ - Changed string array to object array in contact_data
+ - Added buttons to open contact website and send email to contact
+ - Added menus on list popup to open contact website and send email to contact
+ - Changed browse method in bbutils
+ 
+Version 0.8.0.2 - 28/03/2015
+- Major change in csv import. Field selection greatly simplified; 
+- Contact selection to see existing fields implemented
+- First line description not yet implemented. 
+
+Version 0.8.0.3 - 28/03/2015
+- Adding a tab to show work data
+- Amended code to cope with work data : geolocalisation, email and web buttons 
+  work with personal data when personal tab is displayed and with work data when 
+  work tab is displayed
+- Currently, import and export are limited to personal data
+
+Version 0.8.0.4 - 30/03/2015
+- Change some import/export routines to cope with new contact fields
+- Added charset when needed in vCard export
+- Some fields cannot be exported to /imported from vCards as they have no property defined in the vCard format
+- For more flexibility, vCard export in 2.1 format and import 2.1 and 3.0 format
+  
+Version 0.8.0.5 - 07/04/2015
+- Added option to change the data folder
+- This allow several contacts databases
+
+Version 0.8.0.6 - 08/04/2015
+- Corrected size bug in config loadXML
+
+Version 0.8.0.7 - 27/01/2016
+- Size is no longer used in config as app cannot be resized
+
+Version 0.8.0.8 - 19/05/2016
+- Corrected error in data location on the first launch
+
+Version 0.9.0.0 - 29/01/2019
+- Minor changes vor Java 9
+
+Version 0.9.0.1
+ 

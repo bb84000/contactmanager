@@ -1,0 +1,27 @@
+program contactmgr;
+
+{$mode objfpc}{$H+}
+
+uses
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Interfaces, // this includes the LCL widgetset
+  Forms, contactmgr1, contacts1, impex1, lazbbabout, prefs1, config1, unit1
+
+  { you can add units after this };
+
+{$R *.res}
+{$R contactmgr1.rc}
+
+begin
+  RequireDerivedFormResource:=True;
+  Application.Scaled:=True;
+  Application.Initialize;
+  Application.CreateForm(TFContactManager, FContactManager);
+  Application.CreateForm(TAboutBox, AboutBox);
+  Application.CreateForm(TFImpex, FImpex);
+  Application.CreateForm(TFPrefs, FPrefs);
+  Application.Run;
+end.
+
