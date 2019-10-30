@@ -5,7 +5,7 @@ unit contacts1;
 interface
 
 uses
-  Classes, SysUtils, Math, laz2_DOM , laz2_XMLRead, laz2_XMLWrite, Dialogs, lazbbutils;
+  Classes, SysUtils, Math, laz2_DOM , laz2_XMLRead, laz2_XMLWrite, Dialogs, lazbbutils, base64;
 
 Type
   TChampsCompare = (cdcNone, cdcName, cdcSurname, cdcPostcode, cdcTown,  cdcCountry, cdcLongit, cdcLatit);
@@ -477,22 +477,32 @@ var
   A: TStringArray;
   i: integer;
   k: PContact;
+  photo: boolean;
+  imagetype: String;
+  b64string: string;
+  p: integer;
+  fs: TFileStream;
 begin
   result:= false;
+  photo:= false;
+  imagetype:= '';
+  b64string:= '';
   if not FileExists(filename) then exit;
   result:= true;
   vcsl := TStringList.Create;
   vcsl.LoadFromFile(filename);
   for i:= 0 to vcsl.count-1 do
   begin
-
     s:= vcsl.Strings[i];
+
+
     sup:= UpperCase(s);
     // We auto convert it to UTF8 if ansi detected
     sdata:= IsAnsi2Utf8(copy(s, LastDelimiter(':', s)+1, length(s)));
     Setlength(A, 0);
     A := sdata.Split(';');
-     if sup= 'BEGIN:VCARD' then              // We have a new VCard
+
+    if sup= 'BEGIN:VCARD' then              // We have a new VCard
     begin
       new(K);
       K^.Longitude:= 0;
@@ -501,7 +511,29 @@ begin
       K^.LatitudeWk:= 0;
       continue;
     end;
-  if s= 'END:VCARD' then                  // End of the current VCard
+
+        // If it is a phot field, so append line to b64string
+    if photo then
+    begin
+      if length(s) > 0 then b64string:= b64string+s+#10 else
+      // blank line, end of b64 code
+      begin
+        if Length(b64string)> 0 then
+        try
+          fs:= TFileStream.Create(GetTempDir(true)+InttoStr(i)+'.jpg', fmCreate);
+          s1:= DecodeStringBase64(b64string);
+          fs.Position := 0;
+          fs.Write(s1[1], length(s1));
+        finally
+          fs.free;
+          K^.Imagepath:= GetTempDir(true)+InttoStr(i)+'.jpg';
+        end;
+        photo:= false;
+      end;
+    end;
+
+
+    if s= 'END:VCARD' then                  // End of the current VCard
     begin
       add(K);
       continue;
@@ -600,9 +632,42 @@ begin
     begin
       s1:= copy(s, pos(':', s)+1, length(s));       // Need first ':' there is another one after http...
       K^.WebWk:= sdata;
+      continue;
     end;
+    // GEO:geo:37.386013,-122.082932  or GEO:37.386013;-122.082932
+    if pos('GEO', sup)=1 then
+    begin
+      s1:= copy(s, pos('GEO', sup)+4, length(s));   // remove firest GEO
+      s1:= copy(s1, pos(':', s1)+1, length(s));
+      A:= s1.Split(',;"''');        // allow ignore quotes
+      if pos('WORK', SUP) > 0 then
+      begin
+        K^.LatitudeWk:= GetFloat(A[0]);
+        K^.LongitudeWk:= GetFloat(A[1]) ;
+      end else
+      begin
+        K^.Latitude:= GetFloat(A[0]);
+        K^.Longitude:= GetFloat(A[1]) ;
+      end;
+      continue;
+    end;
+    // Photo field
+    if pos('PHOTO', sup)=1 then
+    begin
+      if pos('ENCODING=BASE64', sup) >0 then      // embedded image, search type
+      begin
+        p:= pos('TYPE=', sup);
+        if p > 0 then
+        begin
+          imagetype:= uppercase(copy(s, p+5, 4));
+          p:= pos(':', sup);
+          b64string:= copy (s, p+1, length(s))+#10;
+          photo:= true;
+        end;
 
 
+      end;
+    end;
   end;
   vcsl.free;
 

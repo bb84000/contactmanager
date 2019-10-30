@@ -183,7 +183,12 @@ Version 0.8.0.8 - 19/05/2016
 Version 0.9.0.0 - 29/01/2019
 - Minor changes vor Java 9
 
-Version 0.1.0.0 - 28/10/2019
+Version 1.0.0.0 - 28/10/2019
 - Port on Lazarus FPC
+
+Version 1.0.0.1 - 30/10/2019
+- Added VCard image import
+- Added resizing function in lazbbutils
+- Better contact's image handling, related image is now deleted when a contact is deleted
 
  

@@ -173,7 +173,7 @@ type
     OS, OSTarget, CRLF : string;
     CompileDateTime: TDateTime;
     UserPath, UserAppsDataPath: string;
-    ContactMgrAppsData: string;
+
     ProgName: string;
     ConfigFile: string;
 
@@ -200,7 +200,7 @@ type
     MnuDeleteCaption: string;
     MnuSendmailCaption: string;
     MnuVisitwebCaption: string;
-
+    PnlImageOldHint: string;
     MouseIndex: Integer;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
@@ -219,6 +219,7 @@ type
     FImpex_ExportBtn_Caption: string;
     csvheader: String;
     ListeContacts: TContactsList;
+    ContactMgrAppsData: string;
   end;
 
 
@@ -537,32 +538,17 @@ var
 begin
   if OPictDialog.Execute then
   begin
+    PnlImageOldHint:= PnlImage.Hint;
     filename:= OPictDialog.FileName;
     Image1:= TImage.Create(self);
-    bmp := TBitmap.Create;
     Image1.Picture.LoadFromFile(filename);
-    w:= Image1.Width;
-    h:= Image1.Height;
-    sar:= w/h;
-    tar:= ImgContact.Width/ImgContact.Height;
-    if(sar >= tar) then  //source is wider than target in proportion
-    begin
-      bmp.width:= ImgContact.Width;
-      bmp.Height:= round(ImgContact.Width / sar);
-    end else
-    begin
-      bmp.Height:= ImgContact.Height;
-      bmp.width:= round(ImgContact.Height *sar)
-    end;
-    bmp.Canvas.StretchDraw(rect(0,0,bmp.width,bmp.height), Image1.Picture.Graphic);
-    Image1.Picture.Assign(bmp);
+    ImageFitToSize(Image1, ImgContact.Width, ImgContact.Height);
     Randomize;
     rInt:= random(10000);
-    nimgfile:= ListeContacts.GetItem(LBContacts.ItemIndex).Name+Format('%d', [rInt])+'.jpg' ;
+    nimgfile:= LowerCase(ListeContacts.GetItem(LBContacts.ItemIndex).Name+Format('%d', [rInt])+'.jpg') ;
     Image1.Picture.SaveToFile( ContactMgrAppsData+'images\'+nimgfile);
-    ImgContact.Picture.Assign(bmp);
+    ImgContact.Picture.Assign(Image1.Picture.Bitmap);
     PnlImage.Hint:= nimgfile;
-    bmp.Free;
     Image1.Free;
   end;
 end;
@@ -961,11 +947,19 @@ begin
 end;
 
 procedure TFContactManager.BtnDeleteClick(Sender: TObject);
+var
+  imgfile: string;
 begin
   If MsgDlg(ProgName, 'Voulez-vous vraiment supprimer ce contact ?', mtWarning,
        mbYesNo, ['Oui', 'Non'],0) = mrYes then
   begin
-    if (LBContacts.ItemIndex >= 0) and (LBContacts.ItemIndex < LBContacts.Count) then ListeContacts.Delete(LBContacts.ItemIndex);
+    if (LBContacts.ItemIndex >= 0) and (LBContacts.ItemIndex < LBContacts.Count) then
+    begin
+      imgfile:= ContactMgrAppsData+'images\'+ ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
+      if Fileexists(imgfile) then DeleteFile(imgfile);
+      ListeContacts.Delete(LBContacts.ItemIndex);
+
+    end;
     DisplayList;
   end;
 end;
@@ -985,6 +979,8 @@ begin
   GBOrder.Enabled:= True;
   Esearch.Enabled:= True;
   NewContact:= false;
+  // Delete image file if changed   (name in image hint)
+  if PnlImageOldHint <> PnlImage.Hint then DeleteFile(ContactMgrAppsData+'images\'+PnlImage.Hint);
 end;
 
 

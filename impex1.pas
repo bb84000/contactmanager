@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils, math;
+  Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils, math, FileUtil;
 
 type
 
@@ -187,7 +187,7 @@ begin
     BtnImpex.ModalResult:= mrOK;              // Import
     CBType.Items.Text:='CSV'+#10+'Contacts'+#10+'vCard';
     CBType.ItemIndex:=0;
-
+    CBCode.ItemIndex:=0;
   end else
   begin
     SBFileOpen.Glyph.LoadFromResourceName(HINSTANCE, 'filesave')  ;
@@ -203,8 +203,8 @@ begin
      end;
     CBType.Items.Text:='CSV'+#10+'vCard';
     CBType.ItemIndex:=0;
+    CBCode.ItemIndex:=0;
   end;
-
 end;
 
 procedure TFImpex.SBFileOpenClick(Sender: TObject);
@@ -353,6 +353,7 @@ begin
   ESepar.Enabled:= LSepar.Enabled;
   LDelim.Enabled:= LSepar.Enabled;
   EDelim.Enabled:= LSepar.Enabled;
+
 end;
 
 procedure TFImpex.BtnUpClick(Sender: TObject);
@@ -378,6 +379,7 @@ begin
   SGImpex.SetFocus;
   ContactFldArray[curline-1]:= prevndx;
 end;
+
 
 procedure TFImpex.BtnEmptyClick(Sender: TObject);
 var
@@ -443,8 +445,16 @@ var
   MyContact: TContact;
   i: integer;
   csvh: string;
-  csv: TStringList;
+  csv, vcard: TStringList;
   delim, delsep: string;        // delimiter, delimiter+separator
+  line: string;
+  rInt: LongInt;
+  nimgfile: string;
+  Image1: TImage;
+
+const
+  vcbeg= 'BEGIN:VCARD';
+  vcend=  'END:VCARD';
 begin
   if RBImport.checked then
   begin
@@ -518,7 +528,18 @@ begin
              MyContact.Date:= now();
              MyContact.DateModif:= now();      //17
              MyContact.Comment:= VCards.GetItem(i).Comment;
-             MyContact.Imagepath:= '';    //19
+             // retrieve image
+             Image1:= TImage.Create(self);
+             Image1.Picture.LoadFromFile(VCards.GetItem(i).Imagepath);
+             DeleteFile(VCards.GetItem(i).Imagepath);
+             ImageFitToSize(Image1, FContactManager.ImgContact.Width, FContactManager.ImgContact.Height);
+             Randomize;
+             rInt:= random(10000);
+             nimgfile:= LowerCase('VCIMP'+VCards.GetItem(i).Name+VCards.GetItem(i).Surname+Format('%d', [rInt])+'.jpg') ;
+             Image1.Picture.SaveToFile( FContactManager.ContactMgrAppsData+'images\'+nimgfile);
+             Image1.Free;
+
+             MyContact.Imagepath:= nimgfile ;    //19
              MyContact.fonction:= VCards.GetItem(i).fonction;
              MyContact.Service:= VCards.GetItem(i).Service;
              MyContact.Company:= VCards.GetItem(i).Company;
@@ -553,12 +574,14 @@ begin
            csvh:= StringReplace(FContactManager.csvheader, ',', ESepar.text, [rfReplaceAll]);
            csvh:= StringReplace(csvh, '"', EDelim.text, [rfReplaceAll]);
            csv:= TStringList.create;
-           csv.AddText(csvh);
+           if CBCode.ItemIndex= 0 then csv.AddText(csvh)     // UTF8
+               else  csv.Add(IsUtf82Ansi(csvh));         // ANSI
+           // Now, write records
            for i:= 0 to LBImpex.Items.Count-1 do
            begin
              if Fimpex.LBImpex.Selected[i] then
              begin
-               csv.AddText(delim+FContactManager.ListeContacts.GetItem(i).Name+delsep+
+               line:= delim+FContactManager.ListeContacts.GetItem(i).Name+delsep+
                    delim+FContactManager.ListeContacts.GetItem(i).SurName+delsep+
                    delim+FContactManager.ListeContacts.GetItem(i).Street+delsep+
                    delim+FContactManager.ListeContacts.GetItem(i).BP+EDelim.Text+delsep+
@@ -595,15 +618,51 @@ begin
                    delim+FContactManager.ListeContacts.GetItem(i).EmailWk+delsep+
                    delim+FContactManager.ListeContacts.GetItem(i).WebWk+delsep+
                    delim+FloatToStr(FContactManager.ListeContacts.GetItem(i).LongitudeWk)+delsep+
-                   delim+FloatToStr(FContactManager.ListeContacts.GetItem(i).LatitudeWk)+delim);
+                   delim+FloatToStr(FContactManager.ListeContacts.GetItem(i).LatitudeWk)+delim;
+               if CBCode.ItemIndex= 0 then csv.AddText(line)     // UTF8
+               else  csv.Add(IsUtf82Ansi(line));             // ANSI
+
              end;
            end;
            csv.SaveToFile(EFileName.text);
            DefaultFormatSettings.DecimalSeparator:= DecSep;
+           csv.free;
          end;
       1: begin
+           DefaultFormatSettings.DecimalSeparator:= '.';
+           vcard:= TStringList.create;
+           for i:= 0 to LBImpex.Items.Count-1 do
+           begin
+             if Fimpex.LBImpex.Selected[i] then
+             begin
+               vcard.add(vcbeg);
+               vcard.add('VERSION:2.1');
+               vcard.add('N;CHARSET=UTF-8:'+FContactManager.ListeContacts.GetItem(i).Name+';'+
+                                            FContactManager.ListeContacts.GetItem(i).Surname+';;;');
+               vcard.add('FN;CHARSET=UTF-8:'+FContactManager.ListeContacts.GetItem(i).Surname+' '+
+                                            FContactManager.ListeContacts.GetItem(i).Name);
+               vcard.add('ADR;HOME;CHARSET=UTF-8:'+FContactManager.ListeContacts.GetItem(i).BP+';'+
+                                            FContactManager.ListeContacts.GetItem(i).Lieudit+';'+
+                                            FContactManager.ListeContacts.GetItem(i).Street+';'+
+                                            FContactManager.ListeContacts.GetItem(i).Town+';'+';'+   //region left blank
+                                            FContactManager.ListeContacts.GetItem(i).Postcode+';'+
+                                            FContactManager.ListeContacts.GetItem(i).Country);
+               vcard.add('TEL;HOME:'+FContactManager.ListeContacts.GetItem(i).Phone);
+               vcard.add('TEL;CELL:'+FContactManager.ListeContacts.GetItem(i).Mobile);
+               vcard.add('EMAIL;HOME:'+FContactManager.ListeContacts.GetItem(i).Email);
+               vcard.add('URL;HOME:'+FContactManager.ListeContacts.GetItem(i).Web);
+               //GEO:geo:37.386013,-122.082932   (lat, lon);
+               vcard.add('GEO:'+FloattoStr(FContactManager.ListeContacts.GetItem(i).Latitude)+';'+
+                                    FloattoStr(FContactManager.ListeContacts.GetItem(i).Longitude));
+               vcard.add(vcend);
+               vcard.add('');
+            end;
+          end;
+          DefaultFormatSettings.DecimalSeparator:= DecSep;
+          vcard.SaveToFile(EFileName.text);
+          vcard.free;
+        end;
 
-         end;
     end;
   end;
 

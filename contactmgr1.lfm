@@ -1,13 +1,13 @@
 object FContactManager: TFContactManager
-  Left = 439
+  Left = 441
   Height = 500
   Top = 342
-  Width = 650
+  Width = 648
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Gestionnaire de contacts'
   ClientHeight = 500
-  ClientWidth = 650
+  ClientWidth = 648
   OnActivate = FormActivate
   OnChangeBounds = FormChangeBounds
   OnClose = FormClose
@@ -19,21 +19,21 @@ object FContactManager: TFContactManager
     Left = 0
     Height = 70
     Top = 430
-    Width = 650
+    Width = 648
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 70
-    ClientWidth = 650
+    ClientWidth = 648
     TabOrder = 0
     object GBOrder: TGroupBox
       Left = 0
       Height = 70
       Top = 0
-      Width = 650
+      Width = 648
       Align = alClient
       Caption = 'Ordre'
       ClientHeight = 50
-      ClientWidth = 646
+      ClientWidth = 644
       TabOrder = 0
       object RBNone: TRadioButton
         Left = 16
@@ -123,11 +123,11 @@ object FContactManager: TFContactManager
     Left = 0
     Height = 36
     Top = 0
-    Width = 650
+    Width = 648
     Align = alTop
     BevelInner = bvLowered
     ClientHeight = 36
-    ClientWidth = 650
+    ClientWidth = 648
     TabOrder = 1
     object BtnImport: TSpeedButton
       Left = 8
@@ -293,7 +293,7 @@ object FContactManager: TFContactManager
       ParentShowHint = False
     end
     object BtnDelete: TSpeedButton
-      Left = 158
+      Left = 160
       Height = 24
       Hint = 'Supprimer le contact sélectionné'
       Top = 6
@@ -862,18 +862,18 @@ object FContactManager: TFContactManager
     Left = 222
     Height = 394
     Top = 36
-    Width = 428
+    Width = 426
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 394
-    ClientWidth = 428
+    ClientWidth = 426
     ParentColor = False
     TabOrder = 2
     object PCtrl1: TPageControl
       Left = 0
       Height = 394
       Top = 0
-      Width = 428
+      Width = 426
       ActivePage = TSPerso
       Align = alClient
       ParentFont = False
@@ -882,18 +882,18 @@ object FContactManager: TFContactManager
       object TSPerso: TTabSheet
         Caption = 'Perso'
         ClientHeight = 366
-        ClientWidth = 420
+        ClientWidth = 418
         ParentFont = False
         object PnlPerso: TPanel
           Left = 0
           Height = 366
           Top = 0
-          Width = 420
+          Width = 418
           Align = alClient
           BevelColor = clNone
           BevelOuter = bvNone
           ClientHeight = 366
-          ClientWidth = 420
+          ClientWidth = 418
           ParentColor = False
           TabOrder = 0
           object LName: TLabel

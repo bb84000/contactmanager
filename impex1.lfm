@@ -166,17 +166,12 @@ object FImpex: TFImpex
     Top = 40
     Width = 134
     ItemHeight = 15
-    ItemIndex = 0
     Items.Strings = (
-      'Auto'
-      'ASCII 7 bits'
-      'ANSI'
       'UTF-8'
-      'UTF-16 LE'
-      'UTF-16 BE'
+      'ANSI'
     )
     TabOrder = 3
-    Text = 'Auto'
+    Text = 'UTF -8'
   end
   object LBImpex: TListBox
     Left = 16
