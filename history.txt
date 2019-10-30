@@ -191,4 +191,9 @@ Version 1.0.0.1 - 30/10/2019
 - Added resizing function in lazbbutils
 - Better contact's image handling, related image is now deleted when a contact is deleted
 
+Version 1.0.0.2 - 30/10/2019
+- Added message box after contacts import or export
+- fixed vcard image import
+
+
  

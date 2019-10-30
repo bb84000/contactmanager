@@ -530,9 +530,6 @@ procedure TFContactManager.PMnuChooseClick(Sender: TObject);
 var
   filename: string;
   Image1: TImage;
-  bmp: Tbitmap;
-  w, h : integer;
-  sar, tar : double;
   rInt: LongInt;
   nimgfile: string;
 begin
@@ -877,12 +874,15 @@ begin
              begin
                if Fimpex.LBImpex.Selected[i] then ListeContacts.AddContact(Fimpex.ImpexContacts.GetItem(i));
              end;
+             MsgDlg('Importation de contacts', IntToStr(Fimpex.ImpexSelcount)+ ' contacts '+FImpex.CBType.Text+ ' importés',
+                       mtInformation,  [mbOK] , ['OK'], 0);
              ListeContacts.SortType:= SortType;
              DisplayList;
            end;
     // mrYes : Export
     mrYes : begin
-
+               MsgDlg('Exportation de contacts', IntToStr(Fimpex.ImpexSelcount)+ ' contacts '+FImpex.CBType.Text+ ' exportés',
+                       mtInformation,  [mbOK] , ['OK'], 0);
             end;
   end;
   FImpex.ImpexContacts.free;

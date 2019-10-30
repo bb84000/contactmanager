@@ -482,6 +482,8 @@ var
   b64string: string;
   p: integer;
   fs: TFileStream;
+  imgpath: string;
+  MyCont: Tcontact;
 begin
   result:= false;
   photo:= false;
@@ -505,89 +507,93 @@ begin
     if sup= 'BEGIN:VCARD' then              // We have a new VCard
     begin
       new(K);
-      K^.Longitude:= 0;
-      K^.Latitude:= 0;
-      K^.LongitudeWk:= 0;
-      K^.LatitudeWk:= 0;
+      MyCont.Longitude:= 0;
+      MyCont.Latitude:= 0;
+      MyCont.LongitudeWk:= 0;
+      MyCont.LatitudeWk:= 0;
+      photo:= false;
       continue;
     end;
 
-        // If it is a phot field, so append line to b64string
+        // If it is a phot0 field, so append line to b64string
     if photo then
     begin
       if length(s) > 0 then b64string:= b64string+s+#10 else
       // blank line, end of b64 code
       begin
-        if Length(b64string)> 0 then
+        photo:= false;
+        imgpath:= GetTempDir(true)+InttoStr(i)+'.jpg';
+        if Length(b64string) > 0 then
         try
-          fs:= TFileStream.Create(GetTempDir(true)+InttoStr(i)+'.jpg', fmCreate);
+          fs:= TFileStream.Create(imgpath, fmCreate);
           s1:= DecodeStringBase64(b64string);
           fs.Position := 0;
           fs.Write(s1[1], length(s1));
         finally
           fs.free;
-          K^.Imagepath:= GetTempDir(true)+InttoStr(i)+'.jpg';
+          MyCont.Imagepath:= imgpath;
         end;
-        photo:= false;
-      end;
+       end;
+      continue
     end;
 
 
     if s= 'END:VCARD' then                  // End of the current VCard
     begin
-      add(K);
+      AddContact(MyCont);
       continue;
     end;
+
     if pos('VERSION:', sup)= 1 then
     begin
-      K^.version:= copy(s, 9, 5) ;
+      MyCont.version:= copy(s, 9, 5) ;
       continue;
     end;
     // Name field  (skip charset) : LASTNAME; FIRSTNAME; ADDITIONAL NAME; NAME PREFIX(Mr.,Mrs.); NAME SUFFIX
     if (pos('N:', sup)= 1) or (pos('N;', sup)= 1) then
     begin
-      K^.name:= A[0];
-      K^.surname:= A[1];
+      MyCont.name:= A[0];
+      MyCont.surname:= A[1];
       continue;
     end;
     // home address field : Post Office Box; Extended Address; Street; Locality; Region; Postal Code; Country
     // can also be coordinates : ADR;GEO="geo:12.3457,78.910";
     if (pos('ADR:', sup)= 1) or ((pos('ADR;', sup)= 1) and (pos('WORK', sup) = 0)) then
     begin
-      K^.BP:= A[0];
-      K^.Lieudit:= A[1];
-      K^.street:= A[2];
-      K^.town:= A[3];
-      K^.postcode:= A[5];
-      K^.country:= A[6];
+      MyCont.BP:= A[0];
+      MyCont.Lieudit:= A[1];
+      MyCont.street:= A[2];
+      MyCont.town:= A[3];
+      MyCont.postcode:= A[5];
+      MyCont.country:= A[6];
       // check geo
       if pos('GEO', sup) > 0 then
       begin
         s1:= copy(s, pos('GEO', sup)+1, length(s));
         s1:= copy(s1, pos(':', s1)+1, pos(';', s1)-pos(':', s1)-1);
         A:= s1.Split(',"''');        // allow ignore quotes
-        K^.Longitude:= GetFloat(A[0]);
-        K^.Latitude:= GetFloat(A[1]);
+        MyCont.Longitude:= GetFloat(A[0]);
+        MyCont.Latitude:= GetFloat(A[1]);
       end;
       continue;
     end;
     // work address field : Post Office Box; Extended Address; Street; Locality; Region; Postal Code; Country
     if ((pos('ADR;', sup)= 1) and (pos('WORK', sup) > 0)) then
     begin
-      K^.BPWk:= A[0];
-      K^.LieuditWk:= A[1];
-      K^.StreetWk:= A[2];
-      K^.TownWk:= A[3];
-      K^.PostcodeWk:= A[5];
-      K^.CountryWk:= A[6];
+      MyCont.BPWk:= A[0];
+      MyCont.LieuditWk:= A[1];
+      MyCont.StreetWk:= A[2];
+      MyCont.TownWk:= A[3];
+      MyCont.PostcodeWk:= A[5];
+      MyCont.CountryWk:= A[6];
       // check geo
       if pos('GEO', sup) > 0 then
       begin
         s1:= copy(s, pos('GEO', sup)+1, length(s));
         s1:= copy(s1, pos(':', s1)+1, pos(';', s1)-pos(':', s1)-1);
         A:= s1.Split(',"''');        // allow ignore quotes
-        K^.LongitudeWk:= GetFloat(A[0]);
-        K^.LatitudeWk:= GetFloat(A[1]);
+        MyCont.LongitudeWk:= GetFloat(A[0]);
+        MyCont.LatitudeWk:= GetFloat(A[1]);
       end;
 
       continue;
@@ -595,7 +601,7 @@ begin
     // home phone field
     if (pos('TEL:', sup)= 1) then //or (pos('TEL;HOME', sup)= 1) or (pos('TEL;TYPE=HOME', sup)= 1)  then
     begin
-      K^.phone:= s;
+      MyCont.phone:= s;
       continue;
     end;
    // can be fixed line or cell, home or work other cases nor relevant for this app
@@ -603,35 +609,35 @@ begin
     begin
        if pos('CELL', sup) > 0 then       // Cell phone
        begin
-         if pos('WORK', sup) > 0 then K^.MobileWk:= sdata    // work cell phone
-         else K^.mobile:= sdata;                            // home or other cell phone
+         if pos('WORK', sup) > 0 then MyCont.MobileWk:= sdata    // work cell phone
+         else MyCont.mobile:= sdata;                            // home or other cell phone
        end else                                                    // fixes line phone
        begin
-         if pos('WORK', sup) > 0 then K^.PhoneWk:= sdata     // work phone line
-         else K^.phone:= sdata;                             // home or other phone line
+         if pos('WORK', sup) > 0 then MyCont.PhoneWk:= sdata     // work phone line
+         else MyCont.phone:= sdata;                             // home or other phone line
        end;
       continue;
     end;
     if (pos('EMAIL:', sup)= 1) or ((pos('EMAIL;', sup)= 1) and (pos('WORK', sup) = 0)) then
     begin
-      K^.email:= sdata;
+      MyCont.email:= sdata;
       continue;
     end;
     if (pos('EMAIL;', sup)= 1) and (pos('WORK', sup) > 0) then
     begin
-      K^.EmailWk:= sdata;
+      MyCont.EmailWk:= sdata;
       continue;
     end;
     if (pos('URL:', sup)= 1) or ((pos('URL;', sup)= 1) and (pos('WORK', sup) = 0)) then
     begin
       s1:= copy(s, pos(':', s)+1, length(s));       // Need first ':' there is another one after http...
-      K^.web:= s1;
+      MyCont.web:= s1;
       continue;
     end;
     if (pos('URL;', sup)= 1) and (pos('WORK', sup) > 0) then
     begin
       s1:= copy(s, pos(':', s)+1, length(s));       // Need first ':' there is another one after http...
-      K^.WebWk:= sdata;
+      MyCont.WebWk:= sdata;
       continue;
     end;
     // GEO:geo:37.386013,-122.082932  or GEO:37.386013;-122.082932
@@ -642,12 +648,12 @@ begin
       A:= s1.Split(',;"''');        // allow ignore quotes
       if pos('WORK', SUP) > 0 then
       begin
-        K^.LatitudeWk:= GetFloat(A[0]);
-        K^.LongitudeWk:= GetFloat(A[1]) ;
+        MyCont.LatitudeWk:= GetFloat(A[0]);
+        MyCont.LongitudeWk:= GetFloat(A[1]) ;
       end else
       begin
-        K^.Latitude:= GetFloat(A[0]);
-        K^.Longitude:= GetFloat(A[1]) ;
+        MyCont.Latitude:= GetFloat(A[0]);
+        MyCont.Longitude:= GetFloat(A[1]) ;
       end;
       continue;
     end;

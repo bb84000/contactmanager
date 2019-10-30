@@ -65,7 +65,7 @@ type
     function getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
   public
     ImpexContacts: TContactsList;
-
+    ImpexSelcount: integer;
   end;
 
 var
@@ -456,6 +456,7 @@ const
   vcbeg= 'BEGIN:VCARD';
   vcend=  'END:VCARD';
 begin
+  ImpexSelcount:= LBImpex.SelCount;
   if RBImport.checked then
   begin
     Case CBType.ItemIndex of
@@ -529,16 +530,18 @@ begin
              MyContact.DateModif:= now();      //17
              MyContact.Comment:= VCards.GetItem(i).Comment;
              // retrieve image
-             Image1:= TImage.Create(self);
-             Image1.Picture.LoadFromFile(VCards.GetItem(i).Imagepath);
-             DeleteFile(VCards.GetItem(i).Imagepath);
-             ImageFitToSize(Image1, FContactManager.ImgContact.Width, FContactManager.ImgContact.Height);
-             Randomize;
-             rInt:= random(10000);
-             nimgfile:= LowerCase('VCIMP'+VCards.GetItem(i).Name+VCards.GetItem(i).Surname+Format('%d', [rInt])+'.jpg') ;
-             Image1.Picture.SaveToFile( FContactManager.ContactMgrAppsData+'images\'+nimgfile);
-             Image1.Free;
-
+             if FileExists(VCards.GetItem(i).Imagepath) then
+             begin
+               Image1:= TImage.Create(self);
+               Image1.Picture.LoadFromFile(VCards.GetItem(i).Imagepath);
+               DeleteFile(VCards.GetItem(i).Imagepath);
+               ImageFitToSize(Image1, FContactManager.ImgContact.Width, FContactManager.ImgContact.Height);
+               Randomize;
+               rInt:= random(10000);
+               nimgfile:= LowerCase('VCIMP'+VCards.GetItem(i).Name+VCards.GetItem(i).Surname+Format('%d', [rInt])+'.jpg') ;
+               Image1.Picture.SaveToFile( FContactManager.ContactMgrAppsData+'images\'+nimgfile);
+               Image1.Free;
+             end;
              MyContact.Imagepath:= nimgfile ;    //19
              MyContact.fonction:= VCards.GetItem(i).fonction;
              MyContact.Service:= VCards.GetItem(i).Service;
@@ -654,6 +657,7 @@ begin
                //GEO:geo:37.386013,-122.082932   (lat, lon);
                vcard.add('GEO:'+FloattoStr(FContactManager.ListeContacts.GetItem(i).Latitude)+';'+
                                     FloattoStr(FContactManager.ListeContacts.GetItem(i).Longitude));
+               // Add photo (todo)
                vcard.add(vcend);
                vcard.add('');
             end;
