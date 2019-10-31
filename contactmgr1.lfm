@@ -1,7 +1,7 @@
 object FContactManager: TFContactManager
-  Left = 441
+  Left = 645
   Height = 500
-  Top = 342
+  Top = 281
   Width = 648
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -486,7 +486,7 @@ object FContactManager: TFContactManager
       Left = 248
       Height = 24
       Hint = 'Annuler la modification du contact sélectionné'
-      Top = 6
+      Top = 8
       Width = 24
       Enabled = False
       Glyph.Data = {
@@ -1316,6 +1316,7 @@ object FContactManager: TFContactManager
             object ImgContact: TImage
               Left = 2
               Height = 96
+              Hint = 'Cliquez avec le bouton droit de la souris'#13#10'pour  insérer, changeer ou effacer une image'
               Top = 2
               Width = 170
               Align = alClient
@@ -1324,22 +1325,31 @@ object FContactManager: TFContactManager
               PopupMenu = PMnuImg
               ShowHint = True
             end
+            object LImageFile: TLabel
+              Left = 48
+              Height = 15
+              Top = 76
+              Width = 57
+              Caption = 'LImageFile'
+              ParentColor = False
+              Visible = False
+            end
           end
         end
       end
       object TSWork: TTabSheet
         Caption = 'Travail'
         ClientHeight = 366
-        ClientWidth = 420
+        ClientWidth = 418
         object PnlWork: TPanel
           Left = 0
           Height = 366
           Top = 0
-          Width = 420
+          Width = 418
           Align = alClient
           BevelOuter = bvNone
           ClientHeight = 366
-          ClientWidth = 420
+          ClientWidth = 418
           ParentColor = False
           ParentFont = False
           TabOrder = 0
@@ -1794,9 +1804,11 @@ object FContactManager: TFContactManager
     end
     object PMnuChange: TMenuItem
       Caption = 'Changer cette image'
+      OnClick = PMnuChooseClick
     end
     object PMnuDelete: TMenuItem
       Caption = 'Supprimer cette image'
+      OnClick = PMnuDeleteClick
     end
   end
   object OPictDialog: TOpenPictureDialog

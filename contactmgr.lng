@@ -76,6 +76,9 @@ PMnuChoose.Caption=Select an image
 PMnuChange.Caption=Change image
 PMnuDelete.Caption=Delete image
 OPictDialog.Title=Open existing file
+ImgContact.Hint=Right click on the mouse to insert%schange or delete an image
+
+
 ;Settings
 FPrefs.Caption=Contact Manager settings
 FPrefs.GroupBox1.Caption=System
@@ -176,6 +179,8 @@ PMnuChoose.Caption=Choisir une image
 PMnuChange.Caption=Changer l'image
 PMnuDelete.Caption=Supprimer l'image
 OPictDialog.Title=Ouvrir un fichier existant
+ImgContact.Hint=Cliquez avec le bouton droit de la souris %spour  insérer, changeer ou effacer une image
+
 ;Settings
 FPrefs.Caption=Préférences du gestionnaire de contacts
 FPrefs.GroupBox1.Caption=Système

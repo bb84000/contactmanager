@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils, math, FileUtil;
+  Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils, math, FileUtil, base64;
 
 type
 
@@ -59,7 +59,7 @@ type
     csvfldcount: Integer;
     Vcards: TContactsList;
     DecSep: Char;
-
+    BtnImpexEnabled: boolean;
     function getcsvstring(doc: TCSVDocument; fld, ndx: integer) : string;
     function getcsvfloat(doc: TCSVDocument; fld, ndx: integer) : Float;
     function getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
@@ -122,6 +122,7 @@ var
   i: integer;
 begin
   curline:= LBImpex.ItemIndex;
+  if BtnImpexEnabled then BtnImpex.Enabled:= true;
   if RBImport.checked then
   begin
     DecSep:= DefaultFormatSettings.DecimalSeparator;
@@ -151,6 +152,8 @@ begin
            sgImpex.Cells[1,14]:= Vcards.GetItem(curline).web;
            sgImpex.Cells[1,15]:= FloatToStr(Vcards.GetItem(curline).Longitude);
            sgImpex.Cells[1,16]:= FloatToStr(Vcards.GetItem(curline).Latitude);
+           sgImpex.Cells[1,17]:= DateToStr(Vcards.GetItem(curline).Date);
+           sgImpex.Cells[1,18]:= DateToStr(Vcards.GetItem(curline).DateModif);
 
            sgImpex.Cells[1,24]:= Vcards.GetItem(curline).StreetWk;
            sgImpex.Cells[1,25]:= Vcards.GetItem(curline).BPWk;
@@ -179,7 +182,10 @@ var
 begin
   ESepar.Enabled:= RBExport.Checked;
   Edelim.Enabled:= RBExport.Checked;
-  CBCode.Enabled:= RBExport.Checked;;
+  CBCode.Enabled:= RBExport.Checked;
+  LBImpex.Clear;
+  SGImpex.Clear;
+  BtnImpexEnabled:= false;;
   if RBImport.Checked then
   begin
     SBFileOpen.Glyph.LoadFromResourceName(HINSTANCE, 'fileopen');
@@ -269,7 +275,7 @@ begin
            begin
              LBImpex.Items.Add(IsAnsi2Utf8(csvdoc.Cells[1, i]));
            end;
-           BtnImpex.Enabled:= true;
+           BtnImpexEnabled:= true;
            BtnUp.Enabled:= true;
            BtnEmpty.Enabled:= true;
            BtnDown.Enabled:= true;
@@ -301,7 +307,7 @@ begin
              LBImpex.Items.Add(s);
            end;
 
-           BtnImpex.Enabled:= true;
+           BtnImpexEnabled:= true;
            //LBImpex.SelectAll;
            xmlContacts.Free;
          end;            // Old jcontacts and contacts
@@ -313,7 +319,7 @@ begin
                LBImpex.Items.Add(VCards.GetItem(i).surname+' '+VCards.GetItem(i).name);
              end;
              LBImpexClick(self);
-             BtnImpex.Enabled:= true;
+             BtnImpexEnabled:= true;
          end
 
       else exit;
@@ -328,7 +334,7 @@ begin
 
     if SD1.Execute then EFileName.text:= SD1.FileName;
 
-    BtnImpex.Enabled:= true;
+    BtnImpexEnabled:= true;
   end;
 
 
@@ -443,7 +449,7 @@ end;
 procedure TFImpex.BtnImpexClick(Sender: TObject);
 var
   MyContact: TContact;
-  i: integer;
+  i, j: integer;
   csvh: string;
   csv, vcard: TStringList;
   delim, delsep: string;        // delimiter, delimiter+separator
@@ -451,7 +457,10 @@ var
   rInt: LongInt;
   nimgfile: string;
   Image1: TImage;
-
+  fs: TFileStream;
+  fstring: string;
+  b64string: string;
+  photostr: string;
 const
   vcbeg= 'BEGIN:VCARD';
   vcend=  'END:VCARD';
@@ -526,8 +535,8 @@ begin
              MyContact.Web:= VCards.GetItem(i).web;
              MyContact.Longitude:= VCards.GetItem(i).Longitude;
              MyContact.Latitude:= VCards.GetItem(i).Latitude;
-             MyContact.Date:= now();
-             MyContact.DateModif:= now();      //17
+             MyContact.Date:= VCards.GetItem(i).Date;
+             MyContact.DateModif:= VCards.GetItem(i).DateModif;      //17
              MyContact.Comment:= VCards.GetItem(i).Comment;
              // retrieve image
              if FileExists(VCards.GetItem(i).Imagepath) then
@@ -650,14 +659,73 @@ begin
                                             FContactManager.ListeContacts.GetItem(i).Town+';'+';'+   //region left blank
                                             FContactManager.ListeContacts.GetItem(i).Postcode+';'+
                                             FContactManager.ListeContacts.GetItem(i).Country);
-               vcard.add('TEL;HOME:'+FContactManager.ListeContacts.GetItem(i).Phone);
-               vcard.add('TEL;CELL:'+FContactManager.ListeContacts.GetItem(i).Mobile);
-               vcard.add('EMAIL;HOME:'+FContactManager.ListeContacts.GetItem(i).Email);
-               vcard.add('URL;HOME:'+FContactManager.ListeContacts.GetItem(i).Web);
+               line:= FContactManager.ListeContacts.GetItem(i).Phone;
+               if length(line) > 0 then vcard.add('TEL;HOME:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).Mobile;
+               if length(line) > 0 then vcard.add('TEL;CELL:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).Email;
+               if length(line) > 0 then vcard.add('EMAIL;HOME:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).Web;
+               if length(line) > 0 then vcard.add('URL;HOME:'+line);
                //GEO:geo:37.386013,-122.082932   (lat, lon);
                vcard.add('GEO:'+FloattoStr(FContactManager.ListeContacts.GetItem(i).Latitude)+';'+
                                     FloattoStr(FContactManager.ListeContacts.GetItem(i).Longitude));
-               // Add photo (todo)
+               line:= FContactManager.ListeContacts.GetItem(i).Company+';'+FContactManager.ListeContacts.GetItem(i).Service;
+               if length(line) > 1 then vcard.add('ORG:'+line+';;');
+               line:= FContactManager.ListeContacts.GetItem(i).fonction;
+               if length(line) > 0 then vcard.add('ROLE:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).BPWk+';'+
+                      FContactManager.ListeContacts.GetItem(i).LieuditWk+';'+
+                      FContactManager.ListeContacts.GetItem(i).StreetWk +';'+
+                      FContactManager.ListeContacts.GetItem(i).TownWk+';'+';'+   //region left blank
+                      FContactManager.ListeContacts.GetItem(i).PostcodeWk +';'+
+                      FContactManager.ListeContacts.GetItem(i).CountryWk;
+               if length(line) > 6 then  vcard.add('ADR;WORK;CHARSET=UTF-8:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).PhoneWk;
+               if length(line) > 0 then vcard.add('TEL;WORK:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).MobileWk;
+               if length(line) > 0 then vcard.add('TEL;CELL;WORK:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).EmailWk;
+               if length(line) > 0 then vcard.add('EMAIL;WORK:'+line);
+               line:= FContactManager.ListeContacts.GetItem(i).WebWk;
+               if length(line) > 0 then vcard.add('URL;WORK:'+line);
+               //GEO:geo:37.386013,-122.082932   (lat, lon);
+               vcard.add('GEO;WORK:'+FloattoStr(FContactManager.ListeContacts.GetItem(i).LatitudeWk)+';'+
+                                    FloattoStr(FContactManager.ListeContacts.GetItem(i).LongitudeWk));
+
+               // REV (timestamp)
+               vcard.add('REV:'+FormatDateTime('YYYYMMDD"T"hhnnss', FContactManager.ListeContacts.GetItem(i).Date));
+
+               // Add photo
+               //EncodeStringBase64(const s:string):String;
+               If Fileexists(FContactManager.ContactMgrAppsData+'images\'+FContactManager.ListeContacts.GetItem(i).Imagepath) then
+               try
+                 fs:= TFileStream.Create(FContactManager.ContactMgrAppsData+'images\'+
+                                     FContactManager.ListeContacts.GetItem(i).Imagepath, fmOpenRead);
+                 if fs.Size > 0 then
+                 begin
+                    fs.Position := 0;
+                    SetLength(fstring, fs.Size div SizeOf(Char));
+                    fs.ReadBuffer(Pointer(fstring)^, fs.Size div SizeOf(Char));
+                    B64string := EncodeStringBase64(fString);
+                    // insert line breaks every 76 chars
+                    photostr:= 'PHOTO;ENCODING=BASE64;TYPE=JPEG:'+B64string;
+                    for j:= 0 to (length(photostr) div 76)+1 do
+                    begin
+                      line:= copy(photostr, (j*76)+1, 76);
+                      if length(line) > 0 then
+                      begin
+                        vcard.add(line);
+                      end else
+                      begin
+                        vcard.add('');
+                        break;
+                      end;
+                    end;
+                 end;
+               finally
+                 fs.free;
+               end;
                vcard.add(vcend);
                vcard.add('');
             end;

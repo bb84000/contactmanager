@@ -491,31 +491,28 @@ begin
   b64string:= '';
   if not FileExists(filename) then exit;
   result:= true;
+  // Create a stringlist and copy the VCard file content to the stringlist
   vcsl := TStringList.Create;
   vcsl.LoadFromFile(filename);
+  // Then parse eache line to find the parameter
   for i:= 0 to vcsl.count-1 do
   begin
+    //Read current line and convert uppercase
     s:= vcsl.Strings[i];
-
-
     sup:= UpperCase(s);
-    // We auto convert it to UTF8 if ansi detected
+    // We auto convert it to UTF8 if ansi detected, then data is after the last ':'
     sdata:= IsAnsi2Utf8(copy(s, LastDelimiter(':', s)+1, length(s)));
+    // split the data in an array
     Setlength(A, 0);
     A := sdata.Split(';');
-
-    if sup= 'BEGIN:VCARD' then              // We have a new VCard
+    // We have a new VCard
+    if sup= 'BEGIN:VCARD' then
     begin
-      new(K);
-      MyCont.Longitude:= 0;
-      MyCont.Latitude:= 0;
-      MyCont.LongitudeWk:= 0;
-      MyCont.LatitudeWk:= 0;
+      MyCont:= Default(TContact );
       photo:= false;
       continue;
     end;
-
-        // If it is a phot0 field, so append line to b64string
+    // If it is a photo field, so append line to b64string
     if photo then
     begin
       if length(s) > 0 then b64string:= b64string+s+#10 else
@@ -536,14 +533,13 @@ begin
        end;
       continue
     end;
-
-
-    if s= 'END:VCARD' then                  // End of the current VCard
+    // End of the current VCard
+    if s= 'END:VCARD' then
     begin
       AddContact(MyCont);
       continue;
     end;
-
+    // Detect version
     if pos('VERSION:', sup)= 1 then
     begin
       MyCont.version:= copy(s, 9, 5) ;
@@ -595,7 +591,6 @@ begin
         MyCont.LongitudeWk:= GetFloat(A[0]);
         MyCont.LatitudeWk:= GetFloat(A[1]);
       end;
-
       continue;
     end;
     // home phone field
@@ -657,7 +652,7 @@ begin
       end;
       continue;
     end;
-    // Photo field
+    // Photo field, with base 64, JPG (or PNG : todo)
     if pos('PHOTO', sup)=1 then
     begin
       if pos('ENCODING=BASE64', sup) >0 then      // embedded image, search type
@@ -670,9 +665,27 @@ begin
           b64string:= copy (s, p+1, length(s))+#10;
           photo:= true;
         end;
-
-
       end;
+      continue;
+    end;
+    if pos('ORG', sup)=1 then
+    begin
+      MyCont.Company:= A[0];
+      MyCont.Service:= A[1];
+      continue;
+    end;
+    if pos('ROLE', sup)=1 then
+    begin
+      MyCont.fonction:= A[0];
+    end;
+    // Timestamp 19961022T140000
+    if pos('REV', sup)=1 then
+    try
+
+      MyCont.Date:= EncodeDate(StrToInt(copy(A[0], 1, 4)), StrToInt(copy(A[0], 5, 2)), StrToInt(copy(A[0], 7, 2))  );
+      MyCont.DateModif:= now();
+      //ShowMessage(DateTimeToStr(MyCont.Date));
+    Except
     end;
   end;
   vcsl.free;

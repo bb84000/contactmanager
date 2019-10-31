@@ -195,5 +195,8 @@ Version 1.0.0.2 - 30/10/2019
 - Added message box after contacts import or export
 - fixed vcard image import
 
+Version 1.0.0.3 - 30/10/2019
+- Added image in VCard export
+- Added modify and delete contact image
 
  

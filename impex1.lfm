@@ -118,11 +118,14 @@ object FImpex: TFImpex
     object BtnImpex: TButton
       Left = 400
       Height = 25
+      Hint = 'Choisir un contact dans la liste de gauche pour activer ce bouton'
       Top = 8
       Width = 75
       Caption = 'Import'
       ModalResult = 1
       OnClick = BtnImpexClick
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 1
     end
   end

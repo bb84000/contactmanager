@@ -71,6 +71,7 @@ type
     EWebWk: TEdit;
     GBOrder: TGroupBox;
     ImgContact: TImage;
+    LImageFile: TLabel;
     LAutre: TLabel;
     LAutreWk: TLabel;
     LBContacts: TListBox;
@@ -164,6 +165,7 @@ type
     procedure LBContactsSelectionChange(Sender: TObject; User: boolean);
     procedure MnuCopyClick(Sender: TObject);
     procedure PMnuChooseClick(Sender: TObject);
+    procedure PMnuDeleteClick(Sender: TObject);
     procedure PMnuListPopup(Sender: TObject);
     procedure PPersoClick(Sender: TObject);
     procedure PWorkClick(Sender: TObject);
@@ -200,7 +202,7 @@ type
     MnuDeleteCaption: string;
     MnuSendmailCaption: string;
     MnuVisitwebCaption: string;
-    PnlImageOldHint: string;
+   // PnlImageOld: string;
     MouseIndex: Integer;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
@@ -214,6 +216,7 @@ type
     procedure SettingsOnStateChange(sender: TObject);
     procedure ContactsOnChange(sender: TObject);
     procedure ModLangue ;
+    procedure SetEditState(val: boolean);
   public
     FImpex_ImportBtn_Caption: string;
     FImpex_ExportBtn_Caption: string;
@@ -286,6 +289,7 @@ begin
   settings.OnStateChange:= @SettingsOnStateChange;
   ListeContacts:= TContactsList.Create;
   ListeContacts.OnChange:= @ContactsOnChange;
+  LImageFile.Caption:= '';;
 end;
 
 procedure TFContactManager.FormDestroy(Sender: TObject);
@@ -526,6 +530,8 @@ end;
 
 
 
+
+
 procedure TFContactManager.PMnuChooseClick(Sender: TObject);
 var
   filename: string;
@@ -533,9 +539,9 @@ var
   rInt: LongInt;
   nimgfile: string;
 begin
+  //PnlImageOld:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
   if OPictDialog.Execute then
   begin
-    PnlImageOldHint:= PnlImage.Hint;
     filename:= OPictDialog.FileName;
     Image1:= TImage.Create(self);
     Image1.Picture.LoadFromFile(filename);
@@ -545,10 +551,22 @@ begin
     nimgfile:= LowerCase(ListeContacts.GetItem(LBContacts.ItemIndex).Name+Format('%d', [rInt])+'.jpg') ;
     Image1.Picture.SaveToFile( ContactMgrAppsData+'images\'+nimgfile);
     ImgContact.Picture.Assign(Image1.Picture.Bitmap);
-    PnlImage.Hint:= nimgfile;
+    LIMageFile.Caption:= nimgfile;
+
     Image1.Free;
   end;
 end;
+
+procedure TFContactManager.PMnuDeleteClick(Sender: TObject);
+begin
+  //PnlImageOld:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
+  PnlImage.Hint:= '';
+  ImgContact.Picture.Assign(nil);
+
+end;
+
+
+
 
 procedure TFContactManager.PMnuListPopup(Sender: TObject);
 var
@@ -637,9 +655,9 @@ begin
   ELatitude.text:= FloatToStr(ListeContacts.GetItem(n).Latitude);
   EDatecreation.text:= DateTimeToStr(ListeContacts.GetItem(n).Date);
   EDatemodif.text:= DateTimeToStr(ListeContacts.GetItem(n).DateModif);
+  PnlImage.Hint:= ListeContacts.GetItem(n).Imagepath;
   try
     ImgContact.Picture.LoadFromFile(ContactMgrAppsData+'images\'+ListeContacts.GetItem(n).Imagepath);
-    PnlImage.Hint:= ListeContacts.GetItem(n).Imagepath;
     PMnuChoose.Visible:= false;
     PMnuChange.Visible:= true;
     PMnuDelete.Visible:= true;
@@ -648,6 +666,7 @@ begin
     PMnuChoose.Visible:= true;
     PMnuChange.Visible:= false;
     PMnuDelete.Visible:= false;
+
   end;
   EFonction.text:= ListeContacts.GetItem(n).fonction ;
   ECompany.text:= ListeContacts.GetItem(n).Company;
@@ -752,6 +771,11 @@ begin
     LatitudeWk:=  ListeContacts.GetFloat(ELatitudeWk.text);
     Index1:= ListeContacts.GetItem(LBContacts.ItemIndex).Index1;
     Comment:= ListeContacts.GetItem(LBContacts.ItemIndex).Comment;
+    if PnlImage.Hint <> ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath then
+    begin
+      if FileExists(ContactMgrAppsData+'images\'+ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath)
+      then deletefile(ContactMgrAppsData+'images\'+ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath);
+    end;
     Imagepath:= PnlImage.Hint;
   end;
   if NewContact then
@@ -763,7 +787,7 @@ begin
   Esearch.Enabled:= True;
   RBSortClick(Sender);
   DisplayList;
-  BtnCancelClick(Sender);
+  SetEditState(false);
 end;
 
 procedure TFContactManager.BtnWebClick(Sender: TObject);
@@ -843,6 +867,7 @@ end;
 
 procedure TFContactManager.EContactChange(Sender: TObject);
 begin
+  //PnlImageOld:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
   SaveButtonStates;
   DisableButtons;
   Esearch.Enabled:= False;
@@ -969,18 +994,28 @@ begin
   OpenURL('mailto:'+ListeContacts.GetItem(LBContacts.ItemIndex).Email+'?subject=Message from Contact Manager&body=Message from Contact Manager');
 end;
 
+
+procedure TFContactManager.SetEditState(val: boolean);
+begin
+  SetContactChange(val);
+  DisplayContact;
+  SetContactChange(not val);
+  RestoreButtonStates;
+  LBContacts.Enabled:= not val;
+  GBOrder.Enabled:= not val;
+  Esearch.Enabled:= not val;
+  NewContact:= val;
+
+end;
+
 procedure TFContactManager.BtnCancelClick(Sender: TObject);
 begin
-  SetContactChange(False);
-  DisplayContact;
-  SetContactChange(True);
-  RestoreButtonStates;
-  LBContacts.Enabled:= True;
-  GBOrder.Enabled:= True;
-  Esearch.Enabled:= True;
-  NewContact:= false;
-  // Delete image file if changed   (name in image hint)
-  if PnlImageOldHint <> PnlImage.Hint then DeleteFile(ContactMgrAppsData+'images\'+PnlImage.Hint);
+  if PnlImage.Hint <> ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath then
+  begin
+    if fileexists(ContactMgrAppsData+'images\'+PnlImage.Hint) then deletefile(ContactMgrAppsData+'images\'+PnlImage.Hint);
+    PnlImage.Hint:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath
+  end;
+  SetEditState(false);
 end;
 
 
@@ -1039,7 +1074,6 @@ begin
   LBContacts.Enabled:= false;
   GBOrder.Enabled:= False;
   Esearch.Enabled:= False;
-
 end;
 
 procedure TFContactManager.BtnAboutClick(Sender: TObject);
@@ -1202,6 +1236,7 @@ begin
     PMnuChoose.Caption:= ReadString(Settings.LangStr, 'PMnuChoose.Caption', PMnuChoose.Caption);
     PMnuChange.Caption:= ReadString(Settings.LangStr, 'PMnuChange.Caption', PMnuChange.Caption);
     PMnuDelete.Caption:= ReadString(Settings.LangStr, 'PMnuDelete.Caption', PMnuDelete.Caption);
+    ImgContact.Hint:= Format(ReadString(Settings.LangStr, 'ImgContact.Hint', 'Cliquez avec le bouton droit de la souris %spour  insérer, changeer ou effacer une image'), [#10]);
     OPictDialog.Title:= ReadString(Settings.LangStr, 'OPictDialog.Title', OPictDialog.Title);
     // Settings
     FPrefs.Caption:= ReadString(Settings.LangStr, 'FPrefs.Caption', FPrefs.Caption);
