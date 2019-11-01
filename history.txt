@@ -199,4 +199,9 @@ Version 1.0.0.3 - 30/10/2019
 - Added image in VCard export
 - Added modify and delete contact image
 
+Version 1.0.0.4 - 01/11/2019
+- Some message boxes localisation
+- images in list box popup menu
+
+
  
