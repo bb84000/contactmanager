@@ -77,7 +77,14 @@ PMnuChange.Caption=Change image
 PMnuDelete.Caption=Delete image
 OPictDialog.Title=Open existing file
 ImgContact.Hint=Right click on the mouse to insert%schange or delete an image
-
+ContactNotFound=Contact not found
+ContactNoOtherFound=No other contact found
+CntImportd=%d imported %s contact
+CntExportd=%d exported %s contact
+CntImportds=%d imported %s contacts
+CntExportds=%d exported %s contacts
+MailSubject=Mail from Contacts Manager
+ConfirmDeleteContact=Do you really want to delete the contact %s ?
 
 ;Settings
 FPrefs.Caption=Contact Manager settings
@@ -179,7 +186,16 @@ PMnuChoose.Caption=Choisir une image
 PMnuChange.Caption=Changer l'image
 PMnuDelete.Caption=Supprimer l'image
 OPictDialog.Title=Ouvrir un fichier existant
-ImgContact.Hint=Cliquez avec le bouton droit de la souris %spour  insérer, changeer ou effacer une image
+ImgContact.Hint=Cliquez avec le bouton droit de la souris %spour  insérer, changer ou supprimer une image
+ContactNotFound=Pas de contact trouvé
+ContactNoOtherFound=Pas d''autre contact trouvé
+CntImportd=%d contact %s importé
+CntExportd=%d contact %s exporté
+CntImportds=%d contacts %s importés
+CntExportds=%d contacts %s exportés
+MailSubject=Courrier du gestionnaire de contacts
+ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
+
 
 ;Settings
 FPrefs.Caption=Préférences du gestionnaire de contacts

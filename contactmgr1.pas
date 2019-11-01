@@ -110,7 +110,7 @@ type
     MenuItem4: TMenuItem;
     MnuCopy: TMenuItem;
     MnuLocate: TMenuItem;
-    MnuRetrieveGPS: TMenuItem;
+    MnuCoord: TMenuItem;
     OPictDialog: TOpenPictureDialog;
     PMnuChoose: TMenuItem;
     PMnuChange: TMenuItem;
@@ -175,10 +175,8 @@ type
     OS, OSTarget, CRLF : string;
     CompileDateTime: TDateTime;
     UserPath, UserAppsDataPath: string;
-
     ProgName: string;
     ConfigFile: string;
-
     SortType: TChampsCompare;
     CurIndex: integer;
     CurContChanged: boolean;
@@ -202,8 +200,11 @@ type
     MnuDeleteCaption: string;
     MnuSendmailCaption: string;
     MnuVisitwebCaption: string;
-   // PnlImageOld: string;
     MouseIndex: Integer;
+    ContactNotFound, ContactNoOtherFound: String;
+    CntImportd, CntExportd, CntImportds, CntExportds: string;
+    ConfirmDeleteContact: string;
+    MailSubject: string;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
     procedure DisplayContact;
@@ -289,7 +290,10 @@ begin
   settings.OnStateChange:= @SettingsOnStateChange;
   ListeContacts:= TContactsList.Create;
   ListeContacts.OnChange:= @ContactsOnChange;
-  LImageFile.Caption:= '';;
+  LImageFile.Caption:= '';
+  CropBitmap(BtnCoord.Glyph, MnuCoord.Bitmap, BtnCoord.Enabled);
+  CropBitmap(BtnLocate.Glyph, MnuLocate.Bitmap, BtnLocate.Enabled);
+  CropBitmap(BtnDelete.Glyph, MnuDelete.Bitmap, BtnDelete.Enabled);
 end;
 
 procedure TFContactManager.FormDestroy(Sender: TObject);
@@ -311,7 +315,6 @@ var
 
   s, s1: string;
   cname, cstreet, clieudit, ctown : string;
-  cemail, cweb: string;
 begin
   MouseIndex := LBContacts.ItemAtPos(Point(X,Y), false);
   if (MouseIndex >= 0) and (previndex <> MouseIndex) then
@@ -330,7 +333,6 @@ begin
     clieudit:= ListeContacts.GetItem(MouseIndex).Lieudit;
     if length(clieudit)>0 then s1:= s1+clieudit;
     if length(s1) > 0 then s:=s+#10+s1;
-    cemail:= ListeContacts.GetItem(MouseIndex).Email;
     s1:=ListeContacts.GetItem(MouseIndex).Postcode;
     if length(s1)>0 then s1:= s1+' ';
     ctown:= ListeContacts.GetItem(MouseIndex).Town;
@@ -539,7 +541,6 @@ var
   rInt: LongInt;
   nimgfile: string;
 begin
-  //PnlImageOld:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
   if OPictDialog.Execute then
   begin
     filename:= OPictDialog.FileName;
@@ -559,10 +560,8 @@ end;
 
 procedure TFContactManager.PMnuDeleteClick(Sender: TObject);
 begin
-  //PnlImageOld:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
   PnlImage.Hint:= '';
   ImgContact.Picture.Assign(nil);
-
 end;
 
 
@@ -580,7 +579,7 @@ begin
   cname:= ListeContacts.GetItem(i).Name;
   if length(cname)>0 then s:= s+cname;
   if length(s)=0 then s:= 'Contact '+IntToStr(i);
-  MnuRetrieveGPS.Caption:= Format(MnuRetrieveGPSCaption, [s]) ;
+  MnuCoord.Caption:= Format(MnuRetrieveGPSCaption, [s]) ;
   MnuLocate.Caption:= Format(MnuLocateCaption, [s]);
   MnuCopy.Caption:= Format(MnuCopyCaption, [s]);
   MnuDelete.Caption:= Format(MnuDeleteCaption, [s]);
@@ -588,6 +587,8 @@ begin
   MnuVisitweb.Caption:= Format(MnuVisitwebCaption, [s]);
   MnuSendmail.Enabled:= not(length(ListeContacts.GetItem(i).Email)=0);
   MnuVisitweb.Enabled:= not(length(ListeContacts.GetItem(i).Web)=0);
+  CropBitmap(BtnEmail.Glyph, MnuSendMail.Bitmap, BtnEmail.Enabled);
+  CropBitmap(BtnWeb.Glyph, MnuVisitweb.Bitmap, BtnWeb.Enabled);
 end;
 
 
@@ -666,7 +667,6 @@ begin
     PMnuChoose.Visible:= true;
     PMnuChange.Visible:= false;
     PMnuDelete.Visible:= false;
-
   end;
   EFonction.text:= ListeContacts.GetItem(n).fonction ;
   ECompany.text:= ListeContacts.GetItem(n).Company;
@@ -687,7 +687,6 @@ begin
   BtnWebWk.Enabled:=  Boolean(length(EWebWk.text));
   ELongitudeWk.text:= FloatToStr(ListeContacts.GetItem(n).LongitudeWk);
   ELatitudeWk.text:= FloatToStr(ListeContacts.GetItem(n).LatitudeWk);
-
   DefaultFormatSettings.DecimalSeparator:= decSep;
   SetContactChange(true);
 end;
@@ -705,7 +704,6 @@ var
   s: string;
 begin
   if newsearch then ns:= 0 else ns:= LBContacts.itemindex+1;
-//  fnd:= not Boolean(LBContacts.itemindex+1);
   if (ns > LBContacts.Count-1) or (Length(ESearch.Text)=0) then exit;
   For i:= ns to  LBContacts.Count-1 do
   begin
@@ -723,8 +721,8 @@ begin
         break;
     end;
   end;
-  if newsearch then showmessage(ESearch.Text+': Pas de contact trouvé')
-  else if (ns>0) and (not(fnd)) then showmessage(ESearch.Text+': Pas d''autre contact trouvé');
+  if newsearch then MsgDlg(Caption, ESearch.Text+': '+ContactNotFound, mtInformation,  [mbOK] , ['OK'], 0)
+  else if (ns>0) and (not(fnd)) then MsgDlg(Caption, ESearch.Text+': '+ContactNoOtherFound, mtInformation,  [mbOK] , ['OK'], 0);
 end;
 
 procedure TFContactManager.BtnValidClick(Sender: TObject);
@@ -890,6 +888,7 @@ end;
 procedure TFContactManager.BtnImportClick(Sender: TObject);
 var
   i: integer;
+  s: string;
 begin
   FImpex.ImpexContacts:= TContactsList.create;
   Case FImpex.ShowModal of
@@ -899,14 +898,16 @@ begin
              begin
                if Fimpex.LBImpex.Selected[i] then ListeContacts.AddContact(Fimpex.ImpexContacts.GetItem(i));
              end;
-             MsgDlg('Importation de contacts', IntToStr(Fimpex.ImpexSelcount)+ ' contacts '+FImpex.CBType.Text+ ' importés',
+             if  Fimpex.ImpexSelcount > 1 then s:= CntImportds else s:= CntImportd;
+             MsgDlg(Caption, Format(s, [Fimpex.ImpexSelcount, FImpex.CBType.Text]),
                        mtInformation,  [mbOK] , ['OK'], 0);
              ListeContacts.SortType:= SortType;
              DisplayList;
            end;
     // mrYes : Export
     mrYes : begin
-               MsgDlg('Exportation de contacts', IntToStr(Fimpex.ImpexSelcount)+ ' contacts '+FImpex.CBType.Text+ ' exportés',
+              if  Fimpex.ImpexSelcount > 1 then s:= CntExportds else s:= CntEXportd;
+              MsgDlg(Caption, Format(s, [Fimpex.ImpexSelcount, FImpex.CBType.Text]),
                        mtInformation,  [mbOK] , ['OK'], 0);
             end;
   end;
@@ -950,7 +951,7 @@ begin
   if length(scountry)>0 then smap:= smap+','+scountry;
   smap:= StringReplace(smap, ' ','+', [rfReplaceAll] );
   if (TSpeedButton(Sender)=BtnLocate) or (TMenuItem(Sender)=MnuLocate) then OpenURL(smap);
-  if (TSpeedButton(Sender)= BtnCoord) or (TMenuItem(Sender)=MnuRetrieveGPS) then
+  if (TSpeedButton(Sender)= BtnCoord) or (TMenuItem(Sender)=MnuCoord) then
   begin
     HTTPCli1:= TFPHTTPClient.Create(nil);
     stmp:=HTTPCli1.get(smap);
@@ -975,8 +976,9 @@ procedure TFContactManager.BtnDeleteClick(Sender: TObject);
 var
   imgfile: string;
 begin
-  If MsgDlg(ProgName, 'Voulez-vous vraiment supprimer ce contact ?', mtWarning,
-       mbYesNo, ['Oui', 'Non'],0) = mrYes then
+  If MsgDlg(Caption, Format(ConfirmDeleteContact,
+            [ListeContacts.GetItem(LBContacts.ItemIndex).Name+' '+ListeContacts.GetItem(LBContacts.ItemIndex).Surname]),
+             mtWarning, mbYesNo, ['Oui', 'Non'],0) = mrYes then
   begin
     if (LBContacts.ItemIndex >= 0) and (LBContacts.ItemIndex < LBContacts.Count) then
     begin
@@ -991,7 +993,7 @@ end;
 
 procedure TFContactManager.BtnEmailClick(Sender: TObject);
 begin
-  OpenURL('mailto:'+ListeContacts.GetItem(LBContacts.ItemIndex).Email+'?subject=Message from Contact Manager&body=Message from Contact Manager');
+  OpenURL('mailto:'+ListeContacts.GetItem(LBContacts.ItemIndex).Email+'?subject='+MailSubject+'&body='+MailSubject);
 end;
 
 
@@ -1238,6 +1240,15 @@ begin
     PMnuDelete.Caption:= ReadString(Settings.LangStr, 'PMnuDelete.Caption', PMnuDelete.Caption);
     ImgContact.Hint:= Format(ReadString(Settings.LangStr, 'ImgContact.Hint', 'Cliquez avec le bouton droit de la souris %spour  insérer, changeer ou effacer une image'), [#10]);
     OPictDialog.Title:= ReadString(Settings.LangStr, 'OPictDialog.Title', OPictDialog.Title);
+    ContactNotFound:= ReadString(Settings.LangStr, 'ContactNotFound', 'Pas de contact trouvé');
+    ContactNoOtherFound:= ReadString(Settings.LangStr, 'ContactNoOtherFound', 'Pas d''autre contact trouvé');
+    CntImportd:= ReadString(Settings.LangStr, 'CntImportd', '%d contact %s importé ');
+    CntExportd:= ReadString(Settings.LangStr, 'CntExportd', '%d contact %s exporté');
+    CntImportds:= ReadString(Settings.LangStr, 'CntImportds', '%d contacts %s importés ');
+    CntExportds:= ReadString(Settings.LangStr, 'CntExportds', '%d contacts %s exportés');
+    MailSubject:= ReadString(Settings.LangStr, 'MailSubject', 'Courrier du gestionnaire de contacts');
+    ConfirmDeleteContact:=ReadString(Settings.LangStr, 'ConfirmDeleteContact', 'Voulez-vous vraiment supprimer le contact %s ?');
+
     // Settings
     FPrefs.Caption:= ReadString(Settings.LangStr, 'FPrefs.Caption', FPrefs.Caption);
     FPrefs.GroupBox1.Caption:= ReadString(Settings.LangStr, 'FPrefs.GroupBox1.Caption', FPrefs.GroupBox1.Caption);

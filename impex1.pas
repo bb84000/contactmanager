@@ -276,6 +276,7 @@ begin
              LBImpex.Items.Add(IsAnsi2Utf8(csvdoc.Cells[1, i]));
            end;
            BtnImpexEnabled:= true;
+           if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
            BtnUp.Enabled:= true;
            BtnEmpty.Enabled:= true;
            BtnDown.Enabled:= true;
@@ -306,9 +307,8 @@ begin
              end;
              LBImpex.Items.Add(s);
            end;
-
            BtnImpexEnabled:= true;
-           //LBImpex.SelectAll;
+           if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
            xmlContacts.Free;
          end;            // Old jcontacts and contacts
       2: begin           //
@@ -320,6 +320,8 @@ begin
              end;
              LBImpexClick(self);
              BtnImpexEnabled:= true;
+             if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
+
          end
 
       else exit;
@@ -333,8 +335,8 @@ begin
     end;
 
     if SD1.Execute then EFileName.text:= SD1.FileName;
-
     BtnImpexEnabled:= true;
+    if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
   end;
 
 

@@ -18,9 +18,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Contacts manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.0.3"/>
+      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Contacts manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.0.4"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
@@ -38,7 +38,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="contactmgr.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -88,6 +88,10 @@
         <Filename Value="vcards1.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="contactmgr1.txt"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
