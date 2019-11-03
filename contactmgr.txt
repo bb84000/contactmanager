@@ -1,6 +1,6 @@
 Gestionnaire de contacts - version 1.0.0.4
 
->>> Eglish text at the end of french text >>>
+>>> English text at the end of french text >>>
 
 
 Le Gestionnaire de contacts stocke et gère une liste de contacts comportant toutes

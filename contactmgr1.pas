@@ -119,7 +119,7 @@ type
     PnlImage: TPanel;
     PnlWork: TPanel;
     PnlPerso: TPanel;
-    Panel3: TPanel;
+    PnlInfos: TPanel;
     PMnuImg: TPopupMenu;
     PMnuList: TPopupMenu;
     PPerso: TPanel;
@@ -164,6 +164,8 @@ type
       Y: Integer);
     procedure LBContactsSelectionChange(Sender: TObject; User: boolean);
     procedure MnuCopyClick(Sender: TObject);
+    procedure PnlButtonsClick(Sender: TObject);
+    procedure PnlInfosClick(Sender: TObject);
     procedure PMnuChooseClick(Sender: TObject);
     procedure PMnuDeleteClick(Sender: TObject);
     procedure PMnuListPopup(Sender: TObject);
@@ -205,6 +207,9 @@ type
     CntImportd, CntExportd, CntImportds, CntExportds: string;
     ConfirmDeleteContact: string;
     MailSubject: string;
+    ImgContactHintEmpty, ImgContactHintFull: string;
+    canCloseMsg: string;
+    YesBtn, NoBtn, CancelBtn: string;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
     procedure DisplayContact;
@@ -235,7 +240,6 @@ implementation
 {$R *.lfm}
 
 { TFContactManager }
-
 
 procedure TFContactManager.FormCreate(Sender: TObject);
 var
@@ -294,6 +298,7 @@ begin
   CropBitmap(BtnCoord.Glyph, MnuCoord.Bitmap, BtnCoord.Enabled);
   CropBitmap(BtnLocate.Glyph, MnuLocate.Bitmap, BtnLocate.Enabled);
   CropBitmap(BtnDelete.Glyph, MnuDelete.Bitmap, BtnDelete.Enabled);
+
 end;
 
 procedure TFContactManager.FormDestroy(Sender: TObject);
@@ -302,7 +307,6 @@ begin
   FreeAndNil(ListeContacts);
   FreeAndNil(LangFile);
   FreeAndNil(LangNums);
-
 end;
 
 
@@ -384,6 +388,8 @@ begin
     end;
   end;
   LoadCfgFile(ConfigFile);
+
+
   UpdateUrl:= 'http://www.sdtp.com/versions/version.php?program=contactmgr&version=';
   version:= GetVersionInfo.ProductVersion;
   //Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
@@ -412,6 +418,9 @@ begin
   PPersoClick(Sender);
   NewContact:= False;
   ContactsChanged:= false;
+  Application.ProcessMessages;
+  Application.Title:= Caption;
+
 end;
 
 procedure TFContactManager.FormChangeBounds(Sender: TObject);
@@ -422,15 +431,18 @@ end;
 procedure TFContactManager.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
 begin
-    //if not ReallyCanClose then
-    //CloseAction := caNone else
-    //begin
-    //  LogSession.Add(DateTimeToStr(now)+' - '+logclosefbb);
-    //  LogSession.Add(' ');
-    //  LogSession.SaveToFile(AppdataPath+'log.txt');
-   if (SettingsChanged or ContactsChanged) then SaveConfig(All);
-    //end;
-
+  // Don't close if changes pending
+  CloseAction:= caFree;
+  if not BtnQuit.Enabled then
+  begin
+   Case  MsgDlg(Caption, Format(canCloseMsg, [#10,#10,#10]), mtwarning,  [mbYes, mbNo, mbCancel] ,
+                                             [YesBtn, NoBtn, CancelBtn])  of
+     mrYes: BtnValidClick(Sender) ;
+     mrNo: BtnCancelClick(Sender);
+     else CloseAction:= caNone;
+   end;
+   end;
+  if (SettingsChanged or ContactsChanged) then SaveConfig(All);
 end;
 
 
@@ -472,6 +484,9 @@ begin
   end;
 
   Modlangue;
+  //Caption:= 'Test';
+
+
   SettingsChanged:= false;
   ListeContacts.LoadXMLfile(filename);
 end;
@@ -480,9 +495,11 @@ end;
 function TFContactManager.SaveConfig(typ: TSaveMode): boolean;
 var
   CfgXML: TXMLDocument;
-  RootNode, SettingsNode :TDOMNode;
-
+  RootNode, ContactsNode, SettingsNode :TDOMNode;
+  FilNamWoExt: string;
+  i: integer;
 begin
+
   if FileExists(ConfigFile)then
   begin
     ReadXMLFile(CfgXml, ConfigFile);
@@ -492,6 +509,14 @@ begin
     CfgXML := TXMLDocument.Create;
     RootNode := CfgXML.CreateElement('config');
     CfgXML.Appendchild(RootNode);
+  end;
+  if (Typ = All) then
+  begin
+    ContactsNode:= RootNode.FindNode('contacts');
+    if ContactsNode <> nil then RootNode.RemoveChild(ContactsNode);
+    ContactsNode:= CfgXML.CreateElement('contacts');
+    ListeContacts.SaveToXMLnode(ContactsNode);
+    RootNode.Appendchild(ContactsNode);
   end;
   if (Typ= Setting) or (Typ = All) then
   begin
@@ -506,9 +531,18 @@ begin
     Settings.WState:= IntToHex(ord(WindowState), 4)+IntToHex(Top, 4)+IntToHex(Left, 4)+IntToHex(Height, 4)+IntToHex(width, 4);
     Settings.SaveXMLnode(SettingsNode);
     RootNode.Appendchild(SettingsNode);
+    // On sauvegarde les versions précédentes
+    FilNamWoExt:= TrimFileExt(ConfigFile);
+    if FileExists (FilNamWoExt+'.bk5')                   // Efface la plus ancienne
+    then  DeleteFile(FilNamWoExt+'.bk5');                // si elle existe
+    For i:= 4 downto 0
+    do if FileExists (FilNamWoExt+'.bk'+IntToStr(i))     // Renomme les précédentes si elles existent
+       then  RenameFile(FilNamWoExt+'.bk'+IntToStr(i), FilNamWoExt+'.bk'+IntToStr(i+1));
+    if FileExists (ConfigFile)
+    then  RenameFile(ConfigFile, FilNamWoExt+'.bk0');
+    // Et on sauvegarde la nouvelle config
     writeXMLFile(CfgXML, ConfigFile);
   end;
-  if (Typ = All) then if ListeContacts.Count > 0 then ListeContacts.SaveToXMLfile(ConfigFile);
 end;
 
 
@@ -527,6 +561,16 @@ end;
 procedure TFContactManager.MnuCopyClick(Sender: TObject);
 begin
  Clipboard.AsText := LBContacts.Hint;
+end;
+
+procedure TFContactManager.PnlButtonsClick(Sender: TObject);
+begin
+
+end;
+
+procedure TFContactManager.PnlInfosClick(Sender: TObject);
+begin
+
 end;
 
 
@@ -662,11 +706,13 @@ begin
     PMnuChoose.Visible:= false;
     PMnuChange.Visible:= true;
     PMnuDelete.Visible:= true;
+    ImgContact.Hint:= Format(ImgContactHintFull, [#10, ListeContacts.GetItem(n).Imagepath]);
   except
     ImgContact.Picture:= nil;
     PMnuChoose.Visible:= true;
     PMnuChange.Visible:= false;
     PMnuDelete.Visible:= false;
+    ImgContact.Hint:=  ImgContactHintEmpty;
   end;
   EFonction.text:= ListeContacts.GetItem(n).fonction ;
   ECompany.text:= ListeContacts.GetItem(n).Company;
@@ -721,8 +767,8 @@ begin
         break;
     end;
   end;
-  if newsearch then MsgDlg(Caption, ESearch.Text+': '+ContactNotFound, mtInformation,  [mbOK] , ['OK'], 0)
-  else if (ns>0) and (not(fnd)) then MsgDlg(Caption, ESearch.Text+': '+ContactNoOtherFound, mtInformation,  [mbOK] , ['OK'], 0);
+  if newsearch then MsgDlg(Caption, ESearch.Text+': '+ContactNotFound, mtInformation,  [mbOK] , ['OK'])
+  else if (ns>0) and (not(fnd)) then MsgDlg(Caption, ESearch.Text+': '+ContactNoOtherFound, mtInformation,  [mbOK] , ['OK']);
 end;
 
 procedure TFContactManager.BtnValidClick(Sender: TObject);
@@ -781,7 +827,7 @@ begin
     RestoreButtonStates;
     ListeContacts.AddContact(tmpContact)
   end else ListeContacts.ModifyContact(LBContacts.ItemIndex, tmpContact);
-  ListeContacts.SaveToXMLfile(ConfigFile);
+  //ListeContacts.SaveToXMLfile(ConfigFile);
   Esearch.Enabled:= True;
   RBSortClick(Sender);
   DisplayList;
@@ -978,7 +1024,7 @@ var
 begin
   If MsgDlg(Caption, Format(ConfirmDeleteContact,
             [ListeContacts.GetItem(LBContacts.ItemIndex).Name+' '+ListeContacts.GetItem(LBContacts.ItemIndex).Surname]),
-             mtWarning, mbYesNo, ['Oui', 'Non'],0) = mrYes then
+             mtWarning, mbYesNo, [YesBtn, NoBtn],0) = mrYes then
   begin
     if (LBContacts.ItemIndex >= 0) and (LBContacts.ItemIndex < LBContacts.Count) then
     begin
@@ -1106,6 +1152,7 @@ begin
   Fprefs.CBUpdate.checked:= Settings.NoChkNewVer;
   FPrefs.CBLangue.ItemIndex:= LangNums.IndexOf(Settings.LangStr);
   oldndx:=  FPrefs.CBLangue.ItemIndex;
+
   if FPrefs.ShowModal = mrOK then
   begin
     Settings.StartWin:= Fprefs.CBStartup.Checked ;
@@ -1114,15 +1161,9 @@ begin
     Settings.NoChkNewVer:= Fprefs.CBUpdate.checked;
     Settings.LangStr:= LangNums.Strings[FPrefs.CBLangue.ItemIndex];
     if FPrefs.CBLangue.ItemIndex <> oldndx then ModLangue;
+    DisplayContact;                                // Needed to change language on hints
   end;
 end;
-
-
-
-
-
-
-
 
 // Remplace les onglets par des panels colorés
 procedure TFContactManager.PPersoClick(Sender: TObject);
@@ -1177,6 +1218,9 @@ begin
     //Main Form
     Caption:= ReadString(Settings.LangStr, 'Caption', 'Gestionnaire de Contacts');
     // Components
+    YesBtn:= ReadString(Settings.LangStr, 'YesBtn', 'Oui');
+    NoBtn:= ReadString(Settings.LangStr, 'NoBtn', 'Non');
+    CancelBtn:=ReadString(Settings.LangStr, 'CancelBtn', 'Annuler');
     Aboutbox.Caption:= ReadString(Settings.LangStr, 'Aboutbox.Caption', 'A propos du Gestionnaire de Contacts');
     AboutBox.LUpdate.Caption:= ReadString(Settings.LangStr, 'AboutBox.LUpdate.Caption', 'Recherche de mise à jour');
     PPerso.Caption:= ReadString(Settings.LangStr, 'PPerso.Caption', PPerso.Caption);
@@ -1238,7 +1282,9 @@ begin
     PMnuChoose.Caption:= ReadString(Settings.LangStr, 'PMnuChoose.Caption', PMnuChoose.Caption);
     PMnuChange.Caption:= ReadString(Settings.LangStr, 'PMnuChange.Caption', PMnuChange.Caption);
     PMnuDelete.Caption:= ReadString(Settings.LangStr, 'PMnuDelete.Caption', PMnuDelete.Caption);
-    ImgContact.Hint:= Format(ReadString(Settings.LangStr, 'ImgContact.Hint', 'Cliquez avec le bouton droit de la souris %spour  insérer, changeer ou effacer une image'), [#10]);
+    ImgContactHintEmpty:= ReadString(Settings.LangStr, 'ImgContactHintEmpty', 'Cliquez avec le bouton droit de la souris pour ajouter une image');
+    ImgContactHintFull:= ReadString(Settings.LangStr, 'ImgContactHintFull',
+                                'Cliquez avec le bouton droit de la souris pour changer ou supprimer cette image%sFichier image: %s');
     OPictDialog.Title:= ReadString(Settings.LangStr, 'OPictDialog.Title', OPictDialog.Title);
     ContactNotFound:= ReadString(Settings.LangStr, 'ContactNotFound', 'Pas de contact trouvé');
     ContactNoOtherFound:= ReadString(Settings.LangStr, 'ContactNoOtherFound', 'Pas d''autre contact trouvé');
@@ -1248,7 +1294,10 @@ begin
     CntExportds:= ReadString(Settings.LangStr, 'CntExportds', '%d contacts %s exportés');
     MailSubject:= ReadString(Settings.LangStr, 'MailSubject', 'Courrier du gestionnaire de contacts');
     ConfirmDeleteContact:=ReadString(Settings.LangStr, 'ConfirmDeleteContact', 'Voulez-vous vraiment supprimer le contact %s ?');
-
+    CanCloseMsg:= ReadString(Settings.LangStr, 'CanCloseMsg', 'Une modification est en cours.%s'+
+                     'Pour la valider et quitter, cliquez sur le bouton "Oui".%s'+
+                     'Pour l''annuler et quitter, cliquer sur le bouton "Non".%s'+
+                     'Pour revenir au programme, cliquer sur le bouton "Annuler".');
     // Settings
     FPrefs.Caption:= ReadString(Settings.LangStr, 'FPrefs.Caption', FPrefs.Caption);
     FPrefs.GroupBox1.Caption:= ReadString(Settings.LangStr, 'FPrefs.GroupBox1.Caption', FPrefs.GroupBox1.Caption);
@@ -1258,7 +1307,7 @@ begin
     FPrefs.CBSavePos.Caption:= ReadString(Settings.LangStr, 'FPrefs.CBSavePos.Caption', FPrefs.CBSavePos.Caption);
     FPrefs.CBUpdate.Caption:= ReadString(Settings.LangStr, 'FPrefs.CBUpdate.Caption', FPrefs.CBUpdate.Caption);
     FPrefs.LLangue.Caption:= ReadString(Settings.LangStr, 'FPrefs.LLangue.Caption', FPrefs.LLangue.Caption);
-    FPrefs.BtnCancel.Caption:= ReadString(Settings.LangStr, 'FPrefs.BtnCancel.Caption', FPrefs.BtnCancel.Caption);
+    FPrefs.BtnCancel.Caption:= CancelBtn;
     // Import/export
     FImpex.Caption:= ReadString(Settings.LangStr, 'FImpex.Caption', FImpex.Caption);
     FImpex.RBImport.Caption:= ReadString(Settings.LangStr, 'FImpex.RBImport.Caption', FImpex.RBImport.Caption);

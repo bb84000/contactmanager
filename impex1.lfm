@@ -239,6 +239,7 @@ object FImpex: TFImpex
       Top = 8
       Width = 71
       Caption = '1ère ligne'
+      Enabled = False
       TabOrder = 0
     end
     object BtnUp: TButton

@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+
   Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils, math, FileUtil, base64;
 
 type
@@ -63,7 +64,7 @@ type
     function getcsvstring(doc: TCSVDocument; fld, ndx: integer) : string;
     function getcsvfloat(doc: TCSVDocument; fld, ndx: integer) : Float;
     function getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
-  public
+   public
     ImpexContacts: TContactsList;
     ImpexSelcount: integer;
   end;
@@ -79,15 +80,15 @@ uses contactmgr1;
 
 { TFImpex }
 
-procedure TFImpex.FormActivate(Sender: TObject);
 
+procedure TFImpex.FormActivate(Sender: TObject);
 begin
   DecSep:= DefaultFormatSettings.DecimalSeparator; ;
   LSepar.Enabled:= not Boolean(CBType.ItemIndex);
   ESepar.Enabled:= LSepar.Enabled;
   LDelim.Enabled:= LSepar.Enabled;
   EDelim.Enabled:= LSepar.Enabled;
-  SBFileOpen.Glyph.LoadFromResourceName(HINSTANCE, 'fileopen');
+  ResPngToGlyph(HInstance,'FILEOPEN', SBFileOpen.Glyph);
   // Contact fields
   csvheaderdoc:= TCSVDocument.Create;
   csvheaderdoc.Delimiter:=',';
@@ -176,6 +177,7 @@ begin
 end;
 
 procedure TFImpex.RBImpexChange(Sender: TObject);
+
 var
   i: Integer;
   s: string;
@@ -188,7 +190,8 @@ begin
   BtnImpexEnabled:= false;;
   if RBImport.Checked then
   begin
-    SBFileOpen.Glyph.LoadFromResourceName(HINSTANCE, 'fileopen');
+    // IMport PNG from resource
+    ResPngToGlyph(HInstance,'FILEOPEN', SBFileOpen.Glyph);
     BtnImpex.Caption:= FContactManager.FImpex_ImportBtn_Caption;
     BtnImpex.ModalResult:= mrOK;              // Import
     CBType.Items.Text:='CSV'+#10+'Contacts'+#10+'vCard';
@@ -196,7 +199,7 @@ begin
     CBCode.ItemIndex:=0;
   end else
   begin
-    SBFileOpen.Glyph.LoadFromResourceName(HINSTANCE, 'filesave')  ;
+    ResPngToGlyph(HInstance,'FILESAVE', SBFileOpen.Glyph);
     BtnImpex.Caption:= FContactManager.FImpex_ExportBtn_Caption;
     BtnImpex.ModalResult:= mrYes;            // Export
     // populate list

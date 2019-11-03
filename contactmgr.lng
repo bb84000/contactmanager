@@ -14,6 +14,10 @@
 ;General
 Language=English
 Caption=Contacts Manager
+YesBtn=Yes
+NoBtn=No
+CancelBtn=Cancel
+
 Aboutbox.Caption=About Contacts Manager
 AboutBox.LUpdate.Caption=Search update
 PPerso.Caption=Private
@@ -76,7 +80,8 @@ PMnuChoose.Caption=Select an image
 PMnuChange.Caption=Change image
 PMnuDelete.Caption=Delete image
 OPictDialog.Title=Open existing file
-ImgContact.Hint=Right click on the mouse to insert%schange or delete an image
+ImgContactHintEmpty=Click the right mouse button to add an image
+ImgContactHintFull=Click the right mouse button to change or delete%s the image. (Image file: %s)
 ContactNotFound=Contact not found
 ContactNoOtherFound=No other contact found
 CntImportd=%d imported %s contact
@@ -85,6 +90,7 @@ CntImportds=%d imported %s contacts
 CntExportds=%d exported %s contacts
 MailSubject=Mail from Contacts Manager
 ConfirmDeleteContact=Do you really want to delete the contact %s ?
+CanCloseMsg=A change is pending.%sTo validate the change and quit, click on the "Yes" button.%To cancel the change and quit, click on the "No" button.%sTo return to the program, click on the "Cancel" button.
 
 ;Settings
 FPrefs.Caption=Contact Manager settings
@@ -95,7 +101,7 @@ FPrefs.CBMinimized.Caption=Launch minimized
 FPrefs.CBSavePos.Caption=Save size and position
 FPrefs.CBUpdate.Caption=Search update
 FPrefs.LLangue.Caption=Language
-FPrefs.BtnCancel.Caption=Cancel
+
 ;FImpex
 FImpex.Caption=Contacts import and export
 FImpex.RBImport.Caption=Import
@@ -124,6 +130,10 @@ MnuVisitwebCaption=Visist the %s private Web site
 ;General
 Language=Français
 Caption=Gestionnaire de Contacts
+YesBtn=Oui
+NoBtn=Non
+CancelBtn=Annuler
+
 Aboutbox.Caption=A propos du Gestionnaire de Contacts
 AboutBox.LUpdate.Caption=Recherche de mise à jour
 PPerso.Caption=Personnel
@@ -186,7 +196,8 @@ PMnuChoose.Caption=Choisir une image
 PMnuChange.Caption=Changer l'image
 PMnuDelete.Caption=Supprimer l'image
 OPictDialog.Title=Ouvrir un fichier existant
-ImgContact.Hint=Cliquez avec le bouton droit de la souris %spour  insérer, changer ou supprimer une image
+ImgContactHintEmpty=Cliquer avec le bouton droit de la souris pour ajouter une image
+ImgContactHintFull=Cliquer avec le bouton droit de la souris pour changer ou supprimer%scette image. (Fichier image: %s)
 ContactNotFound=Pas de contact trouvé
 ContactNoOtherFound=Pas d''autre contact trouvé
 CntImportd=%d contact %s importé
@@ -195,7 +206,7 @@ CntImportds=%d contacts %s importés
 CntExportds=%d contacts %s exportés
 MailSubject=Courrier du gestionnaire de contacts
 ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
-
+CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez sur le bouton 'Oui'.%sPour l'annuler et quitter, cliquer sur le bouton 'Non'.%sPour revenir au programme, cliquer sur le bouton 'Annuler'.
 
 ;Settings
 FPrefs.Caption=Préférences du gestionnaire de contacts
@@ -221,7 +232,7 @@ FImpex.OD1.Title=Ouvrir un fichier existant
 FImpex.SD1.Title=Enregistrer le fichier
 FImpex.ImportBtn.Caption=Importation
 FImpex.ExportBtn.Caption=Exportation
-FImpex.BtnCancel.Caption=Annuler
+
 csvheader="Nom","Prénom","Rue","BP","Lieudit","Code postal","Ville","Pays","Téléphone","Box","Mobile","Autre tél.","Courriel","Web","Longitude","Latitude","Date création","Date modification","Commentaire","Fichier image","Fonction","Service","Société","Adresse pro","BP pro","Leudit pro","CP pro","Ville pro","Pays pro","Téléphone pro","Box pro","Mobile pro","Autre tél. pro","Courriel pro","Web pro","Longitude pro","Latitude pro"
 MnuRetrieveGPSCaption=Récupérer les coordonnées GPS de %s
 MnuLocateCaption=Localiser %s sur une carte

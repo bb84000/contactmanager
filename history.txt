@@ -203,5 +203,11 @@ Version 1.0.0.4 - 01/11/2019
 - Some message boxes localisation
 - images in list box popup menu
 
+Version 1.0.0.5 - 03/11/2019
+- Changed contact image hint (display image filename)
+- Changed buttons glyphs to png
+- Cannot close program if a change is pending
+- Up to 5 settings backup
+
 
  

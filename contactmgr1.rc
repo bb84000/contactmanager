@@ -1,2 +1,2 @@
-fileopen   BITMAP  "images/fileopen.bmp"
-filesave   BITMAP  "images/filesave.bmp"
+FILEOPEN   RCDATA  "images/fileopen.png"
+FILESAVE   RCDATA  "images/filesave.png"

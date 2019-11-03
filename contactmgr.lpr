@@ -16,6 +16,7 @@ uses
 
 begin
   RequireDerivedFormResource:=True;
+  Application.Title:='ContactsMgr';
   Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TFContactManager, FContactManager);
