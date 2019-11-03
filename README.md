@@ -1,5 +1,21 @@
 # contactmanager
-Contacts manager
+Gestionnaire de contacts - version 1.0.0.4
 
-This is a application to store contacts details as address, phones numbers, email and web, and also gps coordinates.
-Can get automatically the coordinates and display the location on a map.
+>>> English text at the end of french text >>>
+
+
+Le Gestionnaire de contacts stocke et gère une liste de contacts comportant toutes les informations nécessaires pour l'identifier, le joindre par téléphone, lui envoyer des courriels, visiter son site Web, obtenir ses coordonnées GPS et le localiser sur une carte, de manière personnelle et/ou professionnelle.
+
+Il permet aussi d'importer des contacts provenant d'une autre application (formats csv, vCard) ainsi que d'exporter des contacts dans les mêmes formats.
+
+Développée avec Lazarus/Free Pascal, cette application peut être compilée pour fonctionner sur Windows 32 et 64 bits, ainsi que sur Linux.
+
+Contacts Manager
+
+>>> Texte français au début >>>
+
+Contacts Manager application stores and manages a contacts' list including all information needed to identify, call, mail, visit web site, get GPS coordinates, locate on a map a contact, on a private and/or professional way.
+
+Il can also import contacts from other applications (csv and vCard formats) and export contacts on same formats.
+
+Developed with Lazarus/Free Pascal, the appllication can be compiled to operate on Windows 32 and 64 bit, and also on Linux systems.
