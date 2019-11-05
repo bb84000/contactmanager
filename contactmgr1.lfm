@@ -1,13 +1,13 @@
 object FContactManager: TFContactManager
-  Left = 708
+  Left = 631
   Height = 500
-  Top = 267
-  Width = 648
+  Top = 172
+  Width = 685
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Gestionnaire de contacts'
   ClientHeight = 500
-  ClientWidth = 648
+  ClientWidth = 685
   OnActivate = FormActivate
   OnChangeBounds = FormChangeBounds
   OnClose = FormClose
@@ -19,21 +19,21 @@ object FContactManager: TFContactManager
     Left = 0
     Height = 70
     Top = 430
-    Width = 648
+    Width = 685
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 70
-    ClientWidth = 648
+    ClientWidth = 685
     TabOrder = 0
     object GBOrder: TGroupBox
       Left = 0
       Height = 70
       Top = 0
-      Width = 648
+      Width = 685
       Align = alClient
       Caption = 'Ordre'
       ClientHeight = 50
-      ClientWidth = 644
+      ClientWidth = 681
       TabOrder = 0
       object RBNone: TRadioButton
         Left = 16
@@ -56,7 +56,7 @@ object FContactManager: TFContactManager
         TabOrder = 2
       end
       object RBNameSurname: TRadioButton
-        Left = 152
+        Left = 166
         Height = 19
         Top = 0
         Width = 120
@@ -68,7 +68,7 @@ object FContactManager: TFContactManager
         TabStop = True
       end
       object RBCountry: TRadioButton
-        Left = 152
+        Left = 166
         Height = 19
         Top = 22
         Width = 120
@@ -78,7 +78,7 @@ object FContactManager: TFContactManager
         TabOrder = 3
       end
       object RBSurnameName: TRadioButton
-        Left = 288
+        Left = 316
         Height = 19
         Top = 0
         Width = 120
@@ -88,7 +88,7 @@ object FContactManager: TFContactManager
         TabOrder = 4
       end
       object RBPostcode: TRadioButton
-        Left = 424
+        Left = 466
         Height = 19
         Top = 0
         Width = 120
@@ -98,7 +98,7 @@ object FContactManager: TFContactManager
         TabOrder = 5
       end
       object RBlongit: TRadioButton
-        Left = 288
+        Left = 316
         Height = 19
         Top = 22
         Width = 120
@@ -108,7 +108,7 @@ object FContactManager: TFContactManager
         TabOrder = 6
       end
       object RBLatit: TRadioButton
-        Left = 424
+        Left = 466
         Height = 19
         Top = 22
         Width = 120
@@ -123,11 +123,11 @@ object FContactManager: TFContactManager
     Left = 0
     Height = 36
     Top = 0
-    Width = 648
+    Width = 685
     Align = alTop
     BevelInner = bvLowered
     ClientHeight = 36
-    ClientWidth = 648
+    ClientWidth = 685
     TabOrder = 1
     OnClick = PnlButtonsClick
     object BtnImport: TSpeedButton
@@ -1239,7 +1239,7 @@ object FContactManager: TFContactManager
       ParentShowHint = False
     end
     object ESearch: TEdit
-      Left = 428
+      Left = 453
       Height = 20
       Top = 8
       Width = 174
@@ -1248,7 +1248,7 @@ object FContactManager: TFContactManager
       TabOrder = 0
     end
     object BtnSearch: TSpeedButton
-      Left = 608
+      Left = 633
       Height = 24
       Hint = 'Rechercher un contact'
       Top = 6
@@ -1331,11 +1331,11 @@ object FContactManager: TFContactManager
     Left = 222
     Height = 394
     Top = 36
-    Width = 426
+    Width = 463
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 394
-    ClientWidth = 426
+    ClientWidth = 463
     ParentColor = False
     TabOrder = 2
     OnClick = PnlInfosClick
@@ -1343,7 +1343,7 @@ object FContactManager: TFContactManager
       Left = 0
       Height = 394
       Top = 0
-      Width = 426
+      Width = 463
       ActivePage = TSPerso
       Align = alClient
       ParentFont = False
@@ -1352,82 +1352,82 @@ object FContactManager: TFContactManager
       object TSPerso: TTabSheet
         Caption = 'Perso'
         ClientHeight = 366
-        ClientWidth = 418
+        ClientWidth = 455
         ParentFont = False
         object PnlPerso: TPanel
           Left = 0
           Height = 366
           Top = 0
-          Width = 418
+          Width = 455
           Align = alClient
           BevelColor = clNone
           BevelOuter = bvNone
           ClientHeight = 366
-          ClientWidth = 418
+          ClientWidth = 455
           ParentColor = False
           TabOrder = 0
           object LName: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 13
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Nom'
             ParentColor = False
           end
           object EName: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 10
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 0
           end
           object LSurname: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 38
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Prénom'
             ParentColor = False
           end
           object ESurname: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 35
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 1
           end
           object LStreet: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 63
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Rue'
             ParentColor = False
           end
           object EStreet: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 60
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 2
           end
           object LBP: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 88
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'BP'
             ParentColor = False
           end
           object EBP: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 85
             Width = 65
@@ -1435,24 +1435,24 @@ object FContactManager: TFContactManager
             TabOrder = 3
           end
           object ELieudit: TEdit
-            Left = 168
+            Left = 200
             Height = 20
             Top = 85
-            Width = 245
+            Width = 250
             AutoSize = False
             TabOrder = 4
           end
           object LCP: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 113
-            Width = 85
+            Width = 123
             AutoSize = False
-            Caption = 'CP, Ville'
+            Caption = 'Code Postal, Ville'
             ParentColor = False
           end
           object EPostcode: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 110
             Width = 65
@@ -1460,117 +1460,117 @@ object FContactManager: TFContactManager
             TabOrder = 5
           end
           object ETown: TEdit
-            Left = 168
+            Left = 200
             Height = 20
-            Top = 110
-            Width = 245
+            Top = 112
+            Width = 250
             AutoSize = False
             TabOrder = 6
           end
           object LCountry: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 138
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Pays'
             ParentColor = False
           end
           object ECountry: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 135
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 7
           end
           object LPhone: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 163
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Téléphone'
             ParentColor = False
           end
           object EPhone: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 160
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 8
           end
           object EBox: TEdit
-            Left = 293
+            Left = 335
             Height = 20
             Top = 160
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 9
           end
           object LBox: TLabel
-            Left = 222
+            Left = 242
             Height = 15
             Top = 163
-            Width = 56
+            Width = 93
             AutoSize = False
             Caption = 'Box'
             ParentColor = False
           end
           object LMobile: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 188
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Mobile'
             ParentColor = False
           end
           object EMobile: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 185
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 10
           end
           object LAutre: TLabel
-            Left = 222
+            Left = 242
             Height = 15
             Top = 188
-            Width = 56
+            Width = 93
             AutoSize = False
-            Caption = 'Autre tél.'
+            Caption = 'Autre téléphone'
             ParentColor = False
           end
           object EAutre: TEdit
-            Left = 293
+            Left = 335
             Height = 20
             Top = 185
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 11
           end
           object LEmail: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 213
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Email'
             ParentColor = False
           end
           object EEmail: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 210
-            Width = 290
+            Width = 295
             AutoSize = False
             TabOrder = 12
           end
           object BtnEmail: TSpeedButton
-            Left = 392
+            Left = 428
             Height = 24
             Top = 208
             Width = 24
@@ -1646,24 +1646,24 @@ object FContactManager: TFContactManager
             OnClick = BtnEmailClick
           end
           object LWeb: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 238
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Web'
             ParentColor = False
           end
           object EWeb: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 235
-            Width = 290
+            Width = 295
             AutoSize = False
             TabOrder = 13
           end
           object BtnWeb: TSpeedButton
-            Left = 391
+            Left = 428
             Height = 24
             Top = 233
             Width = 24
@@ -1739,16 +1739,16 @@ object FContactManager: TFContactManager
             OnClick = BtnWebClick
           end
           object LLongitude: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 263
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Longitude'
             ParentColor = False
           end
           object ELongitude: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 260
             Width = 130
@@ -1756,16 +1756,16 @@ object FContactManager: TFContactManager
             TabOrder = 14
           end
           object LLatitude: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 288
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Latitude'
             ParentColor = False
           end
           object ELatitude: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 285
             Width = 130
@@ -1773,16 +1773,16 @@ object FContactManager: TFContactManager
             TabOrder = 15
           end
           object LDateCre: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 313
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Date création'
             ParentColor = False
           end
           object EDatecreation: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 310
             Width = 130
@@ -1790,16 +1790,16 @@ object FContactManager: TFContactManager
             TabOrder = 16
           end
           object LDateModif: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 338
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Date modific.'
             ParentColor = False
           end
           object EDatemodif: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 335
             Width = 130
@@ -1807,7 +1807,7 @@ object FContactManager: TFContactManager
             TabOrder = 17
           end
           object PnlImage: TPanel
-            Left = 240
+            Left = 275
             Height = 100
             Top = 260
             Width = 174
@@ -1842,81 +1842,81 @@ object FContactManager: TFContactManager
       object TSWork: TTabSheet
         Caption = 'Travail'
         ClientHeight = 366
-        ClientWidth = 418
+        ClientWidth = 455
         object PnlWork: TPanel
           Left = 0
           Height = 366
           Top = 0
-          Width = 418
+          Width = 455
           Align = alClient
           BevelOuter = bvNone
           ClientHeight = 366
-          ClientWidth = 418
+          ClientWidth = 455
           ParentColor = False
           ParentFont = False
           TabOrder = 0
           object LFonction: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 13
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Fonction'
             ParentColor = False
           end
           object EFonction: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 10
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 0
           end
           object LCompany: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 38
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Société'
             ParentColor = False
           end
           object ECompany: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 35
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 1
           end
           object LStreetWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 88
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Adresse pro.'
             ParentColor = False
           end
           object EStreetWk: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 85
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 2
           end
           object LBPWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 113
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'BP pro.'
             ParentColor = False
           end
           object EBpWk: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 110
             Width = 65
@@ -1924,24 +1924,24 @@ object FContactManager: TFContactManager
             TabOrder = 3
           end
           object ELieuditWk: TEdit
-            Left = 168
+            Left = 200
             Height = 20
             Top = 110
-            Width = 245
+            Width = 250
             AutoSize = False
             TabOrder = 4
           end
           object LCPWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 138
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'CP, Ville pro.'
             ParentColor = False
           end
           object EPostcodeWk: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 135
             Width = 65
@@ -1949,117 +1949,117 @@ object FContactManager: TFContactManager
             TabOrder = 5
           end
           object ETownWk: TEdit
-            Left = 168
+            Left = 200
             Height = 20
             Top = 135
-            Width = 245
+            Width = 250
             AutoSize = False
             TabOrder = 6
           end
           object LCountryWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 163
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Pays pro.'
             ParentColor = False
           end
           object ECountryWk: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 160
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 7
           end
           object LPhoneWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 188
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Tél. pro.'
             ParentColor = False
           end
           object EPhoneWk: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 185
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 8
           end
           object EBoxWk: TEdit
-            Left = 293
+            Left = 335
             Height = 20
             Top = 185
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 9
           end
           object LBoxWk: TLabel
-            Left = 222
+            Left = 242
             Height = 15
             Top = 188
-            Width = 65
+            Width = 93
             AutoSize = False
             Caption = 'Box pro.'
             ParentColor = False
           end
           object LMobileWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 213
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Mobile pro.'
             ParentColor = False
           end
           object EMobileWk: TEdit
-            Left = 96
+            Left = 125
             Height = 20
             Top = 210
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 10
           end
           object LAutreWk: TLabel
-            Left = 222
+            Left = 242
             Height = 15
             Top = 213
-            Width = 65
+            Width = 93
             AutoSize = False
             Caption = 'Autre pro.'
             ParentColor = False
           end
           object EAutreWk: TEdit
-            Left = 293
+            Left = 335
             Height = 20
             Top = 210
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 11
           end
           object LEmailWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 238
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Email pro.'
             ParentColor = False
           end
           object EEmailWk: TEdit
-            Left = 95
+            Left = 125
             Height = 20
-            Top = 235
+            Top = 233
             Width = 290
             AutoSize = False
             TabOrder = 12
           end
           object BtnEmailWk: TSpeedButton
-            Left = 391
+            Left = 428
             Height = 24
             Top = 233
             Width = 24
@@ -2118,16 +2118,16 @@ object FContactManager: TFContactManager
             NumGlyphs = 2
           end
           object LWebWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 263
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Web pro.'
             ParentColor = False
           end
           object EWebWk: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 260
             Width = 290
@@ -2135,7 +2135,7 @@ object FContactManager: TFContactManager
             TabOrder = 13
           end
           object BtnWebWk: TSpeedButton
-            Left = 391
+            Left = 428
             Height = 24
             Top = 258
             Width = 24
@@ -2194,53 +2194,53 @@ object FContactManager: TFContactManager
             NumGlyphs = 2
           end
           object LLongitudeWk: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 288
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Longitude pro.'
             ParentColor = False
           end
           object ELongitudeWk: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 285
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 14
           end
           object LLatitudeWk: TLabel
-            Left = 220
+            Left = 242
             Height = 15
             Top = 288
-            Width = 75
+            Width = 93
             AutoSize = False
             Caption = 'Latitude pro.'
             ParentColor = False
           end
           object ELatitudeWk: TEdit
-            Left = 293
+            Left = 335
             Height = 20
             Top = 285
-            Width = 120
+            Width = 115
             AutoSize = False
             TabOrder = 15
           end
           object LService: TLabel
-            Left = 5
+            Left = 3
             Height = 15
             Top = 63
-            Width = 85
+            Width = 123
             AutoSize = False
             Caption = 'Service'
             ParentColor = False
           end
           object EService: TEdit
-            Left = 95
+            Left = 125
             Height = 20
             Top = 60
-            Width = 318
+            Width = 325
             AutoSize = False
             TabOrder = 16
           end
@@ -2298,9 +2298,9 @@ object FContactManager: TFContactManager
     end
   end
   object PMnuImg: TPopupMenu
-    left = 576
-    top = 344
-    object PMnuChoose: TMenuItem
+    left = 608
+    top = 376
+    object PMnuChooseImg: TMenuItem
       Caption = 'Choisir une image'
       Bitmap.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -2338,9 +2338,9 @@ object FContactManager: TFContactManager
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
-      OnClick = PMnuChooseClick
+      OnClick = PMnuChooseImgClick
     end
-    object PMnuChange: TMenuItem
+    object PMnuChangeImg: TMenuItem
       Caption = 'Changer cette image'
       Bitmap.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -2378,9 +2378,9 @@ object FContactManager: TFContactManager
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
         FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
-      OnClick = PMnuChooseClick
+      OnClick = PMnuChooseImgClick
     end
-    object PMnuDelete: TMenuItem
+    object PMnuDeleteImg: TMenuItem
       Caption = 'Supprimer cette image'
       Bitmap.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
@@ -2418,12 +2418,12 @@ object FContactManager: TFContactManager
         0000000000000000000000000000000000000000000000000000000000000000
         0000000000000000000000000000000000000000000000000000
       }
-      OnClick = PMnuDeleteClick
+      OnClick = PMnuDeleteImgClick
     end
   end
   object OPictDialog: TOpenPictureDialog
-    left = 504
-    top = 344
+    left = 496
+    top = 384
   end
   object PMnuList: TPopupMenu
     OnPopup = PMnuListPopup
@@ -2492,5 +2492,10 @@ object FContactManager: TFContactManager
       Caption = 'Visiter le site mail personnel'
       OnClick = BtnWebClick
     end
+  end
+  object UniqueInstance1: TUniqueInstance
+    Enabled = True
+    left = 71
+    top = 148
   end
 end

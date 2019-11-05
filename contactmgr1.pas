@@ -10,7 +10,7 @@ uses
   {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   ComCtrls, Buttons, contacts1, laz2_DOM , laz2_XMLRead, laz2_XMLWrite, Types, lazbbosversion,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, strutils, lazbbabout, prefs1, config1, lazbbinifiles,
-  LazUTF8, Clipbrd;
+  LazUTF8, Clipbrd, UniqueInstance;
 
 type
   TSaveMode = (None, Setting, All);
@@ -112,9 +112,9 @@ type
     MnuLocate: TMenuItem;
     MnuCoord: TMenuItem;
     OPictDialog: TOpenPictureDialog;
-    PMnuChoose: TMenuItem;
-    PMnuChange: TMenuItem;
-    PMnuDelete: TMenuItem;
+    PMnuChooseImg: TMenuItem;
+    PMnuChangeImg: TMenuItem;
+    PMnuDeleteImg: TMenuItem;
     PCtrl1: TPageControl;
     PnlImage: TPanel;
     PnlWork: TPanel;
@@ -140,6 +140,7 @@ type
     BtnEmail: TSpeedButton;
     TSPerso: TTabSheet;
     TSWork: TTabSheet;
+    UniqueInstance1: TUniqueInstance;
     procedure BtnAboutClick(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
@@ -166,8 +167,8 @@ type
     procedure MnuCopyClick(Sender: TObject);
     procedure PnlButtonsClick(Sender: TObject);
     procedure PnlInfosClick(Sender: TObject);
-    procedure PMnuChooseClick(Sender: TObject);
-    procedure PMnuDeleteClick(Sender: TObject);
+    procedure PMnuChooseImgClick(Sender: TObject);
+    procedure PMnuDeleteImgClick(Sender: TObject);
     procedure PMnuListPopup(Sender: TObject);
     procedure PPersoClick(Sender: TObject);
     procedure PWorkClick(Sender: TObject);
@@ -185,7 +186,12 @@ type
     ButtonStates: array [0..14] of Boolean;
     NewContact: boolean;
     version: string;
-    UpdateUrl: string;
+    BaseUpdateUrl: string;
+    LieuditCaption, BPCaption:  string;
+    CPCaption, TownCaption: string;
+    CommentCaption, ImageFileCaption: string;
+    LieuditWkCaption, BPWkCaption:  string;
+    CPWkCaption, TownWkCaption: string;
     settings: TConfig;
     LangStr: string;
     SettingsChanged: Boolean;
@@ -226,7 +232,7 @@ type
   public
     FImpex_ImportBtn_Caption: string;
     FImpex_ExportBtn_Caption: string;
-    csvheader: String;
+    csvheader: string;
     ListeContacts: TContactsList;
     ContactMgrAppsData: string;
   end;
@@ -234,6 +240,8 @@ type
 
 var
   FContactManager: TFContactManager;
+
+
 
 implementation
 
@@ -274,17 +282,12 @@ begin
 
   {$ENDIF}
   GetSysInfo(OsInfo);
-  csvheader:= '"Nom","Prénom","Rue","BP","Lieudit","Code postal","Rue","Pays","Téléphone","Box","Mobile","Autre tél.","Courriel","Web",';
-  csvheader:=csvheader+'"Longitude","Latitude","Date création","Date modification","Commentaire","Fichier image",';
-  csvheader:=csvheader+'"Fonction","Service","Société","Adresse pro","BP pro","Leudit pro","CP pro","Ville pro","Pays pro",';
-  csvheader:=csvheader+'"Téléphone pro","Box pro","Mobile pro","Autre tél. pro","Courriel pro","Web pro","Longitude pro","Latitude pro"';
-
   ProgName:= 'ContactMgr';
   // Chargement des chaînes de langue...
   LangFile:= TBbIniFile.create(ExtractFilePath(Application.ExeName)+'contactmgr.lng');
   LangNums:= TStringList.Create;
 
-  ContactMgrAppsData:= UserAppsDataPath+'\'+ProgName+'\';
+  ContactMgrAppsData:= UserAppsDataPath+PathDelim+ProgName+PathDelim;
     if not DirectoryExists (ContactMgrAppsData) then
   begin
     CreateDir(ContactMgrAppsData);
@@ -387,17 +390,15 @@ begin
       SaveConfig(All)
     end;
   end;
-  LoadCfgFile(ConfigFile);
-
-
-  UpdateUrl:= 'http://www.sdtp.com/versions/version.php?program=contactmgr&version=';
+  BaseUpdateUrl:= 'http://www.sdtp.com/versions/version.php?program=contactmgr&version=%s&language=%s';
   version:= GetVersionInfo.ProductVersion;
+  LoadCfgFile(ConfigFile);
   //Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
   AboutBox.Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
   AboutBox.LProductName.Caption:= GetVersionInfo.FileDescription;
   AboutBox.LCopyright.Caption:= GetVersionInfo.CompanyName+' - '+DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption:= 'Version: '+Version+' ('+OS+OSTarget+')';
-  AboutBox.UrlUpdate:= UpdateURl+Version;
+  //AboutBox.UrlUpdate:= BaseUpdateURl+Version+'&language='+Settings.LangStr;    // In Modlang
  // AboutBox.LUpdate.Caption:= 'Recherche de mise à jour';      // in Modlangue
   AboutBox.UrlWebsite:=GetVersionInfo.Comments;
   FPrefs.LStatus.Caption:= OsInfo.VerDetail;;
@@ -499,7 +500,7 @@ var
   FilNamWoExt: string;
   i: integer;
 begin
-
+  result:= false;
   if FileExists(ConfigFile)then
   begin
     ReadXMLFile(CfgXml, ConfigFile);
@@ -542,6 +543,7 @@ begin
     then  RenameFile(ConfigFile, FilNamWoExt+'.bk0');
     // Et on sauvegarde la nouvelle config
     writeXMLFile(CfgXML, ConfigFile);
+    result:= true;
   end;
 end;
 
@@ -578,7 +580,7 @@ end;
 
 
 
-procedure TFContactManager.PMnuChooseClick(Sender: TObject);
+procedure TFContactManager.PMnuChooseImgClick(Sender: TObject);
 var
   filename: string;
   Image1: TImage;
@@ -593,8 +595,8 @@ begin
     ImageFitToSize(Image1, ImgContact.Width, ImgContact.Height);
     Randomize;
     rInt:= random(10000);
-    nimgfile:= LowerCase(ListeContacts.GetItem(LBContacts.ItemIndex).Name+Format('%d', [rInt])+'.jpg') ;
-    Image1.Picture.SaveToFile( ContactMgrAppsData+'images\'+nimgfile);
+    nimgfile:= ContactMgrAppsData+'images'+PathDelim+LowerCase(ListeContacts.GetItem(LBContacts.ItemIndex).Name+Format('%d', [rInt])+'.jpg') ;
+    Image1.Picture.SaveToFile( nimgfile);
     ImgContact.Picture.Assign(Image1.Picture.Bitmap);
     LIMageFile.Caption:= nimgfile;
 
@@ -602,9 +604,9 @@ begin
   end;
 end;
 
-procedure TFContactManager.PMnuDeleteClick(Sender: TObject);
+procedure TFContactManager.PMnuDeleteImgClick(Sender: TObject);
 begin
-  PnlImage.Hint:= '';
+  LImageFile.Caption:= '';
   ImgContact.Picture.Assign(nil);
 end;
 
@@ -700,18 +702,18 @@ begin
   ELatitude.text:= FloatToStr(ListeContacts.GetItem(n).Latitude);
   EDatecreation.text:= DateTimeToStr(ListeContacts.GetItem(n).Date);
   EDatemodif.text:= DateTimeToStr(ListeContacts.GetItem(n).DateModif);
-  PnlImage.Hint:= ListeContacts.GetItem(n).Imagepath;
+  LIMageFile.Caption:= ListeContacts.GetItem(n).Imagepath;
   try
-    ImgContact.Picture.LoadFromFile(ContactMgrAppsData+'images\'+ListeContacts.GetItem(n).Imagepath);
-    PMnuChoose.Visible:= false;
-    PMnuChange.Visible:= true;
-    PMnuDelete.Visible:= true;
+    ImgContact.Picture.LoadFromFile(ListeContacts.GetItem(n).Imagepath);
+    PMnuChooseImg.Visible:= false;
+    PMnuChangeImg.Visible:= true;
+    PMnuDeleteImg.Visible:= true;
     ImgContact.Hint:= Format(ImgContactHintFull, [#10, ListeContacts.GetItem(n).Imagepath]);
   except
     ImgContact.Picture:= nil;
-    PMnuChoose.Visible:= true;
-    PMnuChange.Visible:= false;
-    PMnuDelete.Visible:= false;
+    PMnuChooseImg.Visible:= true;
+    PMnuChangeImg.Visible:= false;
+    PMnuDeleteImg.Visible:= false;
     ImgContact.Hint:=  ImgContactHintEmpty;
   end;
   EFonction.text:= ListeContacts.GetItem(n).fonction ;
@@ -815,19 +817,18 @@ begin
     LatitudeWk:=  ListeContacts.GetFloat(ELatitudeWk.text);
     Index1:= ListeContacts.GetItem(LBContacts.ItemIndex).Index1;
     Comment:= ListeContacts.GetItem(LBContacts.ItemIndex).Comment;
-    if PnlImage.Hint <> ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath then
-    begin
-      if FileExists(ContactMgrAppsData+'images\'+ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath)
-      then deletefile(ContactMgrAppsData+'images\'+ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath);
+    if LIMageFile.Caption <> ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath then
+      begin
+       if FileExists(ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath)
+       then deletefile(ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath);
     end;
-    Imagepath:= PnlImage.Hint;
+    Imagepath:= LIMageFile.Caption;
   end;
   if NewContact then
   begin
     RestoreButtonStates;
     ListeContacts.AddContact(tmpContact)
   end else ListeContacts.ModifyContact(LBContacts.ItemIndex, tmpContact);
-  //ListeContacts.SaveToXMLfile(ConfigFile);
   Esearch.Enabled:= True;
   RBSortClick(Sender);
   DisplayList;
@@ -1028,7 +1029,7 @@ begin
   begin
     if (LBContacts.ItemIndex >= 0) and (LBContacts.ItemIndex < LBContacts.Count) then
     begin
-      imgfile:= ContactMgrAppsData+'images\'+ ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
+      imgfile:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
       if Fileexists(imgfile) then DeleteFile(imgfile);
       ListeContacts.Delete(LBContacts.ItemIndex);
 
@@ -1058,10 +1059,10 @@ end;
 
 procedure TFContactManager.BtnCancelClick(Sender: TObject);
 begin
-  if PnlImage.Hint <> ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath then
+  if LIMageFile.Caption <> ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath then
   begin
-    if fileexists(ContactMgrAppsData+'images\'+PnlImage.Hint) then deletefile(ContactMgrAppsData+'images\'+PnlImage.Hint);
-    PnlImage.Hint:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath
+    if fileexists(LImageFile.Caption) then deletefile(LImageFile.Caption);
+    LIMageFile.Caption:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
   end;
   SetEditState(false);
 end;
@@ -1212,6 +1213,9 @@ end;
 
 // To be called in form activation routine
 procedure TFContactManager.ModLangue ;
+const
+  dquot='"';     // Double quote
+  dquotv='","';   // Double cote  plus comma plus double quote
 begin
   With LangFile do
   begin
@@ -1223,6 +1227,7 @@ begin
     CancelBtn:=ReadString(Settings.LangStr, 'CancelBtn', 'Annuler');
     Aboutbox.Caption:= ReadString(Settings.LangStr, 'Aboutbox.Caption', 'A propos du Gestionnaire de Contacts');
     AboutBox.LUpdate.Caption:= ReadString(Settings.LangStr, 'AboutBox.LUpdate.Caption', 'Recherche de mise à jour');
+    AboutBox.UrlUpdate:= Format(BaseUpdateURl, [Version, Settings.LangStr]);
     PPerso.Caption:= ReadString(Settings.LangStr, 'PPerso.Caption', PPerso.Caption);
     PWork.Caption:= ReadString(Settings.LangStr, 'PWork.Caption', PWork.Caption);
     GBOrder.Caption:= ReadString(Settings.LangStr, 'GBOrder.Caption', GBOrder.Caption);
@@ -1252,8 +1257,12 @@ begin
     LName.Caption:= ReadString(Settings.LangStr, 'LName.Caption', LName.Caption);
     LSurname.Caption:= ReadString(Settings.LangStr, 'LSurname.Caption', LSurname.Caption);
     LStreet.Caption:= ReadString(Settings.LangStr, 'LStreet.Caption', LStreet.Caption);
-    LBP.Caption:= ReadString(Settings.LangStr, 'LBP.Caption', LBP.Caption);
-    LCP.Caption:= ReadString(Settings.LangStr, 'LCP.Caption', LCP.Caption);
+    BPCaption:= ReadString(Settings.LangStr, 'BPCaption', 'BP');
+    LieuditCaption:= ReadString(Settings.LangStr, 'LieuditCaption', 'Lieudit');
+    LBP.Caption:= BPCaption+', '+LieuditCaption;
+    CPCaption:= ReadString(Settings.LangStr, 'CPCaption', 'CP');
+    TownCaption:= ReadString(Settings.LangStr, 'TownCaption', 'Ville');
+    LCP.Caption:= CPCaption+', '+TownCaption;
     LCountry.Caption:= ReadString(Settings.LangStr, 'LCountry.Caption', LCountry.Caption);
     LPhone.Caption:= ReadString(Settings.LangStr, 'LPhone.Caption', LPhone.Caption);
     LBox.Caption:= ReadString(Settings.LangStr, 'LBox.Caption', LBox.Caption);
@@ -1265,11 +1274,17 @@ begin
     LLatitude.Caption:= ReadString(Settings.LangStr, 'LLatitude.Caption', LLatitude.Caption);
     LDateCre.Caption:= ReadString(Settings.LangStr, 'LDateCre.Caption', LDateCre.Caption);
     LDatemodif.Caption:= ReadString(Settings.LangStr, 'LDatemodif.Caption', LDatemodif.Caption);
+    CommentCaption:= ReadString(Settings.LangStr, 'CommentCaption', 'Commentaire');
+    ImageFileCaption:= ReadString(Settings.LangStr, 'ImageFileCaption', 'Fichier image');
     LFonction.Caption:= ReadString(Settings.LangStr, 'LFonction.Caption', LFonction.Caption);
     LCompany.Caption:= ReadString(Settings.LangStr, 'LCompany.Caption', LCompany.Caption);
     LStreetWk.Caption:= ReadString(Settings.LangStr, 'LStreetWk.Caption', LStreetWk.Caption);
-    LBPWk.Caption:= ReadString(Settings.LangStr, 'LBPWk.Caption', LBPWk.Caption);
-    LCPWk.Caption:= ReadString(Settings.LangStr, 'LCPWk.Caption', LCPWk.Caption);
+    BPWkCaption:= ReadString(Settings.LangStr, 'BPWkCaption', 'BP Pro');
+    LieuditWkCaption:= ReadString(Settings.LangStr, 'LieuditWkCaption', 'Lieudit pro');
+    LBPWk.Caption:= BPWkCaption+', '+LieuditWkCaption;
+    CPWkCaption:= ReadString(Settings.LangStr, 'CPWkCaption', 'CP pro');
+    TownWkCaption:= ReadString(Settings.LangStr, 'TownWkCaption', 'Ville pro');
+    LCP.Caption:= CPWkCaption+', '+TownWkCaption;
     LCountryWk.Caption:= ReadString(Settings.LangStr, 'LCountryWk.Caption', LCountryWk.Caption);
     LPhoneWk.Caption:= ReadString(Settings.LangStr, 'LPhoneWk.Caption', LPhoneWk.Caption);
     LBoxWk.Caption:= ReadString(Settings.LangStr, 'LBoxWk.Caption', LBoxWk.Caption);
@@ -1279,9 +1294,6 @@ begin
     LWebWk.Caption:= ReadString(Settings.LangStr, 'LWebWk.Caption', LWebWk.Caption);
     LLongitudeWk.Caption:= ReadString(Settings.LangStr, 'LLongitudeWk.Caption', LLongitudeWk.Caption);
     LLatitudeWk.Caption:= ReadString(Settings.LangStr, 'LLatitudeWk.Caption', LLatitudeWk.Caption);
-    PMnuChoose.Caption:= ReadString(Settings.LangStr, 'PMnuChoose.Caption', PMnuChoose.Caption);
-    PMnuChange.Caption:= ReadString(Settings.LangStr, 'PMnuChange.Caption', PMnuChange.Caption);
-    PMnuDelete.Caption:= ReadString(Settings.LangStr, 'PMnuDelete.Caption', PMnuDelete.Caption);
     ImgContactHintEmpty:= ReadString(Settings.LangStr, 'ImgContactHintEmpty', 'Cliquez avec le bouton droit de la souris pour ajouter une image');
     ImgContactHintFull:= ReadString(Settings.LangStr, 'ImgContactHintFull',
                                 'Cliquez avec le bouton droit de la souris pour changer ou supprimer cette image%sFichier image: %s');
@@ -1323,13 +1335,28 @@ begin
     FImpex_ImportBtn_Caption:= ReadString(Settings.LangStr, 'FImpex.ImportBtn.Caption', 'Importation');
     FImpex_ExportBtn_Caption:= ReadString(Settings.LangStr, 'FImpex.ExportBtn.Caption', 'Exportation');
     FImpex.BtnCancel.Caption:= FPrefs.BtnCancel.Caption;
-    csvheader:= ReadString(Settings.LangStr, 'csvheader', 'csvheader');
+    // popup menus
     MnuRetrieveGPSCaption:= ReadString(Settings.LangStr, 'MnuRetrieveGPSCaption', 'Récupérer les données GPS de %s');
     MnuLocateCaption:= ReadString(Settings.LangStr, 'MnuLocateCaption', 'Localiser %s sur une carte');
     MnuCopyCaption:= ReadString(Settings.LangStr, 'MnuCopyCaption', 'Copier les données de %s');
     MnuDeleteCaption:= ReadString(Settings.LangStr, 'MnuDeleteCaption', 'Supprimer le contact %s');
     MnuSendmailCaption:= ReadString(Settings.LangStr, 'MnuSendmail', 'Envoyer un courriel personnel à %s');
     MnuVisitwebCaption:= ReadString(Settings.LangStr, 'MnuVisitwebCaption', 'Visister le site Web personnel de %s');
+    PMnuChooseImg.Caption:= ReadString(Settings.LangStr, 'PMnuChoose.Caption', PMnuChooseImg.Caption);
+    PMnuChangeImg.Caption:= ReadString(Settings.LangStr, 'PMnuChange.Caption', PMnuChangeImg.Caption);
+    PMnuDeleteImg.Caption:= ReadString(Settings.LangStr, 'PMnuDelete.Caption', PMnuDeleteImg.Caption);
+
+    // Translate header of csv export
+    csvheader:= dquot+LName.Caption+dquotv+LSurname.Caption+dquotv+LStreet.Caption+dquotv+BPCaption+dquotv+
+                LieuditCaption+dquotv+CPCaption+dquotv+TownCaption+dquotv+LCountry.Caption+dquotv+LPhone.Caption+dquotv+
+                LBox.Caption+dquotv+LMobile.Caption+dquotv+LAutre.Caption+dquotv+LEmail.Caption+dquotv+
+                LWeb.Caption+dquotv+LLongitude.Caption+dquotv+LLatitude.Caption+dquotv+LDateCre.Caption+dquotv+
+                LDateModif.Caption+dquotv+CommentCaption+dquotv+ImageFileCaption+dquotv+LFonction.Caption+dquotv+
+                LService.Caption+dquotv+LCompany.Caption+dquotv+LStreetWk.Caption+dquotv+BPWkCaption+dquotv+
+                LieuditWkCaption+dquotv+CPWkCaption+dquotv+TownWkCaption+dquotv+LCountryWk.Caption+dquotv+
+                LPhoneWk.Caption+dquotv+LBoxWk.Caption+dquotv+LMobileWk.Caption+dquotv+LAutreWk.Caption+dquotv+
+                LEmailWk.Caption+dquotv+LWebWk.Caption+dquotv+LLongitudeWk.Caption+dquotv+LLatitudeWk.Caption+dquot;
+
   end;
 end;
 

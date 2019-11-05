@@ -209,5 +209,9 @@ Version 1.0.0.5 - 03/11/2019
 - Cannot close program if a change is pending
 - Up to 5 settings backup
 
-
+Version 1.0.0.6 -04/11/2019
+- Update search in English if language is not french
+- Added UniqueInstance component to prevent execution of several instances of the program
+- Stored complete path of image instead relative path.
+- vCard export function integrated in contacts1 unit
  
