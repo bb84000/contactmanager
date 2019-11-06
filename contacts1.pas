@@ -12,6 +12,7 @@ Type
   TSortDirections = (ascend, descend);
   TSaveMode = (selection, all);
 
+
   PContact = ^TContact;
   TContact = Record
     Name: string;
@@ -34,7 +35,7 @@ Type
     Longitude:float;
     Latitude:float;
     Imagepath:string;
-    fonction:string;
+    Fonction:string;
     Service:string;
     Company:string;
     StreetWk:string;
@@ -53,7 +54,7 @@ Type
     LatitudeWk:float;
     Index1:int64;
     // partial save, tag is true
-    Tag: boolean;
+    Tag: Boolean;
     // For Vcards import
     Version: String;
   end;
@@ -63,9 +64,13 @@ Type
     FOnChange: TNotifyEvent;
     FSortType: TChampsCompare;
     FSortDirection: TSortDirections;
+    FCsvHeader: String;
+    FCsvQuote: String;
+    FCsvDelimiter: String;
     procedure SetSortDirection(Value: TSortDirections);
     procedure SetSortType (Value: TChampsCompare);
     procedure DoSort;
+    procedure SetCsvHeader(value:string);
     function SaveItem(iNode: TDOMNode; sname, svalue: string): TDOMNode;
   public
     Duplicates : TDuplicates;
@@ -80,19 +85,33 @@ Type
     function GetFloat(s: String): Float;
     function GetInt(s: String): INt64;
     function GetDate(s: string): TDateTime;
+    function GetBool(s: string): Boolean;
+    function BoolToStr(b: boolean): string;
     function SaveToXMLnode(iNode: TDOMNode): Boolean;
     function SaveToXMLfile(filename: string): Boolean;
     function SaveToVCardfile(filename: string; mode: TSaveMode=all): Boolean;
+    function SaveToCsvFile(filename: string; chrset: TCharset=UTF8;  mode: TSaveMode=all; header: boolean=true ): Boolean;
     function LoadXMLnode(iNode: TDOMNode): Boolean;
     function LoadXMLfile(filename: string): Boolean;
     function LoadVCardfile(filename: string): Boolean;
+
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property SortDirection: TSortDirections read FSortDirection write SetSortDirection default ascend;
     Property SortType : TChampsCompare read FSortType write SetSortType default cdcNone;
+    Property CsvHeader: string read FCsvHeader write FCsvHeader ;
+    property CsvQuote: string read FCsvQuote write FCsvQuote;
+    property CsvDelimiter: string read FCsvDelimiter write FCsvDelimiter;
   end;
 
   var
   ClesTri: array[0..10] of TChampsCompare;
+
+  Const
+    // default header
+    defheader = '"Name","Surname","Street","BP","Lieudit","Postcode","Town","Country","Phone","Mobile","Box","Autre","Email",'+
+        '"Web","Date","DateModif","Comment","Index1","Longitude","Latitude","Imagepath","Fonction","Service","Company",+' +
+        '"StreetWk","BPWk","LieuditWk","PostcodeWk","TownWk","CountryWk","PhoneWk","BoxWk","MobileWk","AutreWk","EmailWk",'+
+        '"WebWk","LongitudeWk","LatitudeWk","Version","Tag"';
 
 implementation
 
@@ -162,6 +181,9 @@ end;
 constructor TContactsList.Create;
 begin
   inherited Create;
+  FCsvHeader:= defheader;
+  FCsvQuote:= '"';
+  FCsvDelimiter:=',';
 end;
 
 
@@ -327,7 +349,7 @@ begin
   if field='Longitude' then TContact(Items[i]^).Longitude:= value;
   if field='Latitude' then TContact(Items[i]^).Latitude:= value;
   if field='Imagepath' then TContact(Items[i]^).Imagepath:= value;
-  if field='fonction' then TContact(Items[i]^).fonction:= value;
+  if field='Fonction' then TContact(Items[i]^).fonction:= value;
   if field='Service' then TContact(Items[i]^).Service:= value;
   if field='Company' then TContact(Items[i]^).Company:= value;
   if field='StreetWk' then TContact(Items[i]^).StreetWk:= value;
@@ -389,7 +411,15 @@ begin
   end;
 end;
 
+function TContactsList.GetBool(s: string): Boolean;
+begin
+  result:= (uppercase(s)='TRUE');
+end;
 
+function TContactsList.BoolToStr(b: boolean): string;
+begin
+  if b then result:= 'true' else result:= 'false';
+end;
 
 function TContactsList.LoadXMLNode(iNode: TDOMNode): Boolean;
 var
@@ -449,7 +479,7 @@ begin
         if upNodeName = 'LONGITUDEWK' then K^.LongitudeWk:= GetFloat(s);
         if upNodeName = 'LATITUDEWK' then K^.LatitudeWk:= GetFloat(s);
         if upNodeName = 'VERSION' then K^.Version:= s;
-        if upNodeName = 'TAG' then K^.Tag:= Boolean(GetInt(s));
+        if upNodeName = 'TAG' then K^.Tag:= GetBool(s);
       finally
         subnode:= subnode.NextSibling;
       end;
@@ -760,7 +790,7 @@ begin
        ContNode.AppendChild(SaveItem(ContNode, 'longitudewk', FloatToStr(TContact(Items[i]^).LongitudeWk)));
        ContNode.AppendChild(SaveItem(ContNode, 'latitudewk', FloatToStr(TContact(Items[i]^).LatitudeWk)));
        ContNode.AppendChild(SaveItem(ContNode, 'version', TContact(Items[i]^).Version));
-       ContNode.AppendChild(SaveItem(ContNode, 'tag', IntToStr(Integer(TContact(Items[i]^).tag))));
+       ContNode.AppendChild(SaveItem(ContNode, 'tag', BoolToStr(TContact(Items[i]^).tag)));
        DefaultFormatSettings.DecimalSeparator:= DecSep;
      except
        Result:= False;
@@ -801,6 +831,8 @@ end;
 
 // mode : part only tagged contacts
 //      : all
+// default : all
+
 function TContactsList.SaveToVCardfile(filename: string; mode:TSaveMode=all): Boolean;
 var
   DecSep: Char;
@@ -823,7 +855,7 @@ begin
     for i:= 0 to Count-1 do
     begin
       if mode = all then TContact(Items[i]^).Tag:= true;
-      if TContact(Items[i]^).Tag then
+      if TContact(Items[i]^).Tag=true then
        begin
           vcard.add(vcbeg);
           vcard.add('VERSION:2.1');
@@ -902,6 +934,90 @@ begin
     vcard.free;
   end;
   DefaultFormatSettings.DecimalSeparator:= DecSep;
+end;
+
+procedure TContactsList.SetCsvHeader(value:string);
+begin
+end;
+
+function TContactsList.SaveToCsvfile(filename: string; chrset: TCharset=UTF8;  mode: TSaveMode=all; header: boolean=true): Boolean;
+var
+  csv: TstringList;
+  csvh : string;
+  quote : string;      // quote
+  quotdel: string;   // quote+delimiter
+  decsep: Char;
+  i: integer;
+  line: string;
+begin
+
+  decsep:= DefaultFormatSettings.DecimalSeparator;
+  DefaultFormatSettings.DecimalSeparator:= '.';
+  if Count > 0 then
+  begin
+    quote:= FCsvQuote;
+    quotdel:= quote+FCsvDelimiter;
+    csv:= TStringList.create;
+    // Header formatting
+    if header then
+    begin
+      csvh:= StringReplace(FCsvHeader, ',', FCsvDelimiter ,[rfReplaceAll]);
+      csvh:= StringReplace(csvh, '"',FCsvQuote ,[rfReplaceAll]);
+      if chrset = UTF8 then csv.AddText(csvh)     // UTF8
+      else  csv.Add(IsUtf82Ansi(csvh));         // ANSI
+    end;
+    for i:= 0 to Count-1 do
+    begin
+      if mode = all then TContact(Items[i]^).Tag:= true;
+      if TContact(Items[i]^).Tag=true then
+      begin
+        line:= quote+TContact(Items[i]^).Name+quotdel+
+               quote+TContact(Items[i]^).SurName+quotdel+
+               quote+TContact(Items[i]^).Street+quotdel+
+               quote+TContact(Items[i]^).BP+quotdel+
+               quote+TContact(Items[i]^).Lieudit+quotdel+
+               quote+ TContact(Items[i]^).Postcode+quotdel+
+               quote+TContact(Items[i]^).Town+quotdel+
+               quote+TContact(Items[i]^).Country+quotdel+
+               quote+TContact(Items[i]^).Phone+quotdel+
+               quote+TContact(Items[i]^).Box+quotdel+
+               quote+TContact(Items[i]^).Mobile+quotdel+
+               quote+TContact(Items[i]^).Autre+quotdel+
+               quote+TContact(Items[i]^).Email+quotdel+
+               quote+TContact(Items[i]^).Web+quotdel+
+               quote+FloatToStr(TContact(Items[i]^).Longitude)+quotdel+
+               quote+FloatToStr(TContact(Items[i]^).Latitude)+quotdel+
+               quote+DateTimeToStr(TContact(Items[i]^).Date)+quotdel+
+               quote+DateTimeToStr(TContact(Items[i]^).DateModif)+quotdel+
+               quote+TContact(Items[i]^).Comment+quotdel+
+               quote+TContact(Items[i]^).Imagepath+quotdel+
+               quote+TContact(Items[i]^).fonction+quotdel+
+               quote+TContact(Items[i]^).Service+quotdel+
+               quote+TContact(Items[i]^).Company+quotdel+
+               quote+TContact(Items[i]^).StreetWk+quotdel+
+               quote+TContact(Items[i]^).BPWk+quotdel+
+               quote+TContact(Items[i]^).LieuditWk+quotdel+
+               quote+TContact(Items[i]^).PostcodeWk+quotdel+
+               quote+TContact(Items[i]^).PostcodeWk+quotdel+
+               quote+TContact(Items[i]^).TownWk+quotdel+
+               quote+TContact(Items[i]^).CountryWk+quotdel+
+               quote+TContact(Items[i]^).PhoneWk+quotdel+
+               quote+TContact(Items[i]^).BoxWk+quotdel+
+               quote+TContact(Items[i]^).MobileWk+quotdel+
+               quote+TContact(Items[i]^).AutreWk+quotdel+
+               quote+TContact(Items[i]^).EmailWk+quotdel+
+               quote+TContact(Items[i]^).WebWk+quotdel+
+               quote+FloatToStr(TContact(Items[i]^).LongitudeWk)+quotdel+
+               quote+FloatToStr(TContact(Items[i]^).LatitudeWk)+quote;
+        if chrset= UTF8 then csv.AddText(line)     // UTF8
+        else  csv.Add(IsUtf82Ansi(line));          // ANSI
+        TContact(Items[i]^).Tag:= false;
+      end;
+    end;
+    csv.SaveToFile(filename);
+    csv.Free;
+  end;
+  DefaultFormatSettings.DecimalSeparator:= decsep;
 end;
 
 end.

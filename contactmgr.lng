@@ -97,6 +97,7 @@ CntExportds=%d exported %s contacts
 MailSubject=Mail from Contacts Manager
 ConfirmDeleteContact=Do you really want to delete the contact %s ?
 CanCloseMsg=A change is pending.%sTo validate the change and quit, click on the "Yes" button.%To cancel the change and quit, click on the "No" button.%sTo return to the program, click on the "Cancel" button.
+Use64bitcaption=Use the 64bit version of the program
 
 ;Settings
 FPrefs.Caption=Contact Manager settings
@@ -219,6 +220,7 @@ CntExportds=%d contacts %s exportés
 MailSubject=Courrier du gestionnaire de contacts
 ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
 CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez sur le bouton 'Oui'.%sPour l'annuler et quitter, cliquer sur le bouton 'Non'.%sPour revenir au programme, cliquer sur le bouton 'Annuler'.
+Use64bitcaption=Utilisez la version 64 bits de ce programme
 
 ;Settings
 FPrefs.Caption=Préférences du gestionnaire de contacts

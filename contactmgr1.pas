@@ -1,3 +1,6 @@
+{****************************************************************************** }
+{ Contacts manager main form  - bb - sdtp - november 2019                       }
+{*******************************************************************************}
 unit contactmgr1;
 
 {$mode objfpc}{$H+}
@@ -216,6 +219,7 @@ type
     ImgContactHintEmpty, ImgContactHintFull: string;
     canCloseMsg: string;
     YesBtn, NoBtn, CancelBtn: string;
+    Use64bitcaption: string;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
     procedure DisplayContact;
@@ -301,7 +305,6 @@ begin
   CropBitmap(BtnCoord.Glyph, MnuCoord.Bitmap, BtnCoord.Enabled);
   CropBitmap(BtnLocate.Glyph, MnuLocate.Bitmap, BtnLocate.Enabled);
   CropBitmap(BtnDelete.Glyph, MnuDelete.Bitmap, BtnDelete.Enabled);
-
 end;
 
 procedure TFContactManager.FormDestroy(Sender: TObject);
@@ -313,13 +316,9 @@ begin
 end;
 
 
-
-
-
 procedure TFContactManager.LBContactsMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 var
-
   s, s1: string;
   cname, cstreet, clieudit, ctown : string;
 begin
@@ -419,9 +418,11 @@ begin
   PPersoClick(Sender);
   NewContact:= False;
   ContactsChanged:= false;
-  Application.ProcessMessages;
   Application.Title:= Caption;
-
+  If (OSINfo.Architecture= 'x86_64') and  (OsTarget='32 bits') then
+  begin
+    ShowMessage(use64bitcaption);
+  end;
 end;
 
 procedure TFContactManager.FormChangeBounds(Sender: TObject);
@@ -776,7 +777,10 @@ end;
 procedure TFContactManager.BtnValidClick(Sender: TObject);
 var
   tmpContact: TContact;
+  oldind: integer;
+
 begin
+  oldind:= LBContacts.ItemIndex;
   with tmpContact do
   begin
     Name:= EName.text;
@@ -832,6 +836,7 @@ begin
   Esearch.Enabled:= True;
   RBSortClick(Sender);
   DisplayList;
+  LBContacts.ItemIndex:= Oldind;
   SetEditState(false);
 end;
 
@@ -941,12 +946,12 @@ begin
   Case FImpex.ShowModal of
     // mrOK : Import,
     mrOK : begin
-             for i:= 0 to Fimpex.LBImpex.Items.Count-1 do
+             for i:= 0 to Fimpex.ImpexContacts.Count-1 do
              begin
-               if Fimpex.LBImpex.Selected[i] then ListeContacts.AddContact(Fimpex.ImpexContacts.GetItem(i));
+               ListeContacts.AddContact(Fimpex.ImpexContacts.GetItem(i));
              end;
-             if  Fimpex.ImpexSelcount > 1 then s:= CntImportds else s:= CntImportd;
-             MsgDlg(Caption, Format(s, [Fimpex.ImpexSelcount, FImpex.CBType.Text]),
+             if  Fimpex.ImpexContacts.Count > 1 then s:= CntImportds else s:= CntImportd;
+             MsgDlg(Caption, Format(s, [Fimpex.ImpexContacts.Count, FImpex.CBType.Text]),
                        mtInformation,  [mbOK] , ['OK'], 0);
              ListeContacts.SortType:= SortType;
              DisplayList;
@@ -1310,6 +1315,7 @@ begin
                      'Pour la valider et quitter, cliquez sur le bouton "Oui".%s'+
                      'Pour l''annuler et quitter, cliquer sur le bouton "Non".%s'+
                      'Pour revenir au programme, cliquer sur le bouton "Annuler".');
+    Use64bitcaption:= ReadString(Settings.LangStr, 'Use64bitcaption', 'Utilisez la version 64 bits de ce programme');
     // Settings
     FPrefs.Caption:= ReadString(Settings.LangStr, 'FPrefs.Caption', FPrefs.Caption);
     FPrefs.GroupBox1.Caption:= ReadString(Settings.LangStr, 'FPrefs.GroupBox1.Caption', FPrefs.GroupBox1.Caption);

@@ -1,7 +1,7 @@
 object FImpex: TFImpex
-  Left = 556
+  Left = 601
   Height = 321
-  Top = 184
+  Top = 511
   Width = 598
   Align = alLeft
   BorderIcons = [biSystemMenu, biMinimize]
@@ -149,7 +149,7 @@ object FImpex: TFImpex
   object SBFileOpen: TSpeedButton
     Left = 368
     Height = 24
-    Top = 41
+    Top = 39
     Width = 24
     NumGlyphs = 2
     OnClick = SBFileOpenClick
@@ -239,7 +239,8 @@ object FImpex: TFImpex
       Top = 8
       Width = 71
       Caption = '1ère ligne'
-      Enabled = False
+      Checked = True
+      State = cbChecked
       TabOrder = 0
     end
     object BtnUp: TButton

@@ -1,7 +1,7 @@
 object FContactManager: TFContactManager
-  Left = 631
+  Left = 851
   Height = 500
-  Top = 172
+  Top = 312
   Width = 685
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle

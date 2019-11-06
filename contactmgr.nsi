@@ -1,4 +1,4 @@
-;Installation script for ProgramGrpMgr
+;Installation script for ContactsMgr
 
 ;--------------------------------
 
@@ -20,7 +20,7 @@
   ;Windows vista.. 10 manifest
   ManifestSupportedOS all
 
-
+  ;!define MUI_LANGDLL_ALWAYSSHOW                     ; To display language selection dialog
   !define MUI_ICON "${source_dir}\contactmgr.ico"
   !define MUI_UNICON "${source_dir}\contactmgr.ico"
 
@@ -56,10 +56,9 @@
   !insertmacro MUI_UNPAGE_FINISH
 
 ;Languages
-;Languages
   !insertmacro MUI_LANGUAGE "English"
   !insertmacro MUI_LANGUAGE "French"
-
+  !insertmacro MUI_RESERVEFILE_LANGDLL
 
   ;Licence langage file
   LicenseLangString Licence ${LANG_ENGLISH} "${source_dir}\license.txt"
@@ -97,7 +96,8 @@
   LangString Remove_Old ${LANG_ENGLISH} "Install will remove a previous installation."
   LangString Remove_Old ${LANG_FRENCH} "Install va supprimer une ancienne installation."
 
-
+  !define MUI_LANGDLL_WINDOWTITLE "$(LangDialog_Title)"
+  !define MUI_LANGDLL_INFO "$(LangDialog_Text)"
 ;--------------------------------
 
 ; The stuff to install
@@ -193,6 +193,7 @@ Function inst_shortcut
 FunctionEnd
 
 Function .onInit
+  ; !insertmacro MUI_LANGDLL_DISPLAY
   ${If} ${RunningX64}
     SetRegView 64    ; change registry entries and install dir for 64 bit
     StrCpy "$INSTDIR" "$PROGRAMFILES64\contactmgr"
