@@ -98,6 +98,10 @@ MailSubject=Mail from Contacts Manager
 ConfirmDeleteContact=Do you really want to delete the contact %s ?
 CanCloseMsg=A change is pending.%sTo validate the change and quit, click on the "Yes" button.%To cancel the change and quit, click on the "No" button.%sTo return to the program, click on the "Cancel" button.
 Use64bitcaption=Use the 64bit version of the program
+UpdateAvailable=New version %s available
+NoLongerChkUpdates=No longer check updates
+LastUpdateSearch=Last update check
+UpdateAlertBox=Current version: %sA new version %s is available
 
 ;Settings
 FPrefs.Caption=Contact Manager settings
@@ -106,8 +110,26 @@ FPrefs.LDataFolder.Caption=Data folder
 FPrefs.CBStartup.Caption=Launch at system startup
 FPrefs.CBMinimized.Caption=Launch minimized
 FPrefs.CBSavePos.Caption=Save size and position
-FPrefs.CBUpdate.Caption=Search update
+FPrefs.CBUpdate.Caption=Don't search update
 FPrefs.LLangue.Caption=Language
+
+SErrInvalidProtocol=Invalid protocol
+SErrReadingSocket=Error reading data from socket
+SErrInvalidProtocolVersion=Invalid protocol version in response
+SErrInvalidStatusCode=Invalid response status code
+SErrUnexpectedResponse=Unexpected response status code
+SErrChunkTooBig=Chunk too big
+SErrChunkLineEndMissing=Chunk line end missing
+SErrMaxRedirectsReached=Maximum allowed redirects reached
+strHostNotFound=Host name resolution for "%s" failed.
+strSocketCreationFailed=Creation of socket failed
+strSocketBindFailed=Binding of socket failed
+strSocketListenFailed=Listening on port #%s failed, error: %s
+strSocketConnectFailed=Connect to %s failed
+strSocketAcceptFailed=Could not accept a client connection on socket: %s, error %s
+strSocketAcceptWouldBlock=Accept would block on socket
+strSocketIOTimeOut=Failed to set IO Timeout to
+strErrNoStream=Socket stream not assigned
 
 ;FImpex
 FImpex.Caption=Contacts import and export
@@ -221,6 +243,10 @@ MailSubject=Courrier du gestionnaire de contacts
 ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
 CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez sur le bouton 'Oui'.%sPour l'annuler et quitter, cliquer sur le bouton 'Non'.%sPour revenir au programme, cliquer sur le bouton 'Annuler'.
 Use64bitcaption=Utilisez la version 64 bits de ce programme
+UpdateAvailable=Nouvelle version %s disponible
+NoLongerChkUpdates=Ne plus rechercher de mise à jour
+LastUpdateSearch=Dernière recherche de mise à jour
+UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
 
 ;Settings
 FPrefs.Caption=Préférences du gestionnaire de contacts
@@ -229,9 +255,28 @@ FPrefs.LDataFolder.Caption=Dossier de données
 FPrefs.CBStartup.Caption=Lancer au démarrage du système
 FPrefs.CBMinimized.Caption=Démarrage minimisé
 FPrefs.CBSavePos.Caption=Sauvegarde taille et position
-FPrefs.CBUpdate.Caption=Rechereche de mise à jour
+FPrefs.CBUpdate.Caption=Ne pas rechercher de mise à jour
 FPrefs.LLangue.Caption=Langue
 FPrefs.BtnCancel.Caption=Annuler
+
+SErrInvalidProtocol=Protocole invalide
+SErrReadingSocket=Erreur de lecture des données à partir du socket
+SErrInvalidProtocolVersion=Version de protocole invalide en réponse
+SErrInvalidStatusCode=Code de statut de réponse invalide
+SErrUnexpectedResponse=Code de statut de réponse non prévu
+SErrChunkTooBig=Bloc trop grand
+SErrChunkLineEndMissing=Fin de ligne du bloc manquante
+SErrMaxRedirectsReached=Nombre maximum de redirections atteint
+strHostNotFound=Résolution du nom d'hôte pour "%s" impossible.
+strSocketCreationFailed=Echec de la création du socket
+strSocketBindFailed=Echec de liaison du socket
+strSocketListenFailed=Echec de l'écoute sur le port #%s, erreur %s
+strSocketConnectFailed=Echec de la connexion à %s
+strSocketAcceptFailed=Connexion refusée d'un client sur le socket: %s, erreur %s
+strSocketAcceptWouldBlock=La connexion pourrait bloquer le socket
+strSocketIOTimeOut=Impossible de fixer le timeout E/S à
+strErrNoStream=Flux du socket non assigné
+
 ;FImpex
 FImpex.Caption=Importation et exportation de contacts
 FImpex.RBImport.Caption=Importation
@@ -254,3 +299,6 @@ MnuCopyCaption=Copier les données de %s
 MnuDeleteCaption=Supprimer le contact %s
 MnuSendmailCaption=Envoyer un courriel privé à %s
 MnuVisitwebCaption=Visister le site Web personnel de %s
+
+
+

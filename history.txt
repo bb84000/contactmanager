@@ -221,4 +221,11 @@ Version 1.0.0.7 - 06/11/2019
 - Some cosmetic things
 - Advice to use 64bit app on 64bit machines
 
+Version 1.0.0.8 - 10/11/2019
+- Delimiter (separator) and quote characters used in Csv import/export
+- Automatic updates search every week (can be disabled in preferences)
+- Coordinates and localization buttons greyed when town and postcode are blank
+- Localization of HTTP and socket error messages
+
+
  

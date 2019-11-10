@@ -1,3 +1,7 @@
+{*******************************************************************************}
+{ Import/export unit : import csv, vcard and ContactsMgr xml files              }
+{ bb - sdtp - november 2019                                                     }
+{*******************************************************************************}
 unit impex1;
 
 {$mode objfpc}{$H+}
@@ -65,6 +69,7 @@ type
     function getcsvfloat(doc: TCSVDocument; fld, ndx: integer) : Float;
     function getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
     procedure SGImpexPopulate(linecur: integer);
+    procedure EnableCsvControls;
    public
     ImpexContacts: TContactsList;
     ImpexSelcount: integer;
@@ -81,14 +86,13 @@ uses contactmgr1;
 
 { TFImpex }
 
+// Modal result is mrOK for import and mrYes for export, so main form knows
+// it has to do at this moment
 
 procedure TFImpex.FormActivate(Sender: TObject);
 begin
-  DecSep:= DefaultFormatSettings.DecimalSeparator; ;
-  LSepar.Enabled:= not Boolean(CBType.ItemIndex);
-  ESepar.Enabled:= LSepar.Enabled;
-  LDelim.Enabled:= LSepar.Enabled;
-  EDelim.Enabled:= LSepar.Enabled;
+  DecSep:= DefaultFormatSettings.DecimalSeparator;
+  EnableCsvControls;
   ResPngToGlyph(HInstance,'FILEOPEN', SBFileOpen.Glyph);
   // Contact fields
   csvheaderdoc:= TCSVDocument.Create;
@@ -114,9 +118,29 @@ end;
 
 procedure TFImpex.FormDeactivate(Sender: TObject);
 begin
+  DefaultFormatSettings.DecimalSeparator:= DecSep;
   FreeAndNil(csvheaderdoc);
   FreeAndNil(csvdoc);
 end;
+
+// Right panel buttons only acivated in csv import
+// First line check box only activatd in csv export, as only selected contacts
+//   are imported, do not select first contact, which is the fields description
+// Code combobox only activated in csv export, csv import is automagically
+//   converted in UTF8 and vCards has is own coding system
+
+procedure TFImpex.EnableCsvControls;
+begin
+  ESepar.Enabled:= (CBType.ItemIndex=0);
+  Edelim.Enabled:= (CBType.ItemIndex=0);;
+  LSepar.Enabled:= ESepar.Enabled;
+  LDelim.Enabled:= LSepar.Enabled;
+  CBCode.Enabled:= LSepar.Enabled and RBExport.Checked;
+  LCode.Enabled:= CBCode.Enabled;
+  CBFirstline.Enabled:= RBExport.Checked and (CBType.ItemIndex=0);
+end;
+
+// Populate stringgrid with list box last selected conntact values
 
 procedure TFImpex.SGImpexPopulate(linecur: integer);
 begin
@@ -164,6 +188,8 @@ begin
 
 end;
 
+// Click on a contact in listbox
+
 procedure TFImpex.LBImpexClick(Sender: TObject);
 var
   curline: integer;
@@ -173,7 +199,6 @@ begin
   if BtnImpexEnabled then BtnImpex.Enabled:= true;
   if RBImport.checked then
   begin
-    DecSep:= DefaultFormatSettings.DecimalSeparator;
     DefaultFormatSettings.DecimalSeparator:= '.';
     Case CBType.ItemIndex of
       0: begin
@@ -193,16 +218,15 @@ begin
   end;
 end;
 
-procedure TFImpex.RBImpexChange(Sender: TObject);
+// Change import to export or vice-versa
 
+
+procedure TFImpex.RBImpexChange(Sender: TObject);
 var
   i: Integer;
   s: string;
 begin
-  ESepar.Enabled:= RBExport.Checked;
-  Edelim.Enabled:= RBExport.Checked;
-  CBCode.Enabled:= RBExport.Checked and (CBType.ItemIndex=0);
-  CBFirstline.Enabled:= RBExport.Checked and (CBType.ItemIndex=0);
+  EnableCsvControls;
   LBImpex.Clear;
   SGImpex.Clear;
   BtnImpexEnabled:= false;;
@@ -234,6 +258,11 @@ begin
   end;
 end;
 
+// Open file to import or define file to export
+// We dont export xml files as it is the default format !
+// xml Contacts and vCard import are done in contacts1 unit as they have known fields.
+// csv import must be done here as whe have to match import fields with our fields
+
 procedure TFImpex.SBFileOpenClick(Sender: TObject);
 var
   xmlContacts: TXMLDocument;
@@ -242,8 +271,6 @@ var
   i: integer;
   MyContact: TContact;
   s, imgpath: string;
-  //csvstream: TStringStream;
-  //csvtext: string;
   chrset: TCharSet;
   oldcont: boolean;
 begin
@@ -266,42 +293,43 @@ begin
       Case CBType.ItemIndex of
         // Import CSV file
         0: begin
-           // Display contact header
-           {sgImpex.RowCount:= csvsheadercount+1;
-           for i:= 1 to csvsheadercount do
-           begin
-             sgImpex.Cells[0,i]:= csvheaderdoc.Cells[i-1,0];
-           end;   }
-           // Display imported headers or first record
-           //csvdoc:= TCSVDocument.Create;
-           csvdoc.LoadFromFile(EFilename.text);
-           CBCode.Items.Clear;
-           for i:= 0 to length(CharSetArray)-1 do CBCode.Items[i]:= CharSetArray [i];
-           Chrset:= Charset(csvdoc.CSVText);
-           CBCode.ItemIndex:= Ord(Chrset);
-           csvfldcount:= csvdoc.ColCount[0];
-           SetLength(ContactFldArray, csvsheadercount);
-           if csvfldcount > csvsheadercount then
-           begin
-             sgImpex.RowCount:= csvfldcount+1;
-             SetLength(ContactFldArray, csvfldcount);
-           end ;
-           for i:= 1 to csvfldcount do
-           begin
-             sgImpex.Cells[1,i]:= IsAnsi2Utf8(csvdoc.Cells[i-1,0]);
-             ContactFldArray[i-1]:= i-1;
-           end;
-           LBImpex.Clear;
-           For i:= 0 to csvdoc.RowCount-1 do
-           begin
-             LBImpex.Items.Add(IsAnsi2Utf8(csvdoc.Cells[1, i]));
-           end;
-           BtnImpexEnabled:= true;
-           if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
-           BtnUp.Enabled:= true;
-           BtnEmpty.Enabled:= true;
-           BtnDown.Enabled:= true;
-          end ;            //CSV
+             csvDoc.Delimiter:= ESepar.Text[1];
+             csvDoc.QuoteChar:= EDelim.Text[1];
+             csvdoc.LoadFromFile(EFilename.text);
+             // Don't change once csv is imported
+             ESepar.Enabled:= false;
+             EDelim.Enabled:= false;
+             LSepar.Enabled:= false;
+             LDelim.Enabled:= false;
+             LCode.Enabled:= CBCode.Enabled;
+             CBCode.Items.Clear;
+             for i:= 0 to length(CharSetArray)-1 do CBCode.Items[i]:= CharSetArray [i];
+             Chrset:= Charset(csvdoc.CSVText);
+             CBCode.ItemIndex:= Ord(Chrset);
+
+             csvfldcount:= csvdoc.ColCount[0];
+             SetLength(ContactFldArray, csvsheadercount);
+             if csvfldcount > csvsheadercount then
+             begin
+               sgImpex.RowCount:= csvfldcount+1;
+               SetLength(ContactFldArray, csvfldcount);
+             end ;
+             for i:= 1 to csvfldcount do
+             begin
+               sgImpex.Cells[1,i]:= IsAnsi2Utf8(csvdoc.Cells[i-1,0]);
+               ContactFldArray[i-1]:= i-1;
+             end;
+             LBImpex.Clear;
+             For i:= 0 to csvdoc.RowCount-1 do
+             begin
+               LBImpex.Items.Add(IsAnsi2Utf8(csvdoc.Cells[1, i]));
+             end;
+             BtnImpexEnabled:= true;
+             if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
+             BtnUp.Enabled:= true;
+             BtnEmpty.Enabled:= true;
+             BtnDown.Enabled:= true;
+        end ;            //CSV
         // Old jcontacts and contacts
          1: begin           //
            if Assigned(ImpexContacts) then  ImpexContacts.Reset;
@@ -355,7 +383,6 @@ begin
            if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
            xmlContacts.Free;
          end;
-
       else exit;
     end;
   end else
@@ -365,22 +392,21 @@ begin
         0: SD1.filter:= 'CSV|*.csv;*.txt';         // export CSV file
         1: SD1.filter:= 'vCard|*.vcf';
     end;
-
     if SD1.Execute then EFileName.text:= SD1.FileName;
     BtnImpexEnabled:= true;
     if LBImpex.SelCount > 0 then BtnImpex.Enabled:= true;
   end;
-
-
 end;
+
+// Blank procedure needed to process select cell event
 
 procedure TFImpex.SGImpexSelectCell(Sender: TObject; aCol, aRow: Integer;
   var CanSelect: Boolean);
 begin
-
-
+// Do not remove
 end;
 
+// Change type of file
 
 procedure TFImpex.CBTypeChange(Sender: TObject);
 var
@@ -394,12 +420,7 @@ begin
     BtnImpexEnabled:= false;
     BtnImpex.Enabled:= false;
   end  ;
-  LSepar.Enabled:= not Boolean(CBType.ItemIndex);
-  ESepar.Enabled:= LSepar.Enabled;
-  LDelim.Enabled:= LSepar.Enabled;
-  EDelim.Enabled:= LSepar.Enabled;
-  CBFirstline.Enabled:= RBExport.Checked and LSepar.Enabled;
-  CBCode.Enabled:= CBFirstline.Enabled;
+  EnableCsvControls;
 end;
 
 procedure TFImpex.BtnUpClick(Sender: TObject);

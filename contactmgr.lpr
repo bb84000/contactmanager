@@ -7,7 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, contactmgr1, contacts1, impex1, lazbbabout, prefs1, config1
+  Forms, contactmgr1, contacts1, impex1, lazbbabout, lazbbalert, prefs1,
+  config1
 
   { you can add units after this };
 
@@ -21,6 +22,7 @@ begin
   Application.Initialize;
   Application.CreateForm(TFContactManager, FContactManager);
   Application.CreateForm(TAboutBox, AboutBox);
+  Application.CreateForm(TAlertBox, AlertBox);
   Application.CreateForm(TFImpex, FImpex);
   Application.CreateForm(TFPrefs, FPrefs);
   Application.Run;

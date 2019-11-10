@@ -1,3 +1,11 @@
+
+{*******************************************************************************}
+{ contacts1 management unit: customized list of records                         }
+{ Custom xml format Import/export                                               }
+{ Csv, vCard import; VCard import                                               }
+{ bb - sdtp - november 2019                                                     }
+{*******************************************************************************}
+
 unit contacts1;
 
 {$mode objfpc}{$H+}
@@ -12,7 +20,7 @@ Type
   TSortDirections = (ascend, descend);
   TSaveMode = (selection, all);
 
-
+  // Contact record
   PContact = ^TContact;
   TContact = Record
     Name: string;
@@ -172,11 +180,11 @@ begin
   if FSortType <> cdcNone then
   begin
     ClesTri[1] := FSortType;
-    //ClesTri[2] := cdcName;
-    //ClesTri[3] := cdcDur;
     if FSortDirection = ascend then sort(@comparemulti) else sort(@comparemultidesc);
   end;
 end;
+
+
 
 constructor TContactsList.Create;
 begin
@@ -211,7 +219,7 @@ procedure TContactsList.DeleteMulti(j, k : Integer);
 var
   i : Integer;
 begin
-  // On commence par le dernier, ajouter des sécurités
+  // On commence par le dernier, ajouter des sécurités dans la forme appelante
   For i:= k downto j do
   begin
      inherited delete(i);
@@ -219,6 +227,9 @@ begin
   DoSort;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
+
+
+// Efface tous les contacts
 
 procedure TContactsList.Reset;
 var

@@ -25,7 +25,7 @@
   !define MUI_UNICON "${source_dir}\contactmgr.ico"
 
   ; The default installation directory
-  InstallDir "$PROGRAMFILES\ProgramGrpMgr"
+  InstallDir "$PROGRAMFILES\ContactMgr"
 
 ;--------------------------------
 ; Interface Settings
@@ -121,9 +121,14 @@ Section "" ;No components page, name is not important
   ${EndIf}
 
   ; Dans le cas ou on n'aurait pas pu fermer l'application
-  Delete /REBOOTOK "$INSTDIR\contactmgrwin.exe"
+  Delete /REBOOTOK "$INSTDIR\contactmgr.exe"
   File "${source_dir}\contactmgrwin64.exe"
   File "${source_dir}\contactmgrwin32.exe"
+  File "${source_dir}\libeay32.dll"
+  File "${source_dir}\ssleay32.dll"
+  File "${source_dir}\licensf.txt"
+  File "${source_dir}\license.txt"
+  File "${source_dir}\OpenSSL License.txt"
   File "${source_dir}\history.txt"
   File "${source_dir}\contactmgr.txt"
   File "${source_dir}\contactmgr.lng"
@@ -166,16 +171,21 @@ SectionEnd
 Section Uninstall
 SetShellVarContext all
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
-Delete /REBOOTOK "$INSTDIR\Pcontactmgr.exe"
+Delete /REBOOTOK "$INSTDIR\contactmgr.exe"
 Delete "$INSTDIR\history.txt"
 Delete "$INSTDIR\contactmgr.txt"
 Delete "$INSTDIR\contactmgr.lng"
+Delete "$INSTDIR\libeay32.dll"
+Delete "$INSTDIR\ssleay32.dll"
+Delete "$INSTDIR\licensf.txt"
+Delete "$INSTDIR\license.txt"
+Delete "$INSTDIR\OpenSSL License.txt"
 ;Delete "$INSTDIR\FAQ.txt"
 Delete "$INSTDIR\uninst.exe"
 
 ; remove shortcuts, if any.
-  Delete  "$SMPROGRAMS\ProgramGrpMgr\$(ProgramLnkStr)"
-  Delete  "$SMPROGRAMS\ProgramGrpMgr\$(UninstLnkStr)"
+  Delete  "$SMPROGRAMS\contactmgr\$(ProgramLnkStr)"
+  Delete  "$SMPROGRAMS\contactmgr\$(UninstLnkStr)"
   Delete  "$DESKTOP\$(ProgramLnkStr)"
 
 

@@ -15,10 +15,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="7"/>
+      <BuildNr Value="8"/>
       <Language Value="040C"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.0.7"/>
+      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.0.8"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="11">
+    <Units Count="14">
       <Unit0>
         <Filename Value="contactmgr.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -93,6 +93,25 @@
         <Filename Value="contactmgr1.txt"/>
         <IsPartOfProject Value="True"/>
       </Unit10>
+      <Unit11>
+        <Filename Value="..\lazbbunits\lazbbchknewver.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="lazbbChkNewVer"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="chknewversion.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form2"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ChkNewVersion"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\lazbbunits\lazbbautostart.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

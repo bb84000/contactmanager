@@ -1,7 +1,7 @@
 object FContactManager: TFContactManager
-  Left = 851
+  Left = 831
   Height = 500
-  Top = 312
+  Top = 127
   Width = 685
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -129,7 +129,6 @@ object FContactManager: TFContactManager
     ClientHeight = 36
     ClientWidth = 685
     TabOrder = 1
-    OnClick = PnlButtonsClick
     object BtnImport: TSpeedButton
       Left = 8
       Height = 24
@@ -1338,7 +1337,6 @@ object FContactManager: TFContactManager
     ClientWidth = 463
     ParentColor = False
     TabOrder = 2
-    OnClick = PnlInfosClick
     object PCtrl1: TPageControl
       Left = 0
       Height = 394

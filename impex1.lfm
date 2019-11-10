@@ -74,6 +74,7 @@ object FImpex: TFImpex
       Top = 7
       Width = 32
       Alignment = taCenter
+      MaxLength = 1
       TabOrder = 3
       Text = ','
     end
@@ -92,6 +93,7 @@ object FImpex: TFImpex
       Top = 7
       Width = 32
       Alignment = taCenter
+      MaxLength = 1
       TabOrder = 4
       Text = '"'
     end

@@ -1,6 +1,7 @@
 {****************************************************************************** }
 { Contacts manager main form  - bb - sdtp - november 2019                       }
 {*******************************************************************************}
+
 unit contactmgr1;
 
 {$mode objfpc}{$H+}
@@ -12,8 +13,8 @@ uses
      Win32Proc,
   {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   ComCtrls, Buttons, contacts1, laz2_DOM , laz2_XMLRead, laz2_XMLWrite, Types, lazbbosversion,
-  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, strutils, lazbbabout, prefs1, config1, lazbbinifiles,
-  LazUTF8, Clipbrd, UniqueInstance;
+  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl, strutils, lazbbabout, prefs1, config1, lazbbinifiles,
+  LazUTF8, Clipbrd, UniqueInstance,  lazbbalert, lazbbchknewver;
 
 type
   TSaveMode = (None, Setting, All);
@@ -168,8 +169,6 @@ type
       Y: Integer);
     procedure LBContactsSelectionChange(Sender: TObject; User: boolean);
     procedure MnuCopyClick(Sender: TObject);
-    procedure PnlButtonsClick(Sender: TObject);
-    procedure PnlInfosClick(Sender: TObject);
     procedure PMnuChooseImgClick(Sender: TObject);
     procedure PMnuDeleteImgClick(Sender: TObject);
     procedure PMnuListPopup(Sender: TObject);
@@ -189,7 +188,11 @@ type
     ButtonStates: array [0..14] of Boolean;
     NewContact: boolean;
     version: string;
-    BaseUpdateUrl: string;
+    BaseUpdateUrl, ChkVerURL : string;
+    UpdateAvailable, UpdateAlertBox: string;
+
+    NoLongerChkUpdates, LastUpdateSearch: string;
+    NoChkNewVer: boolean;
     LieuditCaption, BPCaption:  string;
     CPCaption, TownCaption: string;
     CommentCaption, ImageFileCaption: string;
@@ -220,6 +223,8 @@ type
     canCloseMsg: string;
     YesBtn, NoBtn, CancelBtn: string;
     Use64bitcaption: string;
+
+    HttpErrMsgNames: array [0..16] of string;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
     procedure DisplayContact;
@@ -233,6 +238,10 @@ type
     procedure ContactsOnChange(sender: TObject);
     procedure ModLangue ;
     procedure SetEditState(val: boolean);
+    function ShowAlert(Title, AlertStr, StReplace, NoShow: String; var Alert: Boolean): Boolean;
+    procedure OnTimer(sender: Tobject);
+    function DecodeHttpMessage(errmsg: string): string;
+    procedure EnableLocBtns;
   public
     FImpex_ImportBtn_Caption: string;
     FImpex_ExportBtn_Caption: string;
@@ -283,7 +292,6 @@ begin
      if  Ord(WindowsVersion) < 7 then UserAppsDataPath:= s                     // NT to XP
      else UserAppsDataPath:= ExtractFilePath(ExcludeTrailingPathDelimiter(s))+'Roaming';  // Vista to W10
      LazGetShortLanguageID(LangStr);
-
   {$ENDIF}
   GetSysInfo(OsInfo);
   ProgName:= 'ContactMgr';
@@ -362,9 +370,17 @@ begin
   end;
 end;
 
+procedure TFContactManager.OnTimer(Sender: TObject);
+begin
+
+end;
+
 procedure TFContactManager.FormActivate(Sender: TObject);
 var
   i: integer;
+  CurVer, NewVer: Int64;
+  s: string;
+  errmsg: string;
 begin
   inherited;
   if not first then exit;
@@ -390,8 +406,10 @@ begin
     end;
   end;
   BaseUpdateUrl:= 'http://www.sdtp.com/versions/version.php?program=contactmgr&version=%s&language=%s';
+  ChkVerURL:= 'https://www.sdtp.com/versions/versions.csv';
   version:= GetVersionInfo.ProductVersion;
   LoadCfgFile(ConfigFile);
+
   //Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
   AboutBox.Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
   AboutBox.LProductName.Caption:= GetVersionInfo.FileDescription;
@@ -399,6 +417,7 @@ begin
   AboutBox.LVersion.Caption:= 'Version: '+Version+' ('+OS+OSTarget+')';
   //AboutBox.UrlUpdate:= BaseUpdateURl+Version+'&language='+Settings.LangStr;    // In Modlang
  // AboutBox.LUpdate.Caption:= 'Recherche de mise à jour';      // in Modlangue
+  AboutBox.LUpdate.Hint:=  LastUpdateSearch+': '+DateToStr(Settings.LastUpdChk );
   AboutBox.UrlWebsite:=GetVersionInfo.Comments;
   FPrefs.LStatus.Caption:= OsInfo.VerDetail;;
   CurIndex:= 0;
@@ -423,12 +442,42 @@ begin
   begin
     ShowMessage(use64bitcaption);
   end;
+  Application.ProcessMessages;
+  //Dernière recherche il y a plus de 7 jours ?
+  if (Trunc(Now) > Settings.LastUpdChk+7) and (not Settings.NoChkNewVer) then
+  begin
+    Settings.LastUpdChk:= Trunc(Now);
+    s:=GetLastVersion(ChkVerURL, 'contactmgr', errmsg);
+    if length(s)=0 then
+    begin
+      ShowMessage(DecodeHttpMessage(errmsg));
+      exit;
+    end;
+    NewVer:= VersionToInt(s);
+    // Cannot get new version
+    if NewVer<0 then exit;
+    CurVer:= VersionToInt(version);
+    if NewVer > CurVer then
+    begin
+      AboutBox.LUpdate.Caption:= Format(UpdateAvailable, [s]);
+      if ShowAlert(Caption, UpdateAlertBox, s, NoLongerChkUpdates, NoChkNewVer) then
+      begin
+        OpenURL(Format(BaseUpdateURl, [version, Settings.LangStr]));
+        Settings.NoChkNewVer:= AlertBox.CBNoShowAlert.Checked;
+      end;
+    end;
+  end;
 end;
+
+
+// Window Change of position
 
 procedure TFContactManager.FormChangeBounds(Sender: TObject);
 begin
   SettingsOnStateChange(Sender);
 end;
+
+// Close application
 
 procedure TFContactManager.FormClose(Sender: TObject;
   var CloseAction: TCloseAction);
@@ -447,6 +496,28 @@ begin
   if (SettingsChanged or ContactsChanged) then SaveConfig(All);
 end;
 
+// Display alertbox for new version available
+
+function TFContactManager.ShowAlert(Title, AlertStr, StReplace, NoShow: String; var Alert: Boolean): Boolean;
+begin
+  Result:= False;
+  With AlertBox do
+  begin
+    Caption:= Title;
+    Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
+    MAlert.Text:=  Format(UpdateAlertBox, [version+#10, streplace]);
+    CBNoShowAlert.Caption:= NoShow;
+    CBNoShowAlert.Checked:= Alert;
+    if not Alert then
+    if ShowModal =mrOk then begin
+       result:= True;
+       Alert:= CBNoShowAlert.Checked;
+    end;
+
+  end;
+end;
+
+// Load configuration and database from file
 
 procedure TFContactManager.LoadCfgFile(filename: string);
 var
@@ -480,19 +551,16 @@ begin
     end;
   // Si la langue n'est pas traduite, alors on passe en Anglais
   If not LangFound then
-  //If LangFound then
+  //If LangFound then       //Only for tests !
   begin
     Settings.LangStr:= 'en';
   end;
-
   Modlangue;
-  //Caption:= 'Test';
-
-
   SettingsChanged:= false;
   ListeContacts.LoadXMLfile(filename);
 end;
 
+// Save configuration and database to file
 
 function TFContactManager.SaveConfig(typ: TSaveMode): boolean;
 var
@@ -548,7 +616,7 @@ begin
   end;
 end;
 
-
+// Selection in list box has changed
 
 procedure TFContactManager.LBContactsSelectionChange(Sender: TObject;
   User: boolean);
@@ -558,28 +626,20 @@ begin
   BtnPrev.enabled:= BtnFirst.enabled;
   BtnLast.Enabled:= boolean(LBContacts.Count-1-LBContacts.ItemIndex);
   BtnNext.Enabled:= BtnLast.Enabled;
+  //If postcode and town is blank, no search possible
+  EnableLocBtns;
   DisplayContact;
 end;
+
+
+// Copy main data from the selected contact in the clipboard
 
 procedure TFContactManager.MnuCopyClick(Sender: TObject);
 begin
  Clipboard.AsText := LBContacts.Hint;
 end;
 
-procedure TFContactManager.PnlButtonsClick(Sender: TObject);
-begin
-
-end;
-
-procedure TFContactManager.PnlInfosClick(Sender: TObject);
-begin
-
-end;
-
-
-
-
-
+// Choose a contact image (popup menu on image, must be valdated)
 
 procedure TFContactManager.PMnuChooseImgClick(Sender: TObject);
 var
@@ -600,10 +660,11 @@ begin
     Image1.Picture.SaveToFile( nimgfile);
     ImgContact.Picture.Assign(Image1.Picture.Bitmap);
     LIMageFile.Caption:= nimgfile;
-
     Image1.Free;
   end;
 end;
+
+// Delete current contact image (popup menu on image, must be valdated)
 
 procedure TFContactManager.PMnuDeleteImgClick(Sender: TObject);
 begin
@@ -612,7 +673,7 @@ begin
 end;
 
 
-
+// Popup menu for listbox items
 
 procedure TFContactManager.PMnuListPopup(Sender: TObject);
 var
@@ -639,7 +700,7 @@ begin
 end;
 
 
-
+// Display the list of contacts in left listbox
 
 procedure TFContactManager.DisplayList;
 var
@@ -648,7 +709,6 @@ var
   s: string;
   ndx: integer;
 begin
-
   ndx:= 0;
   if ListeContacts.Count > 0 then
   begin
@@ -669,9 +729,10 @@ begin
     LBContacts.ItemIndex:= ndx;
     curindex:= ListeContacts.GetItem(ndx).Index1 ;
     DisplayContact;
-
   end;
 end;
+
+// Display infos on selected contact in right panel edit boxes
 
 procedure TFContactManager.DisplayContact;
 var
@@ -740,11 +801,14 @@ begin
   SetContactChange(true);
 end;
 
+// Click on quit button
+
 procedure TFContactManager.BtnQuitClick(Sender: TObject);
 begin
-
   Close;
 end ;
+
+// Click on search button
 
 procedure TFContactManager.BtnSearchClick(Sender: TObject);
 var
@@ -774,11 +838,12 @@ begin
   else if (ns>0) and (not(fnd)) then MsgDlg(Caption, ESearch.Text+': '+ContactNoOtherFound, mtInformation,  [mbOK] , ['OK']);
 end;
 
+// Click on valid button. All changes done on the current contact are saved
+
 procedure TFContactManager.BtnValidClick(Sender: TObject);
 var
   tmpContact: TContact;
   oldind: integer;
-
 begin
   oldind:= LBContacts.ItemIndex;
   with tmpContact do
@@ -840,10 +905,14 @@ begin
   SetEditState(false);
 end;
 
+// Click on web button : open contact wen site in user browser
+
 procedure TFContactManager.BtnWebClick(Sender: TObject);
 begin
   OpenURL(ListeContacts.GetItem(LBContacts.ItemIndex).Web);
 end;
+
+// Enable events fired when a contact edit field change
 
 procedure TFContactManager.SetContactChange(val: Boolean);
 var
@@ -873,6 +942,8 @@ begin
       else ImgContact.OnPictureChanged:= nil;
 end;
 
+//Save buttons states in an array
+
 procedure TFContactManager.SaveButtonStates;
 var
   i: integer;
@@ -889,6 +960,8 @@ begin
   CurContChanged:= true;
 end;
 
+// Restore buttons state (recorded in an array before disable)
+
 procedure TFContactManager.RestoreButtonStates;
 var
   i: integer;
@@ -904,6 +977,8 @@ begin
   CurContChanged:= False;
 end;
 
+// Disable all buttons during edit
+
 procedure TFContactManager.DisableButtons;
 var
   i: integer;
@@ -915,9 +990,10 @@ begin
      end;
 end;
 
+// Fired when right panel edit fields change
+
 procedure TFContactManager.EContactChange(Sender: TObject);
 begin
-  //PnlImageOld:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
   SaveButtonStates;
   DisableButtons;
   Esearch.Enabled:= False;
@@ -929,13 +1005,16 @@ begin
   NewContact:= False;
 end;
 
+// Event fired when typing a search
+
 procedure TFContactManager.ESearchChange(Sender: TObject);
 begin
   Newsearch:= true;
 end;
 
 
-
+// Click on import/export button
+// Launch impex form, then process choice done
 
 procedure TFContactManager.BtnImportClick(Sender: TObject);
 var
@@ -967,7 +1046,9 @@ begin
 end;
 
 
-
+// Geolocalisation function using google maps search
+// Coordinates retrieval is experimental and based on google maps
+// analysed answer page; no warranty !
 
 procedure TFContactManager.BtnLocateClick(Sender: TObject);
 var
@@ -975,6 +1056,7 @@ var
   HTTPCli1: TFPHTTPClient;
   p: integer;
   sstreet, slieu, spost, stown, scountry: string;
+  A: TStringArray;
 begin
   smap:= 'https://www.google.fr/maps/search/';
   // check if perso or work
@@ -1002,27 +1084,37 @@ begin
   if length(stown)>0 then smap:= smap+stown;
   if length(scountry)>0 then smap:= smap+','+scountry;
   smap:= StringReplace(smap, ' ','+', [rfReplaceAll] );
+  // Display location on the map
   if (TSpeedButton(Sender)=BtnLocate) or (TMenuItem(Sender)=MnuLocate) then OpenURL(smap);
+  // Try to retrieve coordinates
   if (TSpeedButton(Sender)= BtnCoord) or (TMenuItem(Sender)=MnuCoord) then
   begin
+    { SSL initialization has to be done by hand here }
+    InitSSLInterface;
     HTTPCli1:= TFPHTTPClient.Create(nil);
-    stmp:=HTTPCli1.get(smap);
-    HTTPCli1.free;
-    // p:= pos('https://www.google.fr/maps/preview/place', stmp);
-    // Based on google analysed answer page; no warranty !
-    p:= pos('/@', stmp);
-    stmp:= copy(stmp, p+2, 30);
-    if PCtrl1.ActivePage= TSPerso then
-    begin
-      ELatitude.Text:= ExtractDelimited(1, stmp, [',']);
-      ELongitude.Text:= ExtractDelimited(2, stmp, [',']);
-    end else
-    begin
-      ELatitudeWk.Text:= ExtractDelimited(1, stmp, [',']);
-      ELongitudeWk.Text:= ExtractDelimited(2, stmp, [',']);
+    HTTPCli1.AllowRedirect:= true;
+    try
+      stmp:=HTTPCli1.get(smap);
+      p:= pos('/@', stmp);
+      stmp:= copy(stmp, p+2, 30);
+      A:= stmp.Split(',');
+      if PCtrl1.ActivePage= TSPerso then
+      begin
+        ELatitude.Text:= A[0];
+        ELongitude.Text:= A[1];
+      end else
+      begin
+        ELatitudeWk.Text:= A[0];
+        ELongitudeWk.Text:= A[1];
+      end;
+    except on e:Exception do
+      ShowMessage(TranslateHttpErrorMsg(e.message, HttpErrMsgNames));
     end;
+    HTTPCli1.free;
   end;
 end;
+
+// Delete the selected contact (only after validation, operation can be cancelled)
 
 procedure TFContactManager.BtnDeleteClick(Sender: TObject);
 var
@@ -1037,17 +1129,19 @@ begin
       imgfile:= ListeContacts.GetItem(LBContacts.ItemIndex).Imagepath;
       if Fileexists(imgfile) then DeleteFile(imgfile);
       ListeContacts.Delete(LBContacts.ItemIndex);
-
     end;
     DisplayList;
   end;
 end;
+
+// Send an email via the email client
 
 procedure TFContactManager.BtnEmailClick(Sender: TObject);
 begin
   OpenURL('mailto:'+ListeContacts.GetItem(LBContacts.ItemIndex).Email+'?subject='+MailSubject+'&body='+MailSubject);
 end;
 
+// non edit functions are disabled
 
 procedure TFContactManager.SetEditState(val: boolean);
 begin
@@ -1059,8 +1153,9 @@ begin
   GBOrder.Enabled:= not val;
   Esearch.Enabled:= not val;
   NewContact:= val;
-
 end;
+
+// Cancel all changes pending on the selected contact
 
 procedure TFContactManager.BtnCancelClick(Sender: TObject);
 begin
@@ -1073,12 +1168,12 @@ begin
 end;
 
 
-
-
+// Click on add contact button
+// Insert a blank record (only after validation)
 
 procedure TFContactManager.BtnAddClick(Sender: TObject);
 begin
-  SetContactChange(false);
+  SetContactChange(false);                   // prevent unwanted firing of the event during the process
   EName.text:= '' ;
   ESurname.text:= '';
   EStreet.text:= '';
@@ -1119,7 +1214,6 @@ begin
   BtnWebWk.Enabled:=  Boolean(length(EWebWk.text));
   ELongitudeWk.text:= '';
   ELatitudeWk.text:= '';
-  //SetContactChange(true);
   NewContact:= True;
   SaveButtonStates;
   DisableButtons;
@@ -1130,10 +1224,15 @@ begin
   Esearch.Enabled:= False;
 end;
 
+// Click on the About button
+// lanch aboutbox form
+
 procedure TFContactManager.BtnAboutClick(Sender: TObject);
 begin
   AboutBox.ShowModal;
 end;
+
+// Click on one of the four navigation buttons
 
 procedure TFContactManager.BtnNavClick(Sender: TObject);
 begin
@@ -1147,6 +1246,10 @@ begin
   then LBContacts.ItemIndex:= LBContacts.Count-1;
 end;
 
+
+// Click on preferences button
+// launch preferences form
+
 procedure TFContactManager.BtnPrefsClick(Sender: TObject);
 var
   oldndx: integer;
@@ -1158,7 +1261,6 @@ begin
   Fprefs.CBUpdate.checked:= Settings.NoChkNewVer;
   FPrefs.CBLangue.ItemIndex:= LangNums.IndexOf(Settings.LangStr);
   oldndx:=  FPrefs.CBLangue.ItemIndex;
-
   if FPrefs.ShowModal = mrOK then
   begin
     Settings.StartWin:= Fprefs.CBStartup.Checked ;
@@ -1171,12 +1273,14 @@ begin
   end;
 end;
 
-// Remplace les onglets par des panels colorés
+// Replace lazarus tabs with coloured panels
+
 procedure TFContactManager.PPersoClick(Sender: TObject);
 begin
   PCtrl1.ActivePage:= TSPerso;
   PWork.Color:= clDefault;
   PPerso.color:=  clGradientActiveCaption;
+  EnableLocBtns;
 end;
 
 procedure TFContactManager.PWorkClick(Sender: TObject);
@@ -1184,10 +1288,29 @@ begin
   PCtrl1.ActivePage:= TSWork;
   PPerso.color:= clDefault;
   PWork.color:= clGradientActiveCaption;
-
+  EnableLocBtns;
 end;
 
+// Disable or enable location and coordinates buttons
+// If postcode and town fields are blank, no maps search possible
 
+procedure TFContactManager.EnableLocBtns;
+begin
+
+  if (PCtrl1.ActivePage=TSPerso) then
+  begin
+    BtnCoord.Enabled:=  not ((length(ListeContacts.GetItem(LBContacts.ItemIndex).Postcode)=0) and
+       (length(ListeContacts.GetItem(LBContacts.ItemIndex).town)=0));
+    BtnLocate.Enabled:= BtnCoord.Enabled;
+  end else
+  begin
+    BtnCoord.Enabled:= not ((length(ListeContacts.GetItem(LBContacts.ItemIndex).PostcodeWk)=0) and
+       (length(ListeContacts.GetItem(LBContacts.ItemIndex).TownWk)=0));
+    BtnLocate.Enabled:= BtnCoord.Enabled;
+  end;
+end;
+
+// Change of sort order fired by a click on sort radioboxes
 
 procedure TFContactManager.RBSortClick(Sender: TObject);
 begin
@@ -1201,22 +1324,80 @@ begin
   DisplayList;
 end;
 
+// Event fired by any change of settings values
+
 procedure TFContactManager.SettingsOnChange(sender: TObject);
 begin
   SettingsChanged:= true;
 end;
+
+// Event fired by any state change (window state and position)
 
 procedure TFContactManager.SettingsOnStateChange(sender: TObject);
 begin
   SettingsChanged:= true;
 end;
 
+// Event fired by any change in contact list
+
 procedure TFContactManager.ContactsOnChange(sender: TObject);
 begin
   ContactsChanged:= true;
 end;
 
-// To be called in form activation routine
+// Replace http errors english strings with localized ones
+
+function TFContactManager.DecodeHttpMessage(errmsg: string): string;
+begin
+  {result:= '';
+  if length(errmsg) > 0 then
+  begin
+    if Pos('Invalid protocol :', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Invalid protocol', SErrInvalidProtocol, []);
+      exit;
+    end;
+    if Pos('Error reading data from socket', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Error reading data from socket', SErrReadingSocket, []);
+      exit;
+    end;
+    if Pos('Invalid protocol version in response', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Invalid protocol version in response', SErrInvalidProtocolVersion, []);
+      exit;
+    end;
+    if Pos('Invalid response status code', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Invalid response status code', SErrInvalidStatusCode, []);
+      exit;
+    end;
+    if Pos('Unexpected response status code', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Unexpected response status code', SErrUnexpectedResponse, []);
+      exit;
+    end;
+    if Pos('Chunk too big', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Chunk too big', SErrChunkTooBig, []);
+      exit;
+    end;
+    if Pos('Chunk line end missing', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Chunk line end missing', SErrChunkLineEndMissing, []);
+      exit;
+    end;
+    if Pos('Maximum allowed redirects reached', errmsg)>0 then
+    begin
+      result:= StringReplace(errmsg, 'Maximum allowed redirects reached', SErrMaxRedirectsReached, []);
+      exit;
+    end;
+  end;  }
+end;
+
+// To be called in form activation routine of loadconfig routine or when language
+// is changed in preferences
+
 procedure TFContactManager.ModLangue ;
 const
   dquot='"';     // Double quote
@@ -1230,9 +1411,11 @@ begin
     YesBtn:= ReadString(Settings.LangStr, 'YesBtn', 'Oui');
     NoBtn:= ReadString(Settings.LangStr, 'NoBtn', 'Non');
     CancelBtn:=ReadString(Settings.LangStr, 'CancelBtn', 'Annuler');
+    // AboutBox
     Aboutbox.Caption:= ReadString(Settings.LangStr, 'Aboutbox.Caption', 'A propos du Gestionnaire de Contacts');
     AboutBox.LUpdate.Caption:= ReadString(Settings.LangStr, 'AboutBox.LUpdate.Caption', 'Recherche de mise à jour');
     AboutBox.UrlUpdate:= Format(BaseUpdateURl, [Version, Settings.LangStr]);
+    // Main form
     PPerso.Caption:= ReadString(Settings.LangStr, 'PPerso.Caption', PPerso.Caption);
     PWork.Caption:= ReadString(Settings.LangStr, 'PWork.Caption', PWork.Caption);
     GBOrder.Caption:= ReadString(Settings.LangStr, 'GBOrder.Caption', GBOrder.Caption);
@@ -1289,7 +1472,7 @@ begin
     LBPWk.Caption:= BPWkCaption+', '+LieuditWkCaption;
     CPWkCaption:= ReadString(Settings.LangStr, 'CPWkCaption', 'CP pro');
     TownWkCaption:= ReadString(Settings.LangStr, 'TownWkCaption', 'Ville pro');
-    LCP.Caption:= CPWkCaption+', '+TownWkCaption;
+    LCPWk.Caption:= CPWkCaption+', '+TownWkCaption;
     LCountryWk.Caption:= ReadString(Settings.LangStr, 'LCountryWk.Caption', LCountryWk.Caption);
     LPhoneWk.Caption:= ReadString(Settings.LangStr, 'LPhoneWk.Caption', LPhoneWk.Caption);
     LBoxWk.Caption:= ReadString(Settings.LangStr, 'LBoxWk.Caption', LBoxWk.Caption);
@@ -1316,6 +1499,11 @@ begin
                      'Pour l''annuler et quitter, cliquer sur le bouton "Non".%s'+
                      'Pour revenir au programme, cliquer sur le bouton "Annuler".');
     Use64bitcaption:= ReadString(Settings.LangStr, 'Use64bitcaption', 'Utilisez la version 64 bits de ce programme');
+
+    NoLongerChkUpdates:= ReadString(Settings.LangStr, 'NoLongerChkUpdates','Ne plus rechercher les mises à jour');
+    LastUpdateSearch:= ReadString(Settings.LangStr, 'LastUpdateSearch', 'Dernière recherche de mise à jour');
+    UpdateAvailable:= ReadString(Settings.LangStr, 'UpdateAvailable', 'Nouvelle version %s disponible');
+    UpdateAlertBox:= ReadString(Settings.LangStr, 'UpdateAlertBox', 'Version actuelle: %sUne nouvelle version %s est disponible');
     // Settings
     FPrefs.Caption:= ReadString(Settings.LangStr, 'FPrefs.Caption', FPrefs.Caption);
     FPrefs.GroupBox1.Caption:= ReadString(Settings.LangStr, 'FPrefs.GroupBox1.Caption', FPrefs.GroupBox1.Caption);
@@ -1351,8 +1539,7 @@ begin
     PMnuChooseImg.Caption:= ReadString(Settings.LangStr, 'PMnuChoose.Caption', PMnuChooseImg.Caption);
     PMnuChangeImg.Caption:= ReadString(Settings.LangStr, 'PMnuChange.Caption', PMnuChangeImg.Caption);
     PMnuDeleteImg.Caption:= ReadString(Settings.LangStr, 'PMnuDelete.Caption', PMnuDeleteImg.Caption);
-
-    // Translate header of csv export
+    // Translate default header of csv export
     csvheader:= dquot+LName.Caption+dquotv+LSurname.Caption+dquotv+LStreet.Caption+dquotv+BPCaption+dquotv+
                 LieuditCaption+dquotv+CPCaption+dquotv+TownCaption+dquotv+LCountry.Caption+dquotv+LPhone.Caption+dquotv+
                 LBox.Caption+dquotv+LMobile.Caption+dquotv+LAutre.Caption+dquotv+LEmail.Caption+dquotv+
@@ -1362,8 +1549,28 @@ begin
                 LieuditWkCaption+dquotv+CPWkCaption+dquotv+TownWkCaption+dquotv+LCountryWk.Caption+dquotv+
                 LPhoneWk.Caption+dquotv+LBoxWk.Caption+dquotv+LMobileWk.Caption+dquotv+LAutreWk.Caption+dquotv+
                 LEmailWk.Caption+dquotv+LWebWk.Caption+dquotv+LLongitudeWk.Caption+dquotv+LLatitudeWk.Caption+dquot;
-
+    // HTTP Error messages
+    HttpErrMsgNames[0]:= ReadString(Settings.LangStr,'SErrInvalidProtocol', 'Protocole invalide');
+    HttpErrMsgNames[1]:= ReadString(Settings.LangStr,'SErrReadingSocket', 'Erreur de lecture des données à partir du socket');
+    HttpErrMsgNames[2]:= ReadString(Settings.LangStr,'SErrInvalidProtocolVersion', 'Version de protocole invalide en réponse');
+    HttpErrMsgNames[3]:= ReadString(Settings.LangStr,'SErrInvalidStatusCode', 'Code de statut de réponse invalide');
+    HttpErrMsgNames[4]:= ReadString(Settings.LangStr,'SErrUnexpectedResponse', 'Code de statut de réponse non prévu');
+    HttpErrMsgNames[5]:= ReadString(Settings.LangStr,'SErrChunkTooBig', 'Bloc trop grand');
+    HttpErrMsgNames[6]:= ReadString(Settings.LangStr,'SErrChunkLineEndMissing', 'Fin de ligne du bloc manquante');
+    HttpErrMsgNames[7]:= ReadString(Settings.LangStr,'SErrMaxRedirectsReached', 'Nombre maximum de redirections atteint');
+    // Socket error messages
+    HttpErrMsgNames[8]:= ReadString(Settings.LangStr,'strHostNotFound', 'Résolution du nom d''hôte pour "%s" impossible.');
+    HttpErrMsgNames[9]:= ReadString(Settings.LangStr,'strSocketCreationFailed', 'Echec de la création du socket');
+    HttpErrMsgNames[10]:= ReadString(Settings.LangStr,'strSocketBindFailed', 'Echec de liaison du socket');
+    HttpErrMsgNames[11]:= ReadString(Settings.LangStr,'strSocketListenFailed', 'Echec de l''écoute sur le port #%s, erreur %s');
+    HttpErrMsgNames[12]:= ReadString(Settings.LangStr,'strSocketConnectFailed', 'Echec de la connexion à %s');
+    HttpErrMsgNames[13]:= ReadString(Settings.LangStr,'strSocketAcceptFailed', 'Connexion refusée d''un client sur le socket: %s, erreur %s');
+    HttpErrMsgNames[14]:= ReadString(Settings.LangStr,'strSocketAcceptWouldBlock', 'La connexion pourrait bloquer le socket');
+    HttpErrMsgNames[15]:= ReadString(Settings.LangStr,'strSocketIOTimeOut', 'Impossible de fixer le timeout E/S à');
+    HttpErrMsgNames[16]:= ReadString(Settings.LangStr,'strErrNoStream', 'Flux du socket non assigné');
+    //= 'Socket stream not assigned'; }
   end;
+
 end;
 
 end.
