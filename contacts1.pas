@@ -78,17 +78,18 @@ Type
     procedure SetSortDirection(Value: TSortDirections);
     procedure SetSortType (Value: TChampsCompare);
     procedure DoSort;
-    procedure SetCsvHeader(value:string);
     function SaveItem(iNode: TDOMNode; sname, svalue: string): TDOMNode;
+
   public
     Duplicates : TDuplicates;
     procedure Delete (const i : Integer);
     procedure DeleteMulti (j, k : Integer);
     procedure Reset;
     procedure AddContact(Contact : TContact);
-    procedure ModifyContact (const i: integer; Contact : TContact);
+    procedure ModifyContact (const i: integer; Contact: TContact);
     procedure ModifyField (const i: integer; field: string; value: variant);
     function GetItem(const i: Integer): TContact;
+    function GetItemFieldString(const i: Integer; field: string): string;
     constructor Create;
     function GetFloat(s: String): Float;
     function GetInt(s: String): INt64;
@@ -102,7 +103,6 @@ Type
     function LoadXMLnode(iNode: TDOMNode): Boolean;
     function LoadXMLfile(filename: string): Boolean;
     function LoadVCardfile(filename: string): Boolean;
-
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property SortDirection: TSortDirections read FSortDirection write SetSortDirection default ascend;
     Property SortType : TChampsCompare read FSortType write SetSortType default cdcNone;
@@ -112,14 +112,14 @@ Type
   end;
 
   var
-  ClesTri: array[0..10] of TChampsCompare;
-
-  Const
-    // default header
-    defheader = '"Name","Surname","Street","BP","Lieudit","Postcode","Town","Country","Phone","Mobile","Box","Autre","Email",'+
-        '"Web","Date","DateModif","Comment","Index1","Longitude","Latitude","Imagepath","Fonction","Service","Company",+' +
-        '"StreetWk","BPWk","LieuditWk","PostcodeWk","TownWk","CountryWk","PhoneWk","BoxWk","MobileWk","AutreWk","EmailWk",'+
-        '"WebWk","LongitudeWk","LatitudeWk","Version","Tag"';
+    ClesTri: array[0..10] of TChampsCompare;
+  const
+    AFieldNames : array [0..39] of string  =('name', 'surname', 'street', 'bp', 'lieudit', 'postcode', 'town', 'country',
+                                          'phone', 'box', 'mobile', 'autre', 'email', 'web', 'longitude', 'latitude','date',
+                                          'datemodif', 'comment', 'index1', 'imagepath', 'fonction', 'service', 'company',
+                                          'streetwk', 'bpwk', 'lieuditwk', 'postcodewk', 'townwk', 'countrywk', 'phonewk',
+                                          'boxwk', 'mobilewk', 'autrewk', 'emailwk', 'webwk', 'longitudewk', 'latitudewk',
+                                          'version', 'tag');
 
 implementation
 
@@ -187,11 +187,16 @@ end;
 
 
 constructor TContactsList.Create;
+var
+  j: integer;
 begin
   inherited Create;
-  FCsvHeader:= defheader;
   FCsvQuote:= '"';
   FCsvDelimiter:=',';
+  FCsvHeader:= '';
+  for j:=0 to length(AFieldNames)-2 do FCsvHeader:= FCsvHeader+FCsvQuote+AFieldNames[j]+FCsvQuote+FCsvDelimiter;
+        // last field, no separator at the end
+        FCsvHeader:= FCsvHeader+FcsvQuote+AFieldNames[length(AFieldNames)-1]+FCsvQuote;
 end;
 
 
@@ -245,144 +250,115 @@ var
  K: PContact;
 begin
   new(K);
-  K^.Name := Contact.Name;
-  K^.Surname := Contact.Surname;
-  K^.Street:= Contact.Street;
-  K^.BP:= Contact.BP;
-  K^.Lieudit:= Contact.Lieudit;
-  K^.Postcode:= Contact.Postcode;
-  K^.Town:= Contact.Town;
-  K^.Country:= Contact.Country;
-  K^.Phone:= Contact.Phone;
-  K^.Mobile:= Contact.Mobile;
-  K^.Box:= Contact.Box;
-  K^.Autre:= Contact.Autre;
-  K^.Email:= Contact.Email;
-  K^.Web:= Contact.Web;
-  K^.Date:= Contact.Date;
-  K^.DateModif:= Contact.DateModif;
-  K^.Comment:= Contact.Comment ;
-  K^.Index1:= Contact.Index1;
-  K^.Longitude:= Contact.Longitude;
-  K^.Latitude:= Contact.Latitude;
-  K^.Imagepath:= Contact.Imagepath;
-  K^.fonction:= Contact.fonction;
-  K^.Service:= Contact.Service;
-  K^.Company:= Contact.Company;
-  K^.StreetWk:=Contact.StreetWk;
-  K^.BPWk:= Contact.BPWk;
-  K^.LieuditWk:= Contact.LieuditWk;
-  K^.PostcodeWk:= Contact.PostcodeWk;
-  K^.TownWk:= Contact.TownWk;
-  K^.CountryWk:= Contact.CountryWk;
-  K^.PhoneWk:= Contact.PhoneWk;
-  K^.BoxWk:= Contact.BoxWk;
-  K^.MobileWk:= Contact.MobileWk;
-  K^.AutreWk:= Contact.AutreWk;
-  K^.EmailWk:= Contact.EmailWk;
-  K^.WebWk:= Contact.WebWk;
-  K^.LongitudeWk:= Contact.LongitudeWk;
-  K^.LatitudeWk:= Contact.LatitudeWk;
-  K^.Version:= Contact.Version;
-  K^.Tag:= Contact.Tag;
+  K^:= Contact;
   add(K);
   DoSort;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
 
 
-procedure TContactsList.ModifyContact (const i: integer; Contact : TContact);
+procedure TContactsList.ModifyContact (const i: integer; Contact: TContact);
 begin
-  TContact(Items[i]^).Name:= Contact.Name;
-  TContact(Items[i]^).Surname := Contact.Surname;
-  TContact(Items[i]^).Street:= Contact.Street;
-  TContact(Items[i]^).BP:= Contact.BP;
-  TContact(Items[i]^).Lieudit:= Contact.Lieudit;
-  TContact(Items[i]^).Postcode:= Contact.Postcode;
-  TContact(Items[i]^).Town:= Contact.Town;
-  TContact(Items[i]^).Country:= Contact.Country;
-  TContact(Items[i]^).Phone:= Contact.Phone;
-  TContact(Items[i]^).Mobile:= Contact.Mobile;
-  TContact(Items[i]^).Box:= Contact.Box;
-  TContact(Items[i]^).Autre:= Contact.Autre;
-  TContact(Items[i]^).Email:= Contact.Email;
-  TContact(Items[i]^).Web:= Contact.Web;
-  TContact(Items[i]^).Date:= Contact.Date;
-  TContact(Items[i]^).DateModif:= Contact.DateModif;
-  TContact(Items[i]^).Comment:= Contact.Comment ;
-  TContact(Items[i]^).Index1:= Contact.Index1;
-  TContact(Items[i]^).Longitude:= Contact.Longitude;
-  TContact(Items[i]^).Latitude:= Contact.Latitude;
-  TContact(Items[i]^).Imagepath:= Contact.Imagepath;
-  TContact(Items[i]^).fonction:= Contact.fonction;
-  TContact(Items[i]^).Service:= Contact.Service;
-  TContact(Items[i]^).Company:= Contact.Company;
-  TContact(Items[i]^).StreetWk:= Contact.StreetWk;
-  TContact(Items[i]^).BPWk:= Contact.BPWk;
-  TContact(Items[i]^).LieuditWk:= Contact.LieuditWk;
-  TContact(Items[i]^).PostcodeWk:= Contact.PostcodeWk;
-  TContact(Items[i]^).TownWk:= Contact.TownWk;
-  TContact(Items[i]^).CountryWk:= Contact.CountryWk;
-  TContact(Items[i]^).PhoneWk:= Contact.PhoneWk;
-  TContact(Items[i]^).BoxWk:= Contact.BoxWk;
-  TContact(Items[i]^).MobileWk:= Contact.MobileWk;
-  TContact(Items[i]^).AutreWk:= Contact.AutreWk;
-  TContact(Items[i]^).EmailWk:= Contact.EmailWk;
-  TContact(Items[i]^).WebWk:= Contact.WebWk;
-  TContact(Items[i]^).LongitudeWk:= Contact.LongitudeWk;
-  TContact(Items[i]^).LatitudeWk:= Contact.LatitudeWk;
-  TContact(Items[i]^).Version:= Contact.Version ;
-  TContact(Items[i]^).Tag:= Contact.Tag;
+  TContact(Items[i]^):= Contact;
   DoSort;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
 
 procedure TContactsList.ModifyField (const i: integer; field: string; value: variant);
 begin
-  if field='Name' then TContact(Items[i]^).Name:= value;
-  if field='Surname' then TContact(Items[i]^).Surname := value;
-  if field='Street' then TContact(Items[i]^).Street:= value;
+  field:= Uppercase(field);
+  if field='NAME' then TContact(Items[i]^).Name:= value;
+  if field='SURNAME' then TContact(Items[i]^).Surname := value;
+  if field='STREET' then TContact(Items[i]^).Street:= value;
   if field='BP' then TContact(Items[i]^).BP:= value;
-  if field='Lieudit' then TContact(Items[i]^).Lieudit:= value;
-  if field='Postcode' then TContact(Items[i]^).Postcode:= value;
-  if field='Town' then TContact(Items[i]^).Town:= value;
-  if field='Country' then TContact(Items[i]^).Country:= value;
-  if field='Phone' then TContact(Items[i]^).Phone:= value;
-  if field='Mobile' then TContact(Items[i]^).Mobile:= value;
-  if field='Box' then TContact(Items[i]^).Box:= value;
-  if field='Autre' then TContact(Items[i]^).Autre:= value;
-  if field='Email' then TContact(Items[i]^).Email:= value;
-  if field='Web' then TContact(Items[i]^).Web:= value;
-  if field='Date' then TContact(Items[i]^).Date:= value;
-  if field='DateModif' then TContact(Items[i]^).DateModif:= value;
-  if field='Comment' then TContact(Items[i]^).Comment:= value ;
-  if field='Index1' then TContact(Items[i]^).Index1:= value;
-  if field='Longitude' then TContact(Items[i]^).Longitude:= value;
-  if field='Latitude' then TContact(Items[i]^).Latitude:= value;
-  if field='Imagepath' then TContact(Items[i]^).Imagepath:= value;
-  if field='Fonction' then TContact(Items[i]^).fonction:= value;
-  if field='Service' then TContact(Items[i]^).Service:= value;
-  if field='Company' then TContact(Items[i]^).Company:= value;
-  if field='StreetWk' then TContact(Items[i]^).StreetWk:= value;
-  if field='BPWk' then TContact(Items[i]^).BPWk:= value;
-  if field='LieuditWk' then TContact(Items[i]^).LieuditWk:= value;
-  if field='PostcodeWk' then TContact(Items[i]^).PostcodeWk:= value;
-  if field='TownWk' then TContact(Items[i]^).TownWk:= value;
-  if field='CountryWk' then TContact(Items[i]^).CountryWk:= value;
-  if field='PhoneWk' then TContact(Items[i]^).PhoneWk:= value;
-  if field='BoxWk' then TContact(Items[i]^).BoxWk:= value;
-  if field='MobileWk' then TContact(Items[i]^).MobileWk:= value;
-  if field='AutreWk' then TContact(Items[i]^).AutreWk:= value;
-  if field='EmailWk' then TContact(Items[i]^).EmailWk:= value;
-  if field='WebWk' then TContact(Items[i]^).WebWk:= value;
-  if field='LongitudeWk' then TContact(Items[i]^).LongitudeWk:= value;
-  if field='LatitudeWk' then TContact(Items[i]^).LatitudeWk:= value;
-  if field='Version' then TContact(Items[i]^).Version:= value;
-  if field='Tag' then TContact(Items[i]^).Tag:= value;
+  if field='LIEUDIT' then TContact(Items[i]^).Lieudit:= value;
+  if field='POSTCODE' then TContact(Items[i]^).Postcode:= value;
+  if field='TOWN' then TContact(Items[i]^).Town:= value;
+  if field='COUNTRY' then TContact(Items[i]^).Country:= value;
+  if field='PHONE' then TContact(Items[i]^).Phone:= value;
+  if field='MOBILE' then TContact(Items[i]^).Mobile:= value;
+  if field='BOX' then TContact(Items[i]^).Box:= value;
+  if field='AUTRE' then TContact(Items[i]^).Autre:= value;
+  if field='EMAIL' then TContact(Items[i]^).Email:= value;
+  if field='WEB' then TContact(Items[i]^).Web:= value;
+  if field='DATE' then TContact(Items[i]^).Date:= value;
+  if field='DATEMODIF' then TContact(Items[i]^).DateModif:= value;
+  if field='COMMENT' then TContact(Items[i]^).Comment:= value ;
+  if field='INDEX1' then TContact(Items[i]^).Index1:= value;
+  if field='LONGITUDE' then TContact(Items[i]^).Longitude:= value;
+  if field='LATITUDE' then TContact(Items[i]^).Latitude:= value;
+  if field='IMAGEPATH' then TContact(Items[i]^).Imagepath:= value;
+  if field='FONCTION' then TContact(Items[i]^).fonction:= value;
+  if field='SERVICE' then TContact(Items[i]^).Service:= value;
+  if field='COMPANY' then TContact(Items[i]^).Company:= value;
+  if field='STREETWK' then TContact(Items[i]^).StreetWk:= value;
+  if field='BPWK' then TContact(Items[i]^).BPWk:= value;
+  if field='LIEUDITWK' then TContact(Items[i]^).LieuditWk:= value;
+  if field='POSTCODEWK' then TContact(Items[i]^).PostcodeWk:= value;
+  if field='TOWNWK' then TContact(Items[i]^).TownWk:= value;
+  if field='COUNTRYWK' then TContact(Items[i]^).CountryWk:= value;
+  if field='PHONEWK' then TContact(Items[i]^).PhoneWk:= value;
+  if field='BOXWK' then TContact(Items[i]^).BoxWk:= value;
+  if field='MOBILEWK' then TContact(Items[i]^).MobileWk:= value;
+  if field='AUTREWK' then TContact(Items[i]^).AutreWk:= value;
+  if field='EMAILWK' then TContact(Items[i]^).EmailWk:= value;
+  if field='WEBWK' then TContact(Items[i]^).WebWk:= value;
+  if field='LONGITUDEWK' then TContact(Items[i]^).LongitudeWk:= value;
+  if field='LATITUDEWK' then TContact(Items[i]^).LatitudeWk:= value;
+  if field='VERSION' then TContact(Items[i]^).Version:= value;
+  if field='TAG' then TContact(Items[i]^).Tag:= value;
   DoSort;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
 
+// Retreive field string value by field name (case insensitive)
+
+function TContactsList.GetItemFieldString(const i: Integer; field: string): string;
+begin
+ field:= Uppercase(field);
+ result:= '';
+  if field='NAME' then result:= TContact(Items[i]^).Name;
+  if field='SURNAME' then result:= TContact(Items[i]^).Surname;
+  if field='STREET' then result:= TContact(Items[i]^).Street;
+  if field='BP' then result:= TContact(Items[i]^).BP;
+  if field='LIEUDIT' then result:= TContact(Items[i]^).Lieudit;
+  if field='POSTCODE' then result:= TContact(Items[i]^).Postcode;
+  if field='TOWN' then result:= TContact(Items[i]^).Town;
+  if field='COUNTRY' then result:= TContact(Items[i]^).Country;
+  if field='PHONE' then result:= TContact(Items[i]^).Phone;
+  if field='MOBILE' then result:= TContact(Items[i]^).Mobile;
+  if field='BOX' then result:= TContact(Items[i]^).Box;
+  if field='AUTRE' then result:= TContact(Items[i]^).Autre;
+  if field='EMAIL' then result:= TContact(Items[i]^).Email;
+  if field='WEB' then result:= TContact(Items[i]^).Web;
+  if field='DATE' then result:= DateTimeToStr(TContact(Items[i]^).Date);
+  if field='DATEMODIF' then result:= DateTimeToStr(TContact(Items[i]^).DateModif);
+  if field='COMMENT' then result:= TContact(Items[i]^).Comment ;
+  if field='INDEX1' then result:= IntToStr(TContact(Items[i]^).Index1);
+  if field='LONGITUDE' then result:= FloatToStr(TContact(Items[i]^).Longitude);
+  if field='LATITUDE' then result:= FloatToStr(TContact(Items[i]^).Latitude);
+  if field='IMAGEPATH' then result:= TContact(Items[i]^).Imagepath;
+  if field='FONCTION' then result:= TContact(Items[i]^).fonction;
+  if field='SERVICE' then result:= TContact(Items[i]^).Service;
+  if field='COMPANY' then result:= TContact(Items[i]^).Company;
+  if field='STREETWK' then result:= TContact(Items[i]^).StreetWk;
+  if field='BPWK' then result:= TContact(Items[i]^).BPWk;
+  if field='LIEUDITWK' then result:= TContact(Items[i]^).LieuditWk;
+  if field='POSTCODEWK' then result:= TContact(Items[i]^).PostcodeWk;
+  if field='TOWNWK' then result:= TContact(Items[i]^).TownWk;
+  if field='COUNTRYWK' then result:= TContact(Items[i]^).CountryWk;
+  if field='PHONEWK' then result:= TContact(Items[i]^).PhoneWk;
+  if field='BOXWK' then result:= TContact(Items[i]^).BoxWk;
+  if field='MOBILEWK' then result:= TContact(Items[i]^).MobileWk;
+  if field='AUTREWK' then result:= TContact(Items[i]^).AutreWk;
+  if field='EMAILWK' then result:= TContact(Items[i]^).EmailWk;
+  if field='WEBWK' then result:= TContact(Items[i]^).WebWk;
+  if field='LONGITUDEWK' then result:= FloatToStr(TContact(Items[i]^).LongitudeWk);
+  if field='LATITUDEWK' then result:= FloatToStr(TContact(Items[i]^).LatitudeWk);
+  if field='VERSION' then result:= TContact(Items[i]^).Version;
+  if field='TAG' then result:= BoolToStr(TContact(Items[i]^).Tag);
+
+end;
 
 function TContactsList.GetItem(const i: Integer): TContact;
 begin
@@ -440,9 +416,9 @@ var
   s: string;
   upNodeName: string;
 begin
- SortType:= TChampsCompare(GetInt(TDOMElement(iNode).GetAttribute('sort')));
- chNode := iNode.FirstChild;
- while (chNode <> nil) and (UpperCase(chnode.NodeName)='CONTACT')  do
+  SortType:= TChampsCompare(GetInt(TDOMElement(iNode).GetAttribute('sort')));
+  chNode := iNode.FirstChild;
+  while (chNode <> nil) and (UpperCase(chnode.NodeName)='CONTACT')  do
   begin
     Try
       new(K);
@@ -748,7 +724,7 @@ end;
 
 function TContactsList.SaveToXMLnode(iNode: TDOMNode): Boolean;
 var
-  i: Integer;
+  i, j: Integer;
   ContNode: TDOMNode;
   DecSep: Char;
 begin
@@ -762,47 +738,9 @@ begin
        iNode.Appendchild(ContNode);
        DecSep:= DefaultFormatSettings.DecimalSeparator;
        DefaultFormatSettings.DecimalSeparator:= '.';
-       ContNode.AppendChild(SaveItem(ContNode, 'name', TContact(Items[i]^).Name));
-       ContNode.AppendChild(SaveItem(ContNode, 'surname', TContact(Items[i]^).Surname));
-       ContNode.AppendChild(SaveItem(ContNode, 'street', TContact(Items[i]^).Street));
-       ContNode.AppendChild(SaveItem(ContNode, 'bp', TContact(Items[i]^).BP));
-       ContNode.AppendChild(SaveItem(ContNode, 'lieudit', TContact(Items[i]^).Lieudit));
-       ContNode.AppendChild(SaveItem(ContNode, 'postcode', TContact(Items[i]^).Postcode));
-       ContNode.AppendChild(SaveItem(ContNode, 'town', TContact(Items[i]^).Town));
-       ContNode.AppendChild(SaveItem(ContNode, 'country', TContact(Items[i]^).Country));
-       ContNode.AppendChild(SaveItem(ContNode, 'phone', TContact(Items[i]^).Phone));
-       ContNode.AppendChild(SaveItem(ContNode, 'mobile', TContact(Items[i]^).Mobile));
-       ContNode.AppendChild(SaveItem(ContNode, 'box', TContact(Items[i]^).Box));
-       ContNode.AppendChild(SaveItem(ContNode, 'autre', TContact(Items[i]^).Autre));
-       ContNode.AppendChild(SaveItem(ContNode, 'email', TContact(Items[i]^).Email));
-       ContNode.AppendChild(SaveItem(ContNode, 'web', TContact(Items[i]^).Web));
-       ContNode.AppendChild(SaveItem(ContNode, 'date', DateTimeToStr(TContact(Items[i]^).Date)));
-       ContNode.AppendChild(SaveItem(ContNode, 'datemodif', DateTimeToStr(TContact(Items[i]^).Datemodif)));
-       ContNode.AppendChild(SaveItem(ContNode, 'comment', TContact(Items[i]^).Comment));
-       ContNode.AppendChild(SaveItem(ContNode, 'index1', IntToStr(i)));  //IntToStr(TContact(Items[i]^).Index1)));
-       ContNode.AppendChild(SaveItem(ContNode, 'longitude', FloatToStr(TContact(Items[i]^).Longitude)));
-       ContNode.AppendChild(SaveItem(ContNode, 'latitude', FloatToStr(TContact(Items[i]^).Latitude)));
-       ContNode.AppendChild(SaveItem(ContNode, 'imagepath', TContact(Items[i]^).Imagepath));
-       ContNode.AppendChild(SaveItem(ContNode, 'function', TContact(Items[i]^).fonction));
-       ContNode.AppendChild(SaveItem(ContNode, 'service', TContact(Items[i]^).Service));
-       ContNode.AppendChild(SaveItem(ContNode, 'company', TContact(Items[i]^).Company));
-       ContNode.AppendChild(SaveItem(ContNode, 'bpwk', TContact(Items[i]^).BPWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'streetwk', TContact(Items[i]^).StreetWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'lieuditwk', TContact(Items[i]^).LieuditWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'postcodewk', TContact(Items[i]^).PostcodeWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'townwk', TContact(Items[i]^).TownWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'countrywk', TContact(Items[i]^).CountryWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'phonewk', TContact(Items[i]^).PhoneWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'boxwk', TContact(Items[i]^).BoxWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'mobilewk', TContact(Items[i]^).MobileWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'autrewk', TContact(Items[i]^).AutreWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'emailwk', TContact(Items[i]^).EmailWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'webwk', TContact(Items[i]^).WebWk));
-       ContNode.AppendChild(SaveItem(ContNode, 'longitudewk', FloatToStr(TContact(Items[i]^).LongitudeWk)));
-       ContNode.AppendChild(SaveItem(ContNode, 'latitudewk', FloatToStr(TContact(Items[i]^).LatitudeWk)));
-       ContNode.AppendChild(SaveItem(ContNode, 'version', TContact(Items[i]^).Version));
-       ContNode.AppendChild(SaveItem(ContNode, 'tag', BoolToStr(TContact(Items[i]^).tag)));
-       DefaultFormatSettings.DecimalSeparator:= DecSep;
+       for j:=0 to length(AFieldNames)-1 do
+           ContNode.AppendChild(SaveItem(ContNode, AFieldNames[j], GetItemFieldString(i,  AFieldNames[j]))) ;
+        DefaultFormatSettings.DecimalSeparator:= DecSep;
      except
        Result:= False;
      end;
@@ -947,9 +885,7 @@ begin
   DefaultFormatSettings.DecimalSeparator:= DecSep;
 end;
 
-procedure TContactsList.SetCsvHeader(value:string);
-begin
-end;
+
 
 function TContactsList.SaveToCsvfile(filename: string; chrset: TCharset=UTF8;  mode: TSaveMode=all; header: boolean=true): Boolean;
 var
@@ -958,7 +894,7 @@ var
   quote : string;      // quote
   quotdel: string;   // quote+delimiter
   decsep: Char;
-  i: integer;
+  i, j: integer;
   line: string;
 begin
 
@@ -979,50 +915,19 @@ begin
     end;
     for i:= 0 to Count-1 do
     begin
-      if mode = all then TContact(Items[i]^).Tag:= true;
-      if TContact(Items[i]^).Tag=true then
+      if mode = all then  GetItem(i).Tag:= true; //TContact(Items[i]^).Tag:= true;
+
+      if GetItem(i).Tag then
       begin
-        line:= quote+TContact(Items[i]^).Name+quotdel+
-               quote+TContact(Items[i]^).SurName+quotdel+
-               quote+TContact(Items[i]^).Street+quotdel+
-               quote+TContact(Items[i]^).BP+quotdel+
-               quote+TContact(Items[i]^).Lieudit+quotdel+
-               quote+ TContact(Items[i]^).Postcode+quotdel+
-               quote+TContact(Items[i]^).Town+quotdel+
-               quote+TContact(Items[i]^).Country+quotdel+
-               quote+TContact(Items[i]^).Phone+quotdel+
-               quote+TContact(Items[i]^).Box+quotdel+
-               quote+TContact(Items[i]^).Mobile+quotdel+
-               quote+TContact(Items[i]^).Autre+quotdel+
-               quote+TContact(Items[i]^).Email+quotdel+
-               quote+TContact(Items[i]^).Web+quotdel+
-               quote+FloatToStr(TContact(Items[i]^).Longitude)+quotdel+
-               quote+FloatToStr(TContact(Items[i]^).Latitude)+quotdel+
-               quote+DateTimeToStr(TContact(Items[i]^).Date)+quotdel+
-               quote+DateTimeToStr(TContact(Items[i]^).DateModif)+quotdel+
-               quote+TContact(Items[i]^).Comment+quotdel+
-               quote+TContact(Items[i]^).Imagepath+quotdel+
-               quote+TContact(Items[i]^).fonction+quotdel+
-               quote+TContact(Items[i]^).Service+quotdel+
-               quote+TContact(Items[i]^).Company+quotdel+
-               quote+TContact(Items[i]^).StreetWk+quotdel+
-               quote+TContact(Items[i]^).BPWk+quotdel+
-               quote+TContact(Items[i]^).LieuditWk+quotdel+
-               quote+TContact(Items[i]^).PostcodeWk+quotdel+
-               quote+TContact(Items[i]^).PostcodeWk+quotdel+
-               quote+TContact(Items[i]^).TownWk+quotdel+
-               quote+TContact(Items[i]^).CountryWk+quotdel+
-               quote+TContact(Items[i]^).PhoneWk+quotdel+
-               quote+TContact(Items[i]^).BoxWk+quotdel+
-               quote+TContact(Items[i]^).MobileWk+quotdel+
-               quote+TContact(Items[i]^).AutreWk+quotdel+
-               quote+TContact(Items[i]^).EmailWk+quotdel+
-               quote+TContact(Items[i]^).WebWk+quotdel+
-               quote+FloatToStr(TContact(Items[i]^).LongitudeWk)+quotdel+
-               quote+FloatToStr(TContact(Items[i]^).LatitudeWk)+quote;
+        line:= '';
+        for j:=0 to length(AFieldNames)-2 do line:= line+quote+GetItemFieldString(i, AFieldNames[j]) +quotdel;
+        // last field, no separator at the end
+        line:= line+quote+GetItemFieldString(i, AFieldNames[length(AFieldNames)-1])+quote;
+        // Charset conversion
         if chrset= UTF8 then csv.AddText(line)     // UTF8
         else  csv.Add(IsUtf82Ansi(line));          // ANSI
-        TContact(Items[i]^).Tag:= false;
+        //TContact(Items[i]^).Tag:= false;
+        GetItem(i).Tag:= false;
       end;
     end;
     csv.SaveToFile(filename);

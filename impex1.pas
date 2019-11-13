@@ -245,11 +245,13 @@ begin
     BtnImpex.Caption:= FContactManager.FImpex_ExportBtn_Caption;
     BtnImpex.ModalResult:= mrYes;            // Export
     // populate list
+    ImpexContacts.Reset;
     For i:= 0 to FContactManager.ListeContacts.Count-1 do
     begin
-      s:= FContactManager.ListeContacts.GetItem(i).Surname;
+      ImpexContacts.AddContact(FContactManager.ListeContacts.GetItem(i));
+      s:= ImpexContacts.GetItem(i).Surname;
       if length(s)>0 then s:= s+' ';
-      s:= s+ FContactManager.ListeContacts.GetItem(i).Name;
+      s:= s+ ImpexContacts.GetItem(i).Name;
       LBImpex.Items.Add(s);
      end;
     CBType.Items.Text:='CSV'+#10+'vCard';
@@ -616,23 +618,23 @@ begin
       0: begin
            for i:= 0 to LBImpex.Items.Count-1 do
            begin
-             if Fimpex.LBImpex.Selected[i] then FContactManager.ListeContacts.ModifyField(i, 'Tag', True)
-             else FContactManager.ListeContacts.ModifyField(i, 'Tag', False);
+             if Fimpex.LBImpex.Selected[i] then ImpexContacts.ModifyField(i, 'Tag', True)
+             else ImpexContacts.ModifyField(i, 'Tag', False);
           end;
-           FContactManager.ListeContacts.CsvHeader:= FContactManager.csvheader;
-           FContactManager.ListeContacts.CsvQuote:= EDelim.text;
-           FContactManager.ListeContacts.CsvDelimiter:= ESepar.Text;
-           if CBCode.ItemIndex= 0 then FContactManager.ListeContacts.SaveToCsvFile(EFileName.text, UTF8, selection, CBFirstline.checked)    // UTF8
-           else FContactManager.ListeContacts.SaveToCsvFile(EFileName.text, ANSI,  selection, CBFirstline.checked);         // ANSI
+           ImpexContacts.CsvHeader:= FContactManager.csvheader;
+           ImpexContacts.CsvQuote:= EDelim.text;
+           ImpexContacts.CsvDelimiter:= ESepar.Text;
+           if CBCode.ItemIndex= 0 then ImpexContacts.SaveToCsvFile(EFileName.text, UTF8, selection, CBFirstline.checked)    // UTF8
+           else ImpexContacts.SaveToCsvFile(EFileName.text, ANSI,  selection, CBFirstline.checked);         // ANSI
          end;
       // Export VCards, tag is set to true for selected items
       1: begin
            for i:= 0 to LBImpex.Items.Count-1 do
            begin
-             if Fimpex.LBImpex.Selected[i] then FContactManager.ListeContacts.ModifyField(i, 'Tag', True)
-             else FContactManager.ListeContacts.ModifyField(i, 'Tag', False);
+             if Fimpex.LBImpex.Selected[i] then ImpexContacts.ModifyField(i, 'Tag', True)
+             else ImpexContacts.ModifyField(i, 'Tag', False);
           end;
-          FContactManager.ListeContacts.SaveToVCardfile(EFileName.text, selection)
+          ImpexContacts.SaveToVCardfile(EFileName.text, selection)
         end;
 
     end;

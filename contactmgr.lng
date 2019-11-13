@@ -113,22 +113,25 @@ FPrefs.CBSavePos.Caption=Save size and position
 FPrefs.CBUpdate.Caption=Don't search update
 FPrefs.LLangue.Caption=Language
 
-SErrInvalidProtocol=Invalid protocol
+;Http error messages
+SErrInvalidProtocol=Invalid protocol "%s"
 SErrReadingSocket=Error reading data from socket
-SErrInvalidProtocolVersion=Invalid protocol version in response
-SErrInvalidStatusCode=Invalid response status code
-SErrUnexpectedResponse=Unexpected response status code
+SErrInvalidProtocolVersion=Invalid protocol version in response: %s
+SErrInvalidStatusCode=Invalid response status code: %s
+SErrUnexpectedResponse=Unexpected response status code: %s
 SErrChunkTooBig=Chunk too big
 SErrChunkLineEndMissing=Chunk line end missing
-SErrMaxRedirectsReached=Maximum allowed redirects reached
+SErrMaxRedirectsReached=Maximum allowed redirects reached: %s
+
+;Socket error messages
 strHostNotFound=Host name resolution for "%s" failed.
-strSocketCreationFailed=Creation of socket failed
-strSocketBindFailed=Binding of socket failed
+strSocketCreationFailed=Creation of socket failed: %s
+strSocketBindFailed=Binding of socket failed: %s
 strSocketListenFailed=Listening on port #%s failed, error: %s
 strSocketConnectFailed=Connect to %s failed
 strSocketAcceptFailed=Could not accept a client connection on socket: %s, error %s
-strSocketAcceptWouldBlock=Accept would block on socket
-strSocketIOTimeOut=Failed to set IO Timeout to
+strSocketAcceptWouldBlock=Accept would block on socket: %s
+strSocketIOTimeOut=Failed to set IO Timeout to %s
 strErrNoStream=Socket stream not assigned
 
 ;FImpex
@@ -146,7 +149,6 @@ FImpex.SD1.Title=Save file
 FImpex.ImportBtn.Caption=Import
 FImpex.ExportBtn.Caption=Export
 FImpex.BtnCancel.Caption=Cancel
-csvheader="Name","Surname","Street","P.O. Box","Site","Post code","Town","Country","Phone","Box","Mobile","Other phone","Email","Web","Longitude","Latitude","Creation date","Change date","Comment","Image file","Function","Service","Company","Work address","Work PO box","Work site","Work post code","Work town","Work country","Work phone","Work box","Work mobile","Work other","Work email","Work web","Work longitude","Work latitude"
 MnuRetrieveGPSCaption=Retrieve %s GPS coordinates
 MnuLocateCaption=Locate %s on a map
 MnuCopyCaption=Copy %s data
@@ -259,22 +261,25 @@ FPrefs.CBUpdate.Caption=Ne pas rechercher de mise à jour
 FPrefs.LLangue.Caption=Langue
 FPrefs.BtnCancel.Caption=Annuler
 
-SErrInvalidProtocol=Protocole invalide
+;Http error messages
+SErrInvalidProtocol=Protocole "%s" invalide
 SErrReadingSocket=Erreur de lecture des données à partir du socket
-SErrInvalidProtocolVersion=Version de protocole invalide en réponse
-SErrInvalidStatusCode=Code de statut de réponse invalide
-SErrUnexpectedResponse=Code de statut de réponse non prévu
+SErrInvalidProtocolVersion=Version de protocole invalide en réponse: %s
+SErrInvalidStatusCode=Code de statut de réponse invalide: %s
+SErrUnexpectedResponse=Code de statut de réponse non prévu: %s
 SErrChunkTooBig=Bloc trop grand
 SErrChunkLineEndMissing=Fin de ligne du bloc manquante
-SErrMaxRedirectsReached=Nombre maximum de redirections atteint
+SErrMaxRedirectsReached=Nombre maximum de redirections atteint: %s
+
+;Socket error messages
 strHostNotFound=Résolution du nom d'hôte pour "%s" impossible.
-strSocketCreationFailed=Echec de la création du socket
-strSocketBindFailed=Echec de liaison du socket
-strSocketListenFailed=Echec de l'écoute sur le port #%s, erreur %s
+strSocketCreationFailed=Echec de la création du socket: %s
+strSocketBindFailed=Echec de liaison du socket: %s
+strSocketListenFailed=Echec de l'écoute sur le port n° %s, erreur %s
 strSocketConnectFailed=Echec de la connexion à %s
 strSocketAcceptFailed=Connexion refusée d'un client sur le socket: %s, erreur %s
-strSocketAcceptWouldBlock=La connexion pourrait bloquer le socket
-strSocketIOTimeOut=Impossible de fixer le timeout E/S à
+strSocketAcceptWouldBlock=La connexion pourrait bloquer le socket: %s
+strSocketIOTimeOut=Impossible de fixer le timeout E/S à %s
 strErrNoStream=Flux du socket non assigné
 
 ;FImpex
@@ -292,7 +297,6 @@ FImpex.SD1.Title=Enregistrer le fichier
 FImpex.ImportBtn.Caption=Importation
 FImpex.ExportBtn.Caption=Exportation
 
-csvheader="Nom","Prénom","Rue","BP","Lieudit","Code postal","Ville","Pays","Téléphone","Box","Mobile","Autre tél.","Courriel","Web","Longitude","Latitude","Date création","Date modification","Commentaire","Fichier image","Fonction","Service","Société","Adresse pro","BP pro","Leudit pro","CP pro","Ville pro","Pays pro","Téléphone pro","Box pro","Mobile pro","Autre tél. pro","Courriel pro","Web pro","Longitude pro","Latitude pro"
 MnuRetrieveGPSCaption=Récupérer les coordonnées GPS de %s
 MnuLocateCaption=Localiser %s sur une carte
 MnuCopyCaption=Copier les données de %s

@@ -1,13 +1,23 @@
-unit config1;
+{****************************************************************************** }
+{ settings1 - Modify settings form and record                                                }
+{ bb - sdtp - november 2019                                                     }
+{*******************************************************************************}
+
+unit settings1;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, laz2_DOM , laz2_XMLRead, dialogs;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, laz2_DOM , laz2_XMLRead;
 
 type
+
+  // Define the classes in this Unit at the very start for clarity
+  TFPrefs = Class;          // This is a forward class definition
+
+  // Settings record management
   TConfig = class
   private
     FOnChange: TNotifyEvent;
@@ -49,7 +59,37 @@ type
     property DataFolder: string read FDataFolder write setDataFolder;
 end;
 
+
+  { TFPrefs }
+
+  TFPrefs = class(TForm)
+    BtnOK: TButton;
+    BtnCancel: TButton;
+    CBSavePos: TCheckBox;
+    CBStartup: TCheckBox;
+    CBMinimized: TCheckBox;
+    CBUpdate: TCheckBox;
+    CBLangue: TComboBox;
+    EDataFolder: TEdit;
+    GroupBox1: TGroupBox;
+    LLangue: TLabel;
+    LDataFolder: TLabel;
+    LStatus: TLabel;
+    PnlButtons: TPanel;
+    PnlStatus: TPanel;
+    procedure CBStartupChange(Sender: TObject);
+  private
+
+  public
+
+  end;
+
+var
+  FPrefs: TFPrefs;
+
 implementation
+
+{$R *.lfm}
 
 constructor TConfig.Create(Sender: TObject);
 begin
@@ -187,6 +227,16 @@ begin
     Result:= False;
   end;
 end;
+
+
+{ TFPrefs : Settings dialog }
+
+procedure TFPrefs.CBStartupChange(Sender: TObject);
+begin
+  CBMinimized.Enabled:= CBStartup.Checked;
+end;
+
+
 
 end.
 

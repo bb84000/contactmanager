@@ -13,8 +13,8 @@ uses
      Win32Proc,
   {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   ComCtrls, Buttons, contacts1, laz2_DOM , laz2_XMLRead, laz2_XMLWrite, Types, lazbbosversion,
-  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl, strutils, lazbbabout, prefs1, config1, lazbbinifiles,
-  LazUTF8, Clipbrd, UniqueInstance,  lazbbalert, lazbbchknewver;
+  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl, strutils, lazbbabout, settings1, lazbbinifiles,
+  LazUTF8, Clipbrd, UniqueInstance,  lazbbalert, lazbbchknewver, lazbbautostart;
 
 type
   TSaveMode = (None, Setting, All);
@@ -55,7 +55,7 @@ type
     ESearch: TEdit;
     EPhoneWk: TEdit;
     EPostcodeWk: TEdit;
-    EDatecreation: TEdit;
+    EDate: TEdit;
     ELatitude: TEdit;
     EDatemodif: TEdit;
     EStreetWk: TEdit;
@@ -239,8 +239,6 @@ type
     procedure ModLangue ;
     procedure SetEditState(val: boolean);
     function ShowAlert(Title, AlertStr, StReplace, NoShow: String; var Alert: Boolean): Boolean;
-    procedure OnTimer(sender: Tobject);
-    function DecodeHttpMessage(errmsg: string): string;
     procedure EnableLocBtns;
   public
     FImpex_ImportBtn_Caption: string;
@@ -298,7 +296,6 @@ begin
   // Chargement des chaînes de langue...
   LangFile:= TBbIniFile.create(ExtractFilePath(Application.ExeName)+'contactmgr.lng');
   LangNums:= TStringList.Create;
-
   ContactMgrAppsData:= UserAppsDataPath+PathDelim+ProgName+PathDelim;
     if not DirectoryExists (ContactMgrAppsData) then
   begin
@@ -323,6 +320,7 @@ begin
   FreeAndNil(LangNums);
 end;
 
+// Display infos on contact under the mouse cursor in a hint
 
 procedure TFContactManager.LBContactsMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
@@ -337,21 +335,18 @@ begin
     s1:= '';
     s:= ListeContacts.GetItem(MouseIndex).Surname;
     if length(s)>0 then s:= s+' ';
-    cname:= ListeContacts.GetItem(MouseIndex).Name;
-    if length(cname)>0 then s:= s+cname;
-    if length(s)=0 then s:= 'Contact '+IntToStr(MouseIndex);
+    s:= s+ListeContacts.GetItem(MouseIndex).Name;
+    if length(s)=1 then s:= 'Contact '+IntToStr(MouseIndex);       // only the space
     cstreet:= ListeContacts.GetItem(MouseIndex).Street;
     if length(cstreet)>0 then s:= s+#10+cstreet;
     s1:= ListeContacts.GetItem(MouseIndex).BP;
     if length(s1)>0 then s1:= s1+' ';
-    clieudit:= ListeContacts.GetItem(MouseIndex).Lieudit;
-    if length(clieudit)>0 then s1:= s1+clieudit;
-    if length(s1) > 0 then s:=s+#10+s1;
+    s1:= s1+ListeContacts.GetItem(MouseIndex).Lieudit;
+     if length(s1) > 1 then s:=s+#10+s1;
     s1:=ListeContacts.GetItem(MouseIndex).Postcode;
     if length(s1)>0 then s1:= s1+' ';
-    ctown:= ListeContacts.GetItem(MouseIndex).Town;
-    if length(ctown)>0 then s1:= s1+ctown;
-    if length(s1) > 0 then s:=s+#10+s1;
+    s1:= s1+ListeContacts.GetItem(MouseIndex).Town;
+    if length(s1) > 1 then s:=s+#10+s1;
     s1:= ListeContacts.GetItem(MouseIndex).Phone;
     if length(s1) > 0 then s:= s+#10+LPhone.Caption+': '+s1;
     s1:= ListeContacts.GetItem(MouseIndex).Box;
@@ -370,10 +365,7 @@ begin
   end;
 end;
 
-procedure TFContactManager.OnTimer(Sender: TObject);
-begin
 
-end;
 
 procedure TFContactManager.FormActivate(Sender: TObject);
 var
@@ -405,7 +397,7 @@ begin
       SaveConfig(All)
     end;
   end;
-  BaseUpdateUrl:= 'http://www.sdtp.com/versions/version.php?program=contactmgr&version=%s&language=%s';
+  BaseUpdateUrl:= 'https://www.sdtp.com/versions/version.php?program=contactmgr&version=%s&language=%s';
   ChkVerURL:= 'https://www.sdtp.com/versions/versions.csv';
   version:= GetVersionInfo.ProductVersion;
   LoadCfgFile(ConfigFile);
@@ -444,13 +436,14 @@ begin
   end;
   Application.ProcessMessages;
   //Dernière recherche il y a plus de 7 jours ?
+  errmsg:='';
   if (Trunc(Now) > Settings.LastUpdChk+7) and (not Settings.NoChkNewVer) then
   begin
     Settings.LastUpdChk:= Trunc(Now);
     s:=GetLastVersion(ChkVerURL, 'contactmgr', errmsg);
     if length(s)=0 then
     begin
-      ShowMessage(DecodeHttpMessage(errmsg));
+      ShowMessage(TranslateHttpErrorMsg(errmsg, HttpErrMsgNames ));
       exit;
     end;
     NewVer:= VersionToInt(s);
@@ -493,6 +486,8 @@ begin
      else CloseAction:= caNone;
    end;
    end;
+  if Settings.StartWin then SetAutostart(progname, Application.exename)
+  else UnSetAutostart(progname);
   if (SettingsChanged or ContactsChanged) then SaveConfig(All);
 end;
 
@@ -513,8 +508,7 @@ begin
        result:= True;
        Alert:= CBNoShowAlert.Checked;
     end;
-
-  end;
+   end;
 end;
 
 // Load configuration and database from file
@@ -541,6 +535,7 @@ begin
     Width:= StrToInt('$'+Copy(Settings.WState,17,4)) ;
   except
   end;
+  if Settings.StartWin and settings.StartMini then Application.Minimize;;
   // Détermination de la langue
   LangFile.ReadSections(LangNums);
   if LangNums.Count > 1 then
@@ -551,7 +546,6 @@ begin
     end;
   // Si la langue n'est pas traduite, alors on passe en Anglais
   If not LangFound then
-  //If LangFound then       //Only for tests !
   begin
     Settings.LangStr:= 'en';
   end;
@@ -594,7 +588,6 @@ begin
     if SettingsNode <> nil then RootNode.RemoveChild(SettingsNode);
     SettingsNode:= CfgXML.CreateElement('settings');
     Settings.DataFolder:= ContactMgrAppsData;
-    //Settings.LangStr:= LangStr;
     Settings.WState:= '';
     if Top < 0 then Top:= 0;
     if Left < 0 then Left:= 0;
@@ -733,37 +726,27 @@ begin
 end;
 
 // Display infos on selected contact in right panel edit boxes
+// Edit fields can exacxty match 'E'+contact field name (case insensitive)
 
 procedure TFContactManager.DisplayContact;
 var
   n: integer;
   DecSep: Char;
+  i: integer;
+  MyEdit: TEdit;
 begin
   SetContactChange(false);
   n:= LBContacts.ItemIndex;
   if (n < 0) and (n > LBContacts.count-1)  then exit;
   DecSep:= DefaultFormatSettings.DecimalSeparator;
   DefaultFormatSettings.DecimalSeparator:= '.';
-  EName.text:= ListeContacts.GetItem(n).Name ;
-  ESurname.text:= ListeContacts.GetItem(n).Surname;
-  EStreet.text:= ListeContacts.GetItem(n).Street;
-  EBP.text:= ListeContacts.GetItem(n).BP;
-  ELieudit.text:= ListeContacts.GetItem(n).Lieudit;
-  EPostcode.text:= ListeContacts.GetItem(n).Postcode ;
-  ETown.text:= ListeContacts.GetItem(n).Town;
-  ECountry.text:= ListeContacts.GetItem(n).Country;
-  EPhone.text:= ListeContacts.GetItem(n).Phone;
-  EBox.text:= ListeContacts.GetItem(n).Box;
-  EMobile.text:= ListeContacts.GetItem(n).Mobile;
-  EAutre.text:= ListeContacts.GetItem(n).Autre;
-  EEmail.text:= ListeContacts.GetItem(n).Email;
+  For i :=0 to length (AFieldNames)-1 do
+  begin
+    MyEdit:= TEdit(FindComponent('E'+AFieldNames[i]));
+    if Assigned(MyEdit) then MyEdit.Text:= ListeContacts.GetItemFieldString(n, AFieldNames[i]);
+  end;
   BtnEmail.enabled:= Boolean(length(EEMail.text));    // pas de bouton Email si pas d'email !
-  EWeb.text:= ListeContacts.GetItem(n).Web;
   BtnWeb.Enabled:=  Boolean(length(EWeb.text));
-  ELongitude.text:= FloatToStr(ListeContacts.GetItem(n).Longitude);
-  ELatitude.text:= FloatToStr(ListeContacts.GetItem(n).Latitude);
-  EDatecreation.text:= DateTimeToStr(ListeContacts.GetItem(n).Date);
-  EDatemodif.text:= DateTimeToStr(ListeContacts.GetItem(n).DateModif);
   LIMageFile.Caption:= ListeContacts.GetItem(n).Imagepath;
   try
     ImgContact.Picture.LoadFromFile(ListeContacts.GetItem(n).Imagepath);
@@ -778,26 +761,8 @@ begin
     PMnuDeleteImg.Visible:= false;
     ImgContact.Hint:=  ImgContactHintEmpty;
   end;
-  EFonction.text:= ListeContacts.GetItem(n).fonction ;
-  ECompany.text:= ListeContacts.GetItem(n).Company;
-  EService.text:= ListeContacts.GetItem(n).Service;
-  EStreetWk.text:= ListeContacts.GetItem(n).StreetWk;
-  EBPWk.text:= ListeContacts.GetItem(n).BPWk;
-  ELieuditWk.text:= ListeContacts.GetItem(n).LieuditWk;
-  EPostcodeWk.text:= ListeContacts.GetItem(n).PostcodeWk ;
-  ETownWk.text:= ListeContacts.GetItem(n).TownWk;
-  ECountryWk.text:= ListeContacts.GetItem(n).CountryWk;
-  EPhoneWk.text:= ListeContacts.GetItem(n).PhoneWk;
-  EBoxWK.text:= ListeContacts.GetItem(n).BoxWk;
-  EMobileWk.text:= ListeContacts.GetItem(n).MobileWk;
-  EAutreWk.text:= ListeContacts.GetItem(n).AutreWk;
-  EEmailWk.text:= ListeContacts.GetItem(n).EmailWk;
-  BtnEmailWk.enabled:= Boolean(length(EEmailWk.text));
-  EWebWK.text:= ListeContacts.GetItem(n).WebWk;
   BtnWebWk.Enabled:=  Boolean(length(EWebWk.text));
-  ELongitudeWk.text:= FloatToStr(ListeContacts.GetItem(n).LongitudeWk);
-  ELatitudeWk.text:= FloatToStr(ListeContacts.GetItem(n).LatitudeWk);
-  DefaultFormatSettings.DecimalSeparator:= decSep;
+   DefaultFormatSettings.DecimalSeparator:= decSep;
   SetContactChange(true);
 end;
 
@@ -805,6 +770,8 @@ end;
 
 procedure TFContactManager.BtnQuitClick(Sender: TObject);
 begin
+  //SetAutostart (ProgName, Application.ExeName);
+  UnsetAutostart(ProgName);
   Close;
 end ;
 
@@ -864,7 +831,7 @@ begin
     Web:= EWeb.text;
     Longitude:= ListeContacts.GetFloat(ELongitude.text);
     Latitude:= ListeContacts.GetFloat(ELatitude.text);
-    Date:=  ListeContacts.GetDate(EDatecreation.text);
+    Date:=  ListeContacts.GetDate(EDate.text);
     DateModif:= now();
     //image
     fonction:= EFonction.text;
@@ -897,7 +864,7 @@ begin
   begin
     RestoreButtonStates;
     ListeContacts.AddContact(tmpContact)
-  end else ListeContacts.ModifyContact(LBContacts.ItemIndex, tmpContact);
+  end else  ListeContacts.ModifyContact(LBContacts.ItemIndex, tmpContact);
   Esearch.Enabled:= True;
   RBSortClick(Sender);
   DisplayList;
@@ -1192,7 +1159,7 @@ begin
   BtnWeb.Enabled:=  Boolean(length(EWeb.text));
   ELongitude.text:= '';
   ELatitude.text:= '';
-  EDatecreation.text:= DateTimeToStr(now);
+  EDate.text:= DateTimeToStr(now);
   EDatemodif.text:= DateTimeToStr(now);
   ImgContact.Picture:= nil;
   EFonction.text:= '' ;
@@ -1261,6 +1228,7 @@ begin
   Fprefs.CBUpdate.checked:= Settings.NoChkNewVer;
   FPrefs.CBLangue.ItemIndex:= LangNums.IndexOf(Settings.LangStr);
   oldndx:=  FPrefs.CBLangue.ItemIndex;
+  FPrefs.CBMinimized.Enabled:= FPrefs.CBStartup.Checked;
   if FPrefs.ShowModal = mrOK then
   begin
     Settings.StartWin:= Fprefs.CBStartup.Checked ;
@@ -1343,56 +1311,6 @@ end;
 procedure TFContactManager.ContactsOnChange(sender: TObject);
 begin
   ContactsChanged:= true;
-end;
-
-// Replace http errors english strings with localized ones
-
-function TFContactManager.DecodeHttpMessage(errmsg: string): string;
-begin
-  {result:= '';
-  if length(errmsg) > 0 then
-  begin
-    if Pos('Invalid protocol :', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Invalid protocol', SErrInvalidProtocol, []);
-      exit;
-    end;
-    if Pos('Error reading data from socket', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Error reading data from socket', SErrReadingSocket, []);
-      exit;
-    end;
-    if Pos('Invalid protocol version in response', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Invalid protocol version in response', SErrInvalidProtocolVersion, []);
-      exit;
-    end;
-    if Pos('Invalid response status code', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Invalid response status code', SErrInvalidStatusCode, []);
-      exit;
-    end;
-    if Pos('Unexpected response status code', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Unexpected response status code', SErrUnexpectedResponse, []);
-      exit;
-    end;
-    if Pos('Chunk too big', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Chunk too big', SErrChunkTooBig, []);
-      exit;
-    end;
-    if Pos('Chunk line end missing', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Chunk line end missing', SErrChunkLineEndMissing, []);
-      exit;
-    end;
-    if Pos('Maximum allowed redirects reached', errmsg)>0 then
-    begin
-      result:= StringReplace(errmsg, 'Maximum allowed redirects reached', SErrMaxRedirectsReached, []);
-      exit;
-    end;
-  end;  }
 end;
 
 // To be called in form activation routine of loadconfig routine or when language
@@ -1544,31 +1462,31 @@ begin
                 LieuditCaption+dquotv+CPCaption+dquotv+TownCaption+dquotv+LCountry.Caption+dquotv+LPhone.Caption+dquotv+
                 LBox.Caption+dquotv+LMobile.Caption+dquotv+LAutre.Caption+dquotv+LEmail.Caption+dquotv+
                 LWeb.Caption+dquotv+LLongitude.Caption+dquotv+LLatitude.Caption+dquotv+LDateCre.Caption+dquotv+
-                LDateModif.Caption+dquotv+CommentCaption+dquotv+ImageFileCaption+dquotv+LFonction.Caption+dquotv+
+                LDateModif.Caption+dquotv+CommentCaption+dquotv+'Index'+dquotv+ImageFileCaption+dquotv+LFonction.Caption+dquotv+
                 LService.Caption+dquotv+LCompany.Caption+dquotv+LStreetWk.Caption+dquotv+BPWkCaption+dquotv+
                 LieuditWkCaption+dquotv+CPWkCaption+dquotv+TownWkCaption+dquotv+LCountryWk.Caption+dquotv+
                 LPhoneWk.Caption+dquotv+LBoxWk.Caption+dquotv+LMobileWk.Caption+dquotv+LAutreWk.Caption+dquotv+
-                LEmailWk.Caption+dquotv+LWebWk.Caption+dquotv+LLongitudeWk.Caption+dquotv+LLatitudeWk.Caption+dquot;
+                LEmailWk.Caption+dquotv+LWebWk.Caption+dquotv+LLongitudeWk.Caption+dquotv+LLatitudeWk.Caption+dquotv+
+                'Version'+dquotv+'Tag'+dquot;
     // HTTP Error messages
-    HttpErrMsgNames[0]:= ReadString(Settings.LangStr,'SErrInvalidProtocol', 'Protocole invalide');
+    HttpErrMsgNames[0]:= ReadString(Settings.LangStr,'SErrInvalidProtocol', 'Protocole "%s" invalide');
     HttpErrMsgNames[1]:= ReadString(Settings.LangStr,'SErrReadingSocket', 'Erreur de lecture des données à partir du socket');
-    HttpErrMsgNames[2]:= ReadString(Settings.LangStr,'SErrInvalidProtocolVersion', 'Version de protocole invalide en réponse');
-    HttpErrMsgNames[3]:= ReadString(Settings.LangStr,'SErrInvalidStatusCode', 'Code de statut de réponse invalide');
-    HttpErrMsgNames[4]:= ReadString(Settings.LangStr,'SErrUnexpectedResponse', 'Code de statut de réponse non prévu');
+    HttpErrMsgNames[2]:= ReadString(Settings.LangStr,'SErrInvalidProtocolVersion', 'Version de protocole invalide en réponse: %s');
+    HttpErrMsgNames[3]:= ReadString(Settings.LangStr,'SErrInvalidStatusCode', 'Code de statut de réponse invalide: %s');
+    HttpErrMsgNames[4]:= ReadString(Settings.LangStr,'SErrUnexpectedResponse', 'Code de statut de réponse non prévu: %s');
     HttpErrMsgNames[5]:= ReadString(Settings.LangStr,'SErrChunkTooBig', 'Bloc trop grand');
     HttpErrMsgNames[6]:= ReadString(Settings.LangStr,'SErrChunkLineEndMissing', 'Fin de ligne du bloc manquante');
-    HttpErrMsgNames[7]:= ReadString(Settings.LangStr,'SErrMaxRedirectsReached', 'Nombre maximum de redirections atteint');
+    HttpErrMsgNames[7]:= ReadString(Settings.LangStr,'SErrMaxRedirectsReached', 'Nombre maximum de redirections atteint: %s');
     // Socket error messages
     HttpErrMsgNames[8]:= ReadString(Settings.LangStr,'strHostNotFound', 'Résolution du nom d''hôte pour "%s" impossible.');
-    HttpErrMsgNames[9]:= ReadString(Settings.LangStr,'strSocketCreationFailed', 'Echec de la création du socket');
-    HttpErrMsgNames[10]:= ReadString(Settings.LangStr,'strSocketBindFailed', 'Echec de liaison du socket');
-    HttpErrMsgNames[11]:= ReadString(Settings.LangStr,'strSocketListenFailed', 'Echec de l''écoute sur le port #%s, erreur %s');
+    HttpErrMsgNames[9]:= ReadString(Settings.LangStr,'strSocketCreationFailed', 'Echec de la création du socket: %s');
+    HttpErrMsgNames[10]:= ReadString(Settings.LangStr,'strSocketBindFailed', 'Echec de liaison du socket: %s');
+    HttpErrMsgNames[11]:= ReadString(Settings.LangStr,'strSocketListenFailed', 'Echec de l''écoute sur le port n° %s, erreur %s');
     HttpErrMsgNames[12]:= ReadString(Settings.LangStr,'strSocketConnectFailed', 'Echec de la connexion à %s');
     HttpErrMsgNames[13]:= ReadString(Settings.LangStr,'strSocketAcceptFailed', 'Connexion refusée d''un client sur le socket: %s, erreur %s');
-    HttpErrMsgNames[14]:= ReadString(Settings.LangStr,'strSocketAcceptWouldBlock', 'La connexion pourrait bloquer le socket');
-    HttpErrMsgNames[15]:= ReadString(Settings.LangStr,'strSocketIOTimeOut', 'Impossible de fixer le timeout E/S à');
+    HttpErrMsgNames[14]:= ReadString(Settings.LangStr,'strSocketAcceptWouldBlock', 'La connexion pourrait bloquer le socket: %s');
+    HttpErrMsgNames[15]:= ReadString(Settings.LangStr,'strSocketIOTimeOut', 'Impossible de fixer le timeout E/S à %s');
     HttpErrMsgNames[16]:= ReadString(Settings.LangStr,'strErrNoStream', 'Flux du socket non assigné');
-    //= 'Socket stream not assigned'; }
   end;
 
 end;

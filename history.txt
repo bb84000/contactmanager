@@ -227,5 +227,16 @@ Version 1.0.0.8 - 10/11/2019
 - Coordinates and localization buttons greyed when town and postcode are blank
 - Localization of HTTP and socket error messages
 
+Version 1.0.0.9 -13/11/2019
+- Optimisation od http error messages translation
+- Added autostart and minimized startup at Windows or Linux login
+- Merged prefs1 (settings dialog) and config1 (settings class management) units in settings1 unit
+- Added function in contacts1 to get field value string by name
+- Optimized some routines
+- On export, work on a copy of the contacts base
+- On Csv import/export, decimal separator for longitude and latitude is always a dot.
+
+
+
 
  

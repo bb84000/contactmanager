@@ -15,10 +15,10 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="8"/>
+      <BuildNr Value="9"/>
       <Language Value="040C"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.0.8"/>
+      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.0.9"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
@@ -39,7 +39,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="9">
       <Unit0>
         <Filename Value="contactmgr.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -52,66 +52,43 @@
         <ResourceBaseClass Value="Form"/>
       </Unit1>
       <Unit2>
-        <Filename Value="contacts1.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
         <Filename Value="impex1.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FImpex"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit3>
-      <Unit4>
+      </Unit2>
+      <Unit3>
         <Filename Value="images\contactmgr.rc"/>
         <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="..\bbunits\jpgplus.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="prefs1.pas"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="settings1.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FPrefs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="config1.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="vcarray.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit8>
-      <Unit9>
+      </Unit4>
+      <Unit5>
         <Filename Value="vcards1.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
+      </Unit5>
+      <Unit6>
         <Filename Value="contactmgr1.txt"/>
         <IsPartOfProject Value="True"/>
-      </Unit10>
-      <Unit11>
+      </Unit6>
+      <Unit7>
         <Filename Value="..\lazbbunits\lazbbchknewver.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="lazbbChkNewVer"/>
-      </Unit11>
-      <Unit12>
-        <Filename Value="chknewversion.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form2"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="ChkNewVersion"/>
-      </Unit12>
-      <Unit13>
+      </Unit7>
+      <Unit8>
         <Filename Value="..\lazbbunits\lazbbautostart.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit13>
+      </Unit8>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -122,7 +99,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\lazbbunits;..\bbunits"/>
+      <OtherUnitFiles Value="..\lazbbunits"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>

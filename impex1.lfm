@@ -1,7 +1,7 @@
 object FImpex: TFImpex
-  Left = 601
+  Left = 407
   Height = 321
-  Top = 511
+  Top = 212
   Width = 598
   Align = alLeft
   BorderIcons = [biSystemMenu, biMinimize]

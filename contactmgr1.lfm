@@ -1342,10 +1342,10 @@ object FContactManager: TFContactManager
       Height = 394
       Top = 0
       Width = 463
-      ActivePage = TSPerso
+      ActivePage = TSWork
       Align = alClient
       ParentFont = False
-      TabIndex = 0
+      TabIndex = 1
       TabOrder = 0
       object TSPerso: TTabSheet
         Caption = 'Perso'
@@ -1779,7 +1779,7 @@ object FContactManager: TFContactManager
             Caption = 'Date création'
             ParentColor = False
           end
-          object EDatecreation: TEdit
+          object EDate: TEdit
             Left = 125
             Height = 20
             Top = 310
