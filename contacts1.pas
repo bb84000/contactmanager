@@ -75,6 +75,7 @@ Type
     FCsvHeader: String;
     FCsvQuote: String;
     FCsvDelimiter: String;
+    FAppName: string;
     procedure SetSortDirection(Value: TSortDirections);
     procedure SetSortType (Value: TChampsCompare);
     procedure DoSort;
@@ -90,7 +91,7 @@ Type
     procedure ModifyField (const i: integer; field: string; value: variant);
     function GetItem(const i: Integer): TContact;
     function GetItemFieldString(const i: Integer; field: string): string;
-    constructor Create;
+    constructor Create (AppName: String);
     function GetFloat(s: String): Float;
     function GetInt(s: String): INt64;
     function GetDate(s: string): TDateTime;
@@ -109,6 +110,8 @@ Type
     Property CsvHeader: string read FCsvHeader write FCsvHeader ;
     property CsvQuote: string read FCsvQuote write FCsvQuote;
     property CsvDelimiter: string read FCsvDelimiter write FCsvDelimiter;
+    property AppName: string read FAppName write FAppName;
+
   end;
 
   var
@@ -186,11 +189,12 @@ end;
 
 
 
-constructor TContactsList.Create;
+constructor TContactsList.Create(AppName: String);
 var
   j: integer;
 begin
   inherited Create;
+  FAppName:= AppName;
   FCsvQuote:= '"';
   FCsvDelimiter:=',';
   FCsvHeader:= '';

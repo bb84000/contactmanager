@@ -1342,10 +1342,10 @@ object FContactManager: TFContactManager
       Height = 394
       Top = 0
       Width = 463
-      ActivePage = TSWork
+      ActivePage = TSPerso
       Align = alClient
       ParentFont = False
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 0
       object TSPerso: TTabSheet
         Caption = 'Perso'

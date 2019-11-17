@@ -10,7 +10,7 @@ unit settings1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, laz2_DOM , laz2_XMLRead;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, laz2_DOM , laz2_XMLRead, lazbbutils;
 
 type
 
@@ -30,11 +30,12 @@ type
     FStartMini: Boolean;
     FLangStr: String;
     FDataFolder: String;
-    Parent: TObject;
+    FAppName: String;
+    FVersion: String;
     function readIntValue(inode : TDOMNode; Attrib: String): Int64;
     function readDateValue(inode : TDOMNode; Attrib: String): TDateTime;
   public
-    constructor Create (Sender: TObject); overload;
+    constructor Create (AppName: string);
     procedure SetSavSizePos (b: Boolean);
     procedure SetWState (s: string);
     procedure SetLastUpdChk (dt: TDateTime);
@@ -43,8 +44,9 @@ type
     procedure SetStartmini (b: Boolean);
     procedure SetLangStr (s: string);
     procedure SetDataFolder(s: string);
+    procedure SetVersion(s: string);
     function SaveXMLnode(iNode: TDOMNode): Boolean;
-    function ReadXMLNode(iNode: TDOMNode): Boolean;
+    function LoadXMLNode(iNode: TDOMNode): Boolean;
 
   published
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
@@ -57,6 +59,9 @@ type
     property StartMini: Boolean read FStartMini write SetStartMini;
     property LangStr: String read FLangStr write SetLangStr;
     property DataFolder: string read FDataFolder write setDataFolder;
+    property AppName: string read FAppName write FAppName;
+    property Version: string read FVersion write SetVersion;
+
 end;
 
 
@@ -91,10 +96,10 @@ implementation
 
 {$R *.lfm}
 
-constructor TConfig.Create(Sender: TObject);
+constructor TConfig.Create(AppName: string);
 begin
-  Create;
-  Parent:= Sender;
+  inherited Create;
+  FAppName:= AppName;
 end;
 
 procedure TConfig.SetSavSizePos(b: Boolean);
@@ -170,6 +175,15 @@ begin
   end;
 end;
 
+procedure TConfig.SetVersion(s:string);
+begin
+  if FVersion <> s then
+  begin
+    FVersion:= s;
+    if Assigned(FOnChange) then FOnChange(Self);
+  end;
+end;
+
 function TConfig.readIntValue(inode : TDOMNode; Attrib: String): INt64;
 var
   s: String;
@@ -197,12 +211,13 @@ end;
 function TConfig.SaveXMLnode(iNode: TDOMNode): Boolean;
 begin
   Try
-    TDOMElement(iNode).SetAttribute ('savsizepos', IntToStr(Integer(FSavSizePos)));
+    TDOMElement(iNode).SetAttribute ('version', FVersion);
+    TDOMElement(iNode).SetAttribute ('savsizepos', BoolToString(FSavSizePos));
     TDOMElement(iNode).SetAttribute ('wstate', FWState);
-    TDOMElement(iNode).SetAttribute ('lastupdchk', DateToStr(FLastUpdChk));
-    TDOMElement(iNode).SetAttribute ('nochknewver', IntToStr(Integer(FNoChkNewVer)));
-    TDOMElement(iNode).SetAttribute ('startwin', IntToStr(Integer(FStartWin)));
-    TDOMElement(iNode).SetAttribute ('startmini',IntToStr(Integer(FStartMini)));
+    TDOMElement(iNode).SetAttribute ('lastupdchk', DateTimeToString(FLastUpdChk));
+    TDOMElement(iNode).SetAttribute ('nochknewver', BoolToString(FNoChkNewVer));
+    TDOMElement(iNode).SetAttribute ('startwin', BoolToString(FStartWin));
+    TDOMElement(iNode).SetAttribute ('startmini',BoolToString(FStartMini));
     TDOMElement(iNode).SetAttribute ('langstr', FLangStr);
     TDOMElement(iNode).SetAttribute ('datafolder', FDataFolder);
     Result:= True;
@@ -211,9 +226,32 @@ begin
   end;
 end;
 
-function TConfig.ReadXMLNode(iNode: TDOMNode): Boolean;
+function TConfig.LoadXMLNode(iNode: TDOMNode): Boolean;
+var
+  i: integer;
+  UpCaseAttrib: string;
 begin
+  Result := false;
+  if (iNode = nil) or (iNode.Attributes = nil) then exit;
+  // Browse settings attributes
+  for i:= 0 to iNode.Attributes.Length-1 do
   try
+    UpCaseAttrib:=UpperCase(iNode.Attributes.Item[i].NodeName);
+    if UpCaseAttrib='VERSION' then FVersion:= iNode.Attributes.Item[i].NodeValue;
+    if UpCaseAttrib='SAVSIZEPOS' then FSavSizePos:= StringToBool(iNode.Attributes.Item[i].NodeValue);
+    if UpCaseAttrib='WSTATE' then  FWState:= iNode.Attributes.Item[i].NodeValue;
+    if UpCaseAttrib='LASTUPDCHK' then FLastUpdChk:= StringToDateTime(iNode.Attributes.Item[i].NodeValue,'dd/mm/yyyy hh:nn:ss');
+    if UpCaseAttrib='NOCHKNEWVER' then FNoChkNewVer:= StringToBool(iNode.Attributes.Item[i].NodeValue);
+    if UpCaseAttrib='STARTWIN' then FStartWin:= StringToBool(iNode.Attributes.Item[i].NodeValue);
+    if UpCaseAttrib='STARTMINI' then FStartMini:= StringToBool(iNode.Attributes.Item[i].NodeValue);
+    if UpCaseAttrib='LANGSTR' then FLangStr:= iNode.Attributes.Item[i].NodeValue;
+    if UpCaseAttrib='DATAFOLDER' then FDataFolder:= iNode.Attributes.Item[i].NodeValue;
+    result:= true;
+  except
+    Result:= False;
+  end;
+
+  {try
     FSavSizePos:= Boolean(readIntValue(iNode, 'savsizepos'));
     FWState:= TDOMElement(iNode).GetAttribute('wstate');
     FLastUpdChk:= readDateValue(iNode, 'lastupdchk');
@@ -225,7 +263,7 @@ begin
     result:= true;
   except
     Result:= False;
-  end;
+  end; }
 end;
 
 

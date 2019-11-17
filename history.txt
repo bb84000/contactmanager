@@ -227,7 +227,7 @@ Version 1.0.0.8 - 10/11/2019
 - Coordinates and localization buttons greyed when town and postcode are blank
 - Localization of HTTP and socket error messages
 
-Version 1.0.0.9 -13/11/2019
+Version 1.0.0.9 - 13/11/2019
 - Optimisation od http error messages translation
 - Added autostart and minimized startup at Windows or Linux login
 - Merged prefs1 (settings dialog) and config1 (settings class management) units in settings1 unit
@@ -236,6 +236,9 @@ Version 1.0.0.9 -13/11/2019
 - On export, work on a copy of the contacts base
 - On Csv import/export, decimal separator for longitude and latitude is always a dot.
 
+Version 1.0.0.10 - 17/11/2019
+- Fixed errors during first use (no contact in database) or when no config file is present
+- Reported all customized conversion routines (bool, date, float) in lazbbutils
 
 
 
