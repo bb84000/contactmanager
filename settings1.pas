@@ -10,7 +10,8 @@ unit settings1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, laz2_DOM , laz2_XMLRead, lazbbutils;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, laz2_DOM ,
+       laz2_XMLRead, laz2_XMLWrite, lazbbutils;
 
 type
 
@@ -32,8 +33,7 @@ type
     FDataFolder: String;
     FAppName: String;
     FVersion: String;
-    function readIntValue(inode : TDOMNode; Attrib: String): Int64;
-    function readDateValue(inode : TDOMNode; Attrib: String): TDateTime;
+
   public
     constructor Create (AppName: string);
     procedure SetSavSizePos (b: Boolean);
@@ -46,8 +46,9 @@ type
     procedure SetDataFolder(s: string);
     procedure SetVersion(s: string);
     function SaveXMLnode(iNode: TDOMNode): Boolean;
+    function SaveToXMLfile(filename: string): Boolean;
     function LoadXMLNode(iNode: TDOMNode): Boolean;
-
+    function LoadXMLFile(filename: string): Boolean;
   published
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnStateChange: TNotifyEvent read FOnStateChange write FOnStateChange;
@@ -184,29 +185,7 @@ begin
   end;
 end;
 
-function TConfig.readIntValue(inode : TDOMNode; Attrib: String): INt64;
-var
-  s: String;
-begin
-  s:= TDOMElement(iNode).GetAttribute(Attrib) ;
-  try
-    result:= StrToInt64(s);
-  except
-    result:= 0;
-  end;
-end;
 
-function TConfig.readDateValue(inode : TDOMNode; Attrib: String): TDateTime;
-var
-  s: String;
-begin
-  s:= TDOMElement(iNode).GetAttribute(Attrib) ;
-  try
-    result:= StrToDateTime(s);
-  except
-    result:= now();
-  end;
-end;
 
 function TConfig.SaveXMLnode(iNode: TDOMNode): Boolean;
 begin
@@ -224,6 +203,32 @@ begin
   except
     result:= False;
   end;
+end;
+
+function TConfig.SaveToXMLfile(filename: string): Boolean;
+var
+  SettingsXML: TXMLDocument;
+  RootNode, SettingsNode :TDOMNode;
+begin
+  result:= false;
+  if FileExists(filename)then
+  begin
+    ReadXMLFile(SettingsXML, filename);
+    RootNode := SettingsXML.DocumentElement;
+  end else
+  begin
+    SettingsXML := TXMLDocument.Create;
+    RootNode := SettingsXML.CreateElement(lowercase(FAppName));
+    SettingsXML.Appendchild(RootNode);
+  end;
+  SettingsNode:= RootNode.FindNode('settings');
+  if SettingsNode <> nil then RootNode.RemoveChild(SettingsNode);
+  SettingsNode:= SettingsXML.CreateElement('settings');
+  SaveXMLnode(SettingsNode);
+  RootNode.Appendchild(SettingsNode);
+  writeXMLFile(SettingsXML, filename);
+  result:= true;
+  if assigned(SettingsXML) then SettingsXML.free;
 end;
 
 function TConfig.LoadXMLNode(iNode: TDOMNode): Boolean;
@@ -250,22 +255,26 @@ begin
   except
     Result:= False;
   end;
-
-  {try
-    FSavSizePos:= Boolean(readIntValue(iNode, 'savsizepos'));
-    FWState:= TDOMElement(iNode).GetAttribute('wstate');
-    FLastUpdChk:= readDateValue(iNode, 'lastupdchk');
-    FNoChkNewVer:= Boolean(readIntValue(iNode, 'nochknewver'));
-    FStartWin:= Boolean(readIntValue(iNode, 'startwin'));
-    FStartMini:= Boolean(readIntValue(iNode, 'startmini'));
-    FLangStr:= TDOMElement(iNode).GetAttribute('langstr');
-    FDataFolder:= TDOMElement(iNode).GetAttribute('datafolder');  ;
-    result:= true;
-  except
-    Result:= False;
-  end; }
 end;
 
+function TConfig.LoadXMLFile(filename: string): Boolean;
+var
+  SettingsXML: TXMLDocument;
+  RootNode,SettingsNode : TDOMNode;
+begin
+  result:= false;
+  if not FileExists(filename) then
+  begin
+    SaveToXMLfile(filename);
+  end;
+  ReadXMLFile(SettingsXML, filename);
+  RootNode := SettingsXML.DocumentElement;
+  SettingsNode:= RootNode.FindNode('settings');
+  if SettingsNode= nil then exit;
+  LoadXMLnode(SettingsNode);
+  If assigned(SettingsNode) then SettingsNode.free;
+  result:= true;
+end;
 
 { TFPrefs : Settings dialog }
 

@@ -14,6 +14,7 @@
 ;General
 Language=English
 Caption=Contacts Manager
+OKBtn=OK
 YesBtn=Yes
 NoBtn=No
 CancelBtn=Cancel
@@ -161,6 +162,7 @@ MnuVisitwebCaption=Visist the %s private Web site
 ;General
 Language=Français
 Caption=Gestionnaire de Contacts
+OKBtn=OK
 YesBtn=Oui
 NoBtn=Non
 CancelBtn=Annuler

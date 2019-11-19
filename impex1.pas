@@ -63,7 +63,6 @@ type
     csvdoc: TCSVDocument;
     csvfldcount: Integer;
 //    Vcards: TContactsList;
-    DecSep: Char;
     BtnImpexEnabled: boolean;
     function getcsvstring(doc: TCSVDocument; fld, ndx: integer) : string;
     function getcsvfloat(doc: TCSVDocument; fld, ndx: integer) : Float;
@@ -91,7 +90,6 @@ uses contactmgr1;
 
 procedure TFImpex.FormActivate(Sender: TObject);
 begin
-  DecSep:= DefaultFormatSettings.DecimalSeparator;
   EnableCsvControls;
   ResPngToGlyph(HInstance,'FILEOPEN', SBFileOpen.Glyph);
   // Contact fields
@@ -104,7 +102,7 @@ begin
   end;
   csvsheadercount:= csvheaderdoc.ColCount[0];
   csvdoc:= TCSVDocument.Create;
-  // // mrOK : Import, mrYes : Export
+  // mrOK : Import, mrYes : Export
   BtnImpex.ModalResult:= mrOK;
   BtnImpex.Enabled:= false;
   BtnUp.Enabled:= false;
@@ -118,7 +116,6 @@ end;
 
 procedure TFImpex.FormDeactivate(Sender: TObject);
 begin
-  DefaultFormatSettings.DecimalSeparator:= DecSep;
   FreeAndNil(csvheaderdoc);
   FreeAndNil(csvdoc);
 end;
@@ -143,49 +140,16 @@ end;
 // Populate stringgrid with list box last selected conntact values
 
 procedure TFImpex.SGImpexPopulate(linecur: integer);
+var
+  i: integer;
 begin
   if assigned(ImpexContacts) and (linecur < ImpexContacts.count) then
   begin
-  sgImpex.Cells[1,1]:= ImpexContacts.GetItem(linecur).name;
-  sgImpex.Cells[1,2]:= ImpexContacts.GetItem(linecur).surname;
-  sgImpex.Cells[1,3]:= ImpexContacts.GetItem(linecur).street;
-  sgImpex.Cells[1,4]:= ImpexContacts.GetItem(linecur).BP;
-  sgImpex.Cells[1,5]:= ImpexContacts.GetItem(linecur).lieudit;
-  sgImpex.Cells[1,6]:= ImpexContacts.GetItem(linecur).postcode;
-  sgImpex.Cells[1,7]:= ImpexContacts.GetItem(linecur).town;
-  sgImpex.Cells[1,8]:= ImpexContacts.GetItem(linecur).country;
-  sgImpex.Cells[1,9]:= ImpexContacts.GetItem(linecur).phone;
-  sgImpex.Cells[1,9]:= ImpexContacts.GetItem(linecur).Box;
-  sgImpex.Cells[1,11]:= ImpexContacts.GetItem(linecur).mobile;
-  sgImpex.Cells[1,11]:= ImpexContacts.GetItem(linecur).Autre;
-  sgImpex.Cells[1,13]:= ImpexContacts.GetItem(linecur).email;
-  sgImpex.Cells[1,14]:= ImpexContacts.GetItem(linecur).web;
-  sgImpex.Cells[1,15]:= FloatToStr(ImpexContacts.GetItem(linecur).Longitude);
-  sgImpex.Cells[1,16]:= FloatToStr(ImpexContacts.GetItem(linecur).Latitude);
-  sgImpex.Cells[1,17]:= DateToStr(ImpexContacts.GetItem(linecur).Date);
-  sgImpex.Cells[1,18]:= DateToStr(ImpexContacts.GetItem(linecur).DateModif);
-  sgImpex.Cells[1,19]:= ImpexContacts.GetItem(linecur).Comment;
-  sgImpex.Cells[1,20]:= ImpexContacts.GetItem(linecur).Imagepath;
-  sgImpex.Cells[1,21]:= ImpexContacts.GetItem(linecur).fonction;
-  sgImpex.Cells[1,22]:= ImpexContacts.GetItem(linecur).Service;
-  sgImpex.Cells[1,23]:= ImpexContacts.GetItem(linecur).Company;
-  sgImpex.Cells[1,24]:= ImpexContacts.GetItem(linecur).StreetWk;
-  sgImpex.Cells[1,25]:= ImpexContacts.GetItem(linecur).BPWk;
-  sgImpex.Cells[1,26]:= ImpexContacts.GetItem(linecur).LieuditWk;
-  sgImpex.Cells[1,27]:= ImpexContacts.GetItem(linecur).PostcodeWk;
-  sgImpex.Cells[1,28]:= ImpexContacts.GetItem(linecur).TownWk;
-  sgImpex.Cells[1,29]:= ImpexContacts.GetItem(linecur).CountryWk;
-  sgImpex.Cells[1,30]:= ImpexContacts.GetItem(linecur).PhoneWk;
-  sgImpex.Cells[1,31]:= ImpexContacts.GetItem(linecur).BoxWk;
-  sgImpex.Cells[1,32]:= ImpexContacts.GetItem(linecur).MobileWk;
-  sgImpex.Cells[1,33]:= ImpexContacts.GetItem(linecur).AutreWk;
-  sgImpex.Cells[1,34]:= ImpexContacts.GetItem(linecur).EmailWk;
-  sgImpex.Cells[1,35]:= ImpexContacts.GetItem(linecur).WebWk;
-  sgImpex.Cells[1,36]:= FloatToStr(ImpexContacts.GetItem(linecur).LongitudeWk);
-  sgImpex.Cells[1,37]:= FloatToStr(ImpexContacts.GetItem(linecur).LatitudeWk);
+
+    for i:= 1 to length(AFieldNames) do
+      sgImpex.Cells[1,i]:= ImpexContacts.GetItemFieldString(linecur, AFieldNames[i-1]) ;
 
   end;
-
 end;
 
 // Click on a contact in listbox
@@ -199,7 +163,6 @@ begin
   if BtnImpexEnabled then BtnImpex.Enabled:= true;
   if RBImport.checked then
   begin
-    DefaultFormatSettings.DecimalSeparator:= '.';
     Case CBType.ItemIndex of
       0: begin
            for i:= 1 to csvfldcount do
@@ -214,8 +177,7 @@ begin
            SGImpexPopulate(curline);
          end;
     end;
-    DefaultFormatSettings.DecimalSeparator:= decSep;
-  end;
+  end else SGImpexPopulate(curline);
 end;
 
 // Change import to export or vice-versa
@@ -244,6 +206,11 @@ begin
     ResPngToGlyph(HInstance,'FILESAVE', SBFileOpen.Glyph);
     BtnImpex.Caption:= FContactManager.FImpex_ExportBtn_Caption;
     BtnImpex.ModalResult:= mrYes;            // Export
+    sgImpex.RowCount:= csvsheadercount+1;
+    for i:= 1 to csvsheadercount do
+    begin
+      sgImpex.Cells[0,i]:= csvheaderdoc.Cells[i-1,0];
+    end;
     // populate list
     ImpexContacts.Reset;
     For i:= 0 to FContactManager.ListeContacts.Count-1 do
@@ -332,7 +299,7 @@ begin
              BtnEmpty.Enabled:= true;
              BtnDown.Enabled:= true;
         end ;            //CSV
-        // Old jcontacts and contacts
+        // VCard
          1: begin           //
            if Assigned(ImpexContacts) then  ImpexContacts.Reset;
            ImpexContacts.LoadVCardFile(EFilename.text);
@@ -494,7 +461,7 @@ end;
 function TFImpex.getcsvfloat(doc: TCSVDocument; fld, ndx: integer) : Float;
 begin
   try
-    result:= StrToFloat(doc.Cells[ContactFldArray[fld],ndx]);
+    result:= StringToFloat(doc.Cells[ContactFldArray[fld],ndx]);
   except
     result:= 0;
   end;
@@ -503,7 +470,7 @@ end;
 function TFImpex.getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
 begin
   try
-    result:= StrToDateTime(doc.Cells[ContactFldArray[fld],ndx]);
+    result:= StringToDateTime(doc.Cells[ContactFldArray[fld],ndx]);
   except
     result:= now();
   end;

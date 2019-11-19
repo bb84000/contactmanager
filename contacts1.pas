@@ -18,7 +18,7 @@ uses
 Type
   TChampsCompare = (cdcNone, cdcName, cdcSurname, cdcPostcode, cdcTown,  cdcCountry, cdcLongit, cdcLatit);
   TSortDirections = (ascend, descend);
-  TSaveMode = (selection, all);
+  TSaveType = (selection, all);
 
   // Contact record
   PContact = ^TContact;
@@ -92,15 +92,11 @@ Type
     function GetItem(const i: Integer): TContact;
     function GetItemFieldString(const i: Integer; field: string): string;
     constructor Create (AppName: String);
-    function GetFloat(s: String): Float;
-    function GetInt(s: String): INt64;
-    function GetDate(s: string): TDateTime;
-    function GetBool(s: string): Boolean;
-    function BoolToStr(b: boolean): string;
-    function SaveToXMLnode(iNode: TDOMNode): Boolean;
-    function SaveToXMLfile(filename: string): Boolean;
-    function SaveToVCardfile(filename: string; mode: TSaveMode=all): Boolean;
-    function SaveToCsvFile(filename: string; chrset: TCharset=UTF8;  mode: TSaveMode=all; header: boolean=true ): Boolean;
+    function SaveToXMLnode(iNode: TDOMNode; typ: TSaveType= all): Boolean;
+    function SaveToXMLfile(filename: string; typ: TSaveType= all): Boolean;
+    function SaveToVCardfile(filename: string; typ: TSaveType=all): Boolean;
+    function SaveToCsvFile(filename: string; chrset: TCharset=UTF8; typ: TSaveType=all;
+                           header: boolean=true ): Boolean;
     function LoadXMLnode(iNode: TDOMNode): Boolean;
     function LoadXMLfile(filename: string): Boolean;
     function LoadVCardfile(filename: string): Boolean;
@@ -117,12 +113,46 @@ Type
   var
     ClesTri: array[0..10] of TChampsCompare;
   const
-    AFieldNames : array [0..39] of string  =('name', 'surname', 'street', 'bp', 'lieudit', 'postcode', 'town', 'country',
-                                          'phone', 'box', 'mobile', 'autre', 'email', 'web', 'longitude', 'latitude','date',
-                                          'datemodif', 'comment', 'index1', 'imagepath', 'fonction', 'service', 'company',
-                                          'streetwk', 'bpwk', 'lieuditwk', 'postcodewk', 'townwk', 'countrywk', 'phonewk',
-                                          'boxwk', 'mobilewk', 'autrewk', 'emailwk', 'webwk', 'longitudewk', 'latitudewk',
-                                          'version', 'tag');
+    AFieldNames : array [0..39] of string  =('name',
+                                             'surname',
+                                             'street',
+                                             'bp',
+                                             'lieudit',
+                                             'postcode',
+                                             'town',
+                                             'country',
+                                             'phone',
+                                             'box',
+                                             'mobile',
+                                             'autre',
+                                             'email',
+                                             'web',
+                                             'longitude',
+                                             'latitude',
+                                             'date',
+                                             'datemodif',
+                                             'comment',
+                                             'index1',
+                                             'imagepath',
+                                             'fonction',
+                                             'service',
+                                             'company',
+                                             'streetwk',
+                                             'bpwk',
+                                             'lieuditwk',
+                                             'postcodewk',
+                                             'townwk',
+                                             'countrywk',
+                                             'phonewk',
+                                             'boxwk',
+                                             'mobilewk',
+                                             'autrewk',
+                                             'emailwk',
+                                             'webwk',
+                                             'longitudewk',
+                                             'latitudewk',
+                                             'version',
+                                             'tag');
 
 implementation
 
@@ -335,12 +365,12 @@ begin
   if field='AUTRE' then result:= TContact(Items[i]^).Autre;
   if field='EMAIL' then result:= TContact(Items[i]^).Email;
   if field='WEB' then result:= TContact(Items[i]^).Web;
-  if field='DATE' then result:= DateTimeToStr(TContact(Items[i]^).Date);
-  if field='DATEMODIF' then result:= DateTimeToStr(TContact(Items[i]^).DateModif);
+  if field='DATE' then result:= DateTimeToString(TContact(Items[i]^).Date, 'dd/mm/yyyy hh:nn:ss');
+  if field='DATEMODIF' then result:= DateTimeToString(TContact(Items[i]^).DateModif, 'dd/mm/yyyy hh:nn:ss');
   if field='COMMENT' then result:= TContact(Items[i]^).Comment ;
   if field='INDEX1' then result:= IntToStr(TContact(Items[i]^).Index1);
-  if field='LONGITUDE' then result:= FloatToStr(TContact(Items[i]^).Longitude);
-  if field='LATITUDE' then result:= FloatToStr(TContact(Items[i]^).Latitude);
+  if field='LONGITUDE' then result:= FloatToString(TContact(Items[i]^).Longitude);
+  if field='LATITUDE' then result:= FloatToString(TContact(Items[i]^).Latitude);
   if field='IMAGEPATH' then result:= TContact(Items[i]^).Imagepath;
   if field='FONCTION' then result:= TContact(Items[i]^).fonction;
   if field='SERVICE' then result:= TContact(Items[i]^).Service;
@@ -357,8 +387,8 @@ begin
   if field='AUTREWK' then result:= TContact(Items[i]^).AutreWk;
   if field='EMAILWK' then result:= TContact(Items[i]^).EmailWk;
   if field='WEBWK' then result:= TContact(Items[i]^).WebWk;
-  if field='LONGITUDEWK' then result:= FloatToStr(TContact(Items[i]^).LongitudeWk);
-  if field='LATITUDEWK' then result:= FloatToStr(TContact(Items[i]^).LatitudeWk);
+  if field='LONGITUDEWK' then result:= FloatToString(TContact(Items[i]^).LongitudeWk);
+  if field='LATITUDEWK' then result:= FloatToString(TContact(Items[i]^).LatitudeWk);
   if field='VERSION' then result:= TContact(Items[i]^).Version;
   if field='TAG' then result:= BoolToStr(TContact(Items[i]^).Tag);
 
@@ -369,48 +399,7 @@ begin
  Result := TContact(Items[i]^);
 end;
 
-function TContactsList.GetInt(s: String): INt64;
-begin
-  try
 
-    result:= StrToInt64(s);
-  except
-    result:= 0;
-  end;
-end;
-
-function TContactsList.GetFloat(s: String): Float;
-var
-  DecSep: Char;
-begin
-  DecSep:= DefaultFormatSettings.DecimalSeparator;
-  DefaultFormatSettings.DecimalSeparator:= '.';
-  try
-    result:= StrToFloat(s);
-  except
-    result:= 0;
-  end;
-  DefaultFormatSettings.DecimalSeparator:= DecSep;
-end;
-
-function TContactsList.GetDate(s: string): TDateTime;
-begin
-  try
-    result:= StrToDateTime(s);
-  except
-    result:= now();
-  end;
-end;
-
-function TContactsList.GetBool(s: string): Boolean;
-begin
-  result:= (uppercase(s)='TRUE');
-end;
-
-function TContactsList.BoolToStr(b: boolean): string;
-begin
-  if b then result:= 'true' else result:= 'false';
-end;
 
 function TContactsList.LoadXMLNode(iNode: TDOMNode): Boolean;
 var
@@ -420,7 +409,7 @@ var
   s: string;
   upNodeName: string;
 begin
-  SortType:= TChampsCompare(GetInt(TDOMElement(iNode).GetAttribute('sort')));
+  SortType:= TChampsCompare(StringToInt(TDOMElement(iNode).GetAttribute('sort')));
   chNode := iNode.FirstChild;
   while (chNode <> nil) and (UpperCase(chnode.NodeName)='CONTACT')  do
   begin
@@ -445,14 +434,14 @@ begin
         if upNodeName = 'AUTRE' then K^.Autre:= s;
         if upNodeName = 'EMAIL' then K^.Email := s;
         if upNodeName = 'WEB' then K^.Web:= s;
-        if upNodeName = 'DATE' then K^.Date := GetDate(s);
-        if upNodeName = 'DATEMODIF' then K^.DateModif:= GetDate(s);
+        if upNodeName = 'DATE' then K^.Date := StringToDateTime(s);
+        if upNodeName = 'DATEMODIF' then K^.DateModif:= StringToDateTime(s);
         if upNodeName = 'COMMENT' then K^.Comment:= s;
-        if upNodeName = 'INDEX1' then K^.Index1 := GetInt(s);
-        if upNodeName = 'LONGITUDE' then K^.Longitude:= GetFloat(s);
-        if upNodeName = 'LATITUDE' then K^.Latitude:= GetFloat(s);
+        if upNodeName = 'INDEX1' then K^.Index1 := StringToInt(s);
+        if upNodeName = 'LONGITUDE' then K^.Longitude:= StringToFloat(s);
+        if upNodeName = 'LATITUDE' then K^.Latitude:= StringToFloat(s);
         if upNodeName = 'IMAGEPATH' then K^.Imagepath:= s;
-        if upNodeName = 'FUNCTION' then K^.fonction := s;
+        if upNodeName = 'FONCTION' then K^.fonction := s;
         if upNodeName = 'SERVICE' then K^.Service:= s;
         if upNodeName = 'COMPANY' then K^.Company:= s;
         if upNodeName = 'STREETWK' then K^.StreetWk:= s;
@@ -467,10 +456,10 @@ begin
         if upNodeName = 'AUTREWK' then K^.AutreWk:= s;
         if upNodeName = 'EMAILWK' then K^.EmailWk := s;
         if upNodeName = 'WEBWK' then K^.WebWk:= s;
-        if upNodeName = 'LONGITUDEWK' then K^.LongitudeWk:= GetFloat(s);
-        if upNodeName = 'LATITUDEWK' then K^.LatitudeWk:= GetFloat(s);
+        if upNodeName = 'LONGITUDEWK' then K^.LongitudeWk:= StringToFloat(s);
+        if upNodeName = 'LATITUDEWK' then K^.LatitudeWk:= StringToFloat(s);
         if upNodeName = 'VERSION' then K^.Version:= s;
-        if upNodeName = 'TAG' then K^.Tag:= GetBool(s);
+        if upNodeName = 'TAG' then K^.Tag:= StringToBool(s);
       finally
         subnode:= subnode.NextSibling;
       end;
@@ -488,7 +477,10 @@ var
   RootNode,ContactsNode : TDOMNode;
 begin
   result:= false;
-  if not FileExists(filename) then exit;
+  if not FileExists(filename) then
+    begin
+    SaveToXMLfile(filename);
+  end;
   ReadXMLFile(ContactsXML, filename);
   RootNode := ContactsXML.DocumentElement;
   ContactsNode:= RootNode.FindNode('contacts');
@@ -595,8 +587,8 @@ begin
         s1:= copy(s, pos('GEO', sup)+1, length(s));
         s1:= copy(s1, pos(':', s1)+1, pos(';', s1)-pos(':', s1)-1);
         A:= s1.Split(',"''');        // allow ignore quotes
-        MyCont.Longitude:= GetFloat(A[0]);
-        MyCont.Latitude:= GetFloat(A[1]);
+        MyCont.Longitude:= StringToFloat(A[0]);
+        MyCont.Latitude:= StringToFloat(A[1]);
       end;
       continue;
     end;
@@ -615,8 +607,8 @@ begin
         s1:= copy(s, pos('GEO', sup)+1, length(s));
         s1:= copy(s1, pos(':', s1)+1, pos(';', s1)-pos(':', s1)-1);
         A:= s1.Split(',"''');        // allow ignore quotes
-        MyCont.LongitudeWk:= GetFloat(A[0]);
-        MyCont.LatitudeWk:= GetFloat(A[1]);
+        MyCont.LongitudeWk:= StringToFloat(A[0]);
+        MyCont.LatitudeWk:= StringToFloat(A[1]);
       end;
       continue;
     end;
@@ -670,12 +662,12 @@ begin
       A:= s1.Split(',;"''');        // allow ignore quotes
       if pos('WORK', SUP) > 0 then
       begin
-        MyCont.LatitudeWk:= GetFloat(A[0]);
-        MyCont.LongitudeWk:= GetFloat(A[1]) ;
+        MyCont.LatitudeWk:= StringToFloat(A[0]);
+        MyCont.LongitudeWk:= StringToFloat(A[1]) ;
       end else
       begin
-        MyCont.Latitude:= GetFloat(A[0]);
-        MyCont.Longitude:= GetFloat(A[1]) ;
+        MyCont.Latitude:= StringToFloat(A[0]);
+        MyCont.Longitude:= StringToFloat(A[1]) ;
       end;
       continue;
     end;
@@ -726,11 +718,10 @@ begin
   result.TextContent:= svalue;
 end;
 
-function TContactsList.SaveToXMLnode(iNode: TDOMNode): Boolean;
+function TContactsList.SaveToXMLnode(iNode: TDOMNode; typ: TSaveType= all): Boolean;
 var
   i, j: Integer;
   ContNode: TDOMNode;
-  DecSep: Char;
 begin
   Result:= True;
   If Count > 0 Then
@@ -738,22 +729,22 @@ begin
      TDOMElement(iNode).SetAttribute('sort', IntToStr(Ord(SortType)));
      For i:= 0 to Count-1 do
      Try
+       // Skip tagged contact if in selection typ
+       if (typ=selection) and not(GetItem(i).Tag) then continue;
+       // Reset tag to false when processed
+       if GetItem(i).Tag then TContact(Items[i]^).Tag:= false;
        ContNode := iNode.OwnerDocument.CreateElement('contact');
        iNode.Appendchild(ContNode);
-       DecSep:= DefaultFormatSettings.DecimalSeparator;
-       DefaultFormatSettings.DecimalSeparator:= '.';
        for j:=0 to length(AFieldNames)-1 do
            ContNode.AppendChild(SaveItem(ContNode, AFieldNames[j], GetItemFieldString(i,  AFieldNames[j]))) ;
-        DefaultFormatSettings.DecimalSeparator:= DecSep;
      except
        Result:= False;
      end;
    end;
-
 end;
 
 
-function TContactsList.SaveToXMLfile(filename: string): Boolean;
+function TContactsList.SaveToXMLfile(filename: string; typ: TSaveType= all): Boolean;
 var
   ContactsXML: TXMLDocument;
   RootNode, ContactsNode :TDOMNode;
@@ -766,7 +757,7 @@ begin
   end else
   begin
     ContactsXML := TXMLDocument.Create;
-    RootNode := ContactsXML.CreateElement('config');
+    RootNode := ContactsXML.CreateElement(lowercase(FAppName));
     ContactsXML.Appendchild(RootNode);
   end;
   ContactsNode:= RootNode.FindNode('contacts');
@@ -782,13 +773,12 @@ begin
   if assigned(ContactsXML) then ContactsXML.free;;
 end;
 
-// mode : part only tagged contacts
+// typ : part only tagged contacts
 //      : all
 // default : all
 
-function TContactsList.SaveToVCardfile(filename: string; mode:TSaveMode=all): Boolean;
+function TContactsList.SaveToVCardfile(filename: string; typ:TSaveType=all): Boolean;
 var
-  DecSep: Char;
   i, j: integer;
   vCard: TstringList;
   line: string;
@@ -800,110 +790,106 @@ const
   vcbeg= 'BEGIN:VCARD';
   vcend=  'END:VCARD';
 begin
-  DecSep:= DefaultFormatSettings.DecimalSeparator;
-  DefaultFormatSettings.DecimalSeparator:= '.';
+  result:= false;
   if Count > 0 then
   begin
     vcard:= TStringList.create;
     for i:= 0 to Count-1 do
     begin
-      if mode = all then TContact(Items[i]^).Tag:= true;
-      if TContact(Items[i]^).Tag=true then
        begin
-          vcard.add(vcbeg);
-          vcard.add('VERSION:2.1');
-          vcard.add('VERSION:2.1');
-          vcard.add('N;CHARSET=UTF-8:'+TContact(Items[i]^).Name+';'+TContact(Items[i]^).Surname+';;;');
-          vcard.add('FN;CHARSET=UTF-8:'+TContact(Items[i]^).Surname+' '+TContact(Items[i]^).Name);
-          vcard.add('ADR;HOME;CHARSET=UTF-8:'+TContact(Items[i]^).BP+';'+TContact(Items[i]^).Lieudit+';'+
+         if (Typ=selection) and not(TContact(Items[i]^).Tag) then continue;
+         // Reset tag to false when processed
+         if GetItem(i).Tag then TContact(Items[i]^).Tag:= false;
+         // Now, create vcard
+         vcard.add(vcbeg);
+         vcard.add('VERSION:2.1');
+         vcard.add('VERSION:2.1');
+         vcard.add('N;CHARSET=UTF-8:'+TContact(Items[i]^).Name+';'+TContact(Items[i]^).Surname+';;;');
+         vcard.add('FN;CHARSET=UTF-8:'+TContact(Items[i]^).Surname+' '+TContact(Items[i]^).Name);
+         vcard.add('ADR;HOME;CHARSET=UTF-8:'+TContact(Items[i]^).BP+';'+TContact(Items[i]^).Lieudit+';'+
                                             TContact(Items[i]^).Street+';'+TContact(Items[i]^).Town+';'+';'+   //region left blank
                                             TContact(Items[i]^).Postcode+';'+TContact(Items[i]^).Country);
-          line:= TContact(Items[i]^).Phone;
-          if length(line) > 0 then vcard.add('TEL;HOME:'+line);
-          line:= TContact(Items[i]^).Mobile;
-          if length(line) > 0 then vcard.add('TEL;CELL:'+line);
-          line:= TContact(Items[i]^).Email;
-          if length(line) > 0 then vcard.add('EMAIL;HOME:'+line);
-          line:= TContact(Items[i]^).Web;
-          if length(line) > 0 then vcard.add('URL;HOME:'+line);
-          //GEO:geo:37.386013,-122.082932   (lat, lon);
-          vcard.add('GEO:'+FloattoStr(TContact(Items[i]^).Latitude)+';'+FloattoStr(TContact(Items[i]^).Longitude));
-          line:= TContact(Items[i]^).Company+';'+TContact(Items[i]^).Service;
-          if length(line) > 1 then vcard.add('ORG:'+line+';;');
-          line:= TContact(Items[i]^).fonction;
-          if length(line) > 0 then vcard.add('ROLE:'+line);
-          line:= TContact(Items[i]^).BPWk+';'+TContact(Items[i]^).LieuditWk+';'+TContact(Items[i]^).StreetWk +';'+
+         line:= TContact(Items[i]^).Phone;
+         if length(line) > 0 then vcard.add('TEL;HOME:'+line);
+         line:= TContact(Items[i]^).Mobile;
+         if length(line) > 0 then vcard.add('TEL;CELL:'+line);
+         line:= TContact(Items[i]^).Email;
+         if length(line) > 0 then vcard.add('EMAIL;HOME:'+line);
+         line:= TContact(Items[i]^).Web;
+         if length(line) > 0 then vcard.add('URL;HOME:'+line);
+         //GEO:geo:37.386013,-122.082932   (lat, lon);
+         vcard.add('GEO:'+FloatToString(TContact(Items[i]^).Latitude)+';'+FloatToString(TContact(Items[i]^).Longitude));
+         line:= TContact(Items[i]^).Company+';'+TContact(Items[i]^).Service;
+         if length(line) > 1 then vcard.add('ORG:'+line+';;');
+         line:= TContact(Items[i]^).fonction;
+         if length(line) > 0 then vcard.add('ROLE:'+line);
+         line:= TContact(Items[i]^).BPWk+';'+TContact(Items[i]^).LieuditWk+';'+TContact(Items[i]^).StreetWk +';'+
                       TContact(Items[i]^).TownWk+';'+';'+   //region left blank
                       TContact(Items[i]^).PostcodeWk +';'+TContact(Items[i]^).CountryWk;
-          if length(line) > 6 then  vcard.add('ADR;WORK;CHARSET=UTF-8:'+line);
-          line:= TContact(Items[i]^).PhoneWk;
-          if length(line) > 0 then vcard.add('TEL;WORK:'+line);
-          line:= TContact(Items[i]^).MobileWk;
-          if length(line) > 0 then vcard.add('TEL;CELL;WORK:'+line);
-          line:= TContact(Items[i]^).EmailWk;
-          if length(line) > 0 then vcard.add('EMAIL;WORK:'+line);
-          line:= TContact(Items[i]^).WebWk;
-          if length(line) > 0 then vcard.add('URL;WORK:'+line);
-          vcard.add('GEO;WORK:'+FloattoStr(TContact(Items[i]^).LatitudeWk)+';'+FloattoStr(TContact(Items[i]^).LongitudeWk));
-          // REV (timestamp)
-          vcard.add('REV:'+FormatDateTime('YYYYMMDD"T"hhnnss', TContact(Items[i]^).Date));
+         if length(line) > 6 then  vcard.add('ADR;WORK;CHARSET=UTF-8:'+line);
+         line:= TContact(Items[i]^).PhoneWk;
+         if length(line) > 0 then vcard.add('TEL;WORK:'+line);
+         line:= TContact(Items[i]^).MobileWk;
+         if length(line) > 0 then vcard.add('TEL;CELL;WORK:'+line);
+         line:= TContact(Items[i]^).EmailWk;
+         if length(line) > 0 then vcard.add('EMAIL;WORK:'+line);
+         line:= TContact(Items[i]^).WebWk;
+         if length(line) > 0 then vcard.add('URL;WORK:'+line);
+         vcard.add('GEO;WORK:'+FloatToString(TContact(Items[i]^).LatitudeWk)+';'+FloatToString(TContact(Items[i]^).LongitudeWk));
+         // REV (timestamp)
+         vcard.add('REV:'+FormatDateTime('YYYYMMDD"T"hhnnss', TContact(Items[i]^).Date));
 
-          // Add photo
-          //EncodeStringBase64(const s:string):String;
-          If Fileexists(TContact(Items[i]^).Imagepath) then
-          try
-            fs:= TFileStream.Create(TContact(Items[i]^).Imagepath, fmOpenRead);
-            if fs.Size > 0 then
-            begin
-              fs.Position := 0;
-              SetLength(fstring, fs.Size div SizeOf(Char));
-              fs.ReadBuffer(Pointer(fstring)^, fs.Size div SizeOf(Char));
-              B64string := EncodeStringBase64(fString);
-              // insert line breaks every 76 chars
-              photostr:= 'PHOTO;ENCODING=BASE64;TYPE=JPEG:'+B64string;
-              for j:= 0 to (length(photostr) div 76)+1 do
-              begin
-                line:= copy(photostr, (j*76)+1, 76);
-                if length(line) > 0 then
-                begin
-                  vcard.add(line);
-                end else
-                begin
-                  vcard.add('');
-                  break;
-                end;
-              end;
-            end;
-          finally
-            fs.free;
-          end;
-          vcard.add(vcend);
-          vcard.add('');
-          // Reset tag to false when processed
-          TContact(Items[i]^).Tag:= false;
+         // Add photo
+         //EncodeStringBase64(const s:string):String;
+         If Fileexists(TContact(Items[i]^).Imagepath) then
+         try
+           fs:= TFileStream.Create(TContact(Items[i]^).Imagepath, fmOpenRead);
+           if fs.Size > 0 then
+           begin
+             fs.Position := 0;
+             SetLength(fstring, fs.Size div SizeOf(Char));
+             fs.ReadBuffer(Pointer(fstring)^, fs.Size div SizeOf(Char));
+             B64string := EncodeStringBase64(fString);
+             // insert line breaks every 76 chars
+             photostr:= 'PHOTO;ENCODING=BASE64;TYPE=JPEG:'+B64string;
+             for j:= 0 to (length(photostr) div 76)+1 do
+             begin
+               line:= copy(photostr, (j*76)+1, 76);
+               if length(line) > 0 then
+               begin
+                 vcard.add(line);
+               end else
+               begin
+                 vcard.add('');
+                 break;
+               end;
+             end;
+           end;
+         finally
+           fs.free;
+         end;
+         vcard.add(vcend);
+         vcard.add('');
        end;
     end;
+    result:= true;
     vcard.SaveToFile(filename);
     vcard.free;
   end;
-  DefaultFormatSettings.DecimalSeparator:= DecSep;
 end;
 
 
 
-function TContactsList.SaveToCsvfile(filename: string; chrset: TCharset=UTF8;  mode: TSaveMode=all; header: boolean=true): Boolean;
+function TContactsList.SaveToCsvfile(filename: string; chrset: TCharset=UTF8;  typ: TSaveType=all; header: boolean=true): Boolean;
 var
   csv: TstringList;
   csvh : string;
   quote : string;      // quote
   quotdel: string;   // quote+delimiter
-  decsep: Char;
   i, j: integer;
   line: string;
 begin
-
-  decsep:= DefaultFormatSettings.DecimalSeparator;
-  DefaultFormatSettings.DecimalSeparator:= '.';
+  result:= false;
   if Count > 0 then
   begin
     quote:= FCsvQuote;
@@ -915,29 +901,24 @@ begin
       csvh:= StringReplace(FCsvHeader, ',', FCsvDelimiter ,[rfReplaceAll]);
       csvh:= StringReplace(csvh, '"',FCsvQuote ,[rfReplaceAll]);
       if chrset = UTF8 then csv.AddText(csvh)     // UTF8
-      else  csv.Add(IsUtf82Ansi(csvh));         // ANSI
+      else  csv.Add(IsUtf82Ansi(csvh));           // ANSI
     end;
     for i:= 0 to Count-1 do
     begin
-      if mode = all then  GetItem(i).Tag:= true; //TContact(Items[i]^).Tag:= true;
-
-      if GetItem(i).Tag then
-      begin
-        line:= '';
-        for j:=0 to length(AFieldNames)-2 do line:= line+quote+GetItemFieldString(i, AFieldNames[j]) +quotdel;
-        // last field, no separator at the end
-        line:= line+quote+GetItemFieldString(i, AFieldNames[length(AFieldNames)-1])+quote;
-        // Charset conversion
-        if chrset= UTF8 then csv.AddText(line)     // UTF8
-        else  csv.Add(IsUtf82Ansi(line));          // ANSI
-        //TContact(Items[i]^).Tag:= false;
-        GetItem(i).Tag:= false;
-      end;
-    end;
+      if (typ=selection) and not(TContact(Items[i]^).Tag) then continue;
+      // Reset tag to false when processed
+      if GetItem(i).Tag then TContact(Items[i]^).Tag:= false;
+      line:= '';
+      for j:=0 to length(AFieldNames)-2 do line:= line+quote+GetItemFieldString(i, AFieldNames[j]) +quotdel;
+      // last field, no separator at the end
+      line:= line+quote+GetItemFieldString(i, AFieldNames[length(AFieldNames)-1])+quote;
+      // Charset conversion
+      if chrset= UTF8 then csv.AddText(line)     // UTF8
+      else  csv.Add(IsUtf82Ansi(line));          // ANSI
+   end;
     csv.SaveToFile(filename);
     csv.Free;
   end;
-  DefaultFormatSettings.DecimalSeparator:= decsep;
 end;
 
 end.

@@ -240,6 +240,16 @@ Version 1.0.0.10 - 17/11/2019
 - Fixed errors during first use (no contact in database) or when no config file is present
 - Reported all customized conversion routines (bool, date, float) in lazbbutils
 
+Version 1.0.0.11 - 18/11/2019
+- Changed load and save settings and contacts functions
+- Optimized import/export functions
+- String conversion routines improved with formatsettings variable and exception trapping
+- Aboutbox size can be changed in the code to match the length of title/descriptions
+- Dates are displayed and entered in local format, but are saved in 'dd/mm/yyyy hh:nn:ss' format
+- Lazbbosversion updated with future Windows 10 H1 detection and ability to translate
+  version names and add new releases from the calling application
+
+
 
 
  

@@ -1,7 +1,7 @@
 object FPrefs: TFPrefs
-  Left = 711
+  Left = 583
   Height = 214
-  Top = 228
+  Top = 245
   Width = 464
   BorderStyle = bsSingle
   Caption = 'Préférences du gestionnaire de contacts'
