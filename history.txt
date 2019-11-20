@@ -249,6 +249,9 @@ Version 1.0.0.11 - 18/11/2019
 - Lazbbosversion updated with future Windows 10 H1 detection and ability to translate
   version names and add new releases from the calling application
 
+Version 1.0.0.12 - 19/11/2019
+- Corrected error in new version search
+- Proper windows install of openssl libraries (32bit or 64bit according windows OS)
 
 
 

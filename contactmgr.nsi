@@ -110,29 +110,32 @@ Section "" ;No components page, name is not important
   ${EndIf}
   Var /GLOBAL prg_to_inst
   Var /GLOBAL prg_to_del
+  
   ${If} ${RunningX64}  ; change registry entries and install dir for 64 bit
      !getdllversion  "${source_dir}\contactmgrwin64.exe" expv_
      StrCpy "$prg_to_inst" "$INSTDIR\contactmgrwin64.exe"
      StrCpy "$prg_to_del" "$INSTDIR\contactmgrwin32.exe"
+     File "${source_dir}\openssl\win64\libeay32.dll"
+     File "${source_dir}\openssl\win64\ssleay32.dll"
+     File "${source_dir}\openssl\win64\OpenSSL License.txt"
   ${Else}
      !getdllversion  "${source_dir}\contactmgrwin32.exe" expv_
      StrCpy "$prg_to_inst" "$INSTDIR\contactmgrwin32.exe"
      StrCpy "$prg_to_del" "$INSTDIR\contactmgrwin64.exe"
-  ${EndIf}
+     File "${source_dir}\\openssl\win32\libeay32.dll"
+     File "${source_dir}\\openssl\win32\ssleay32.dll"
+     File "${source_dir}\openssl\win32\OpenSSL License.txt"
+   ${EndIf}
 
   ; Dans le cas ou on n'aurait pas pu fermer l'application
   Delete /REBOOTOK "$INSTDIR\contactmgr.exe"
   File "${source_dir}\contactmgrwin64.exe"
   File "${source_dir}\contactmgrwin32.exe"
-  File "${source_dir}\libeay32.dll"
-  File "${source_dir}\ssleay32.dll"
   File "${source_dir}\licensf.txt"
   File "${source_dir}\license.txt"
-  File "${source_dir}\OpenSSL License.txt"
   File "${source_dir}\history.txt"
   File "${source_dir}\contactmgr.txt"
   File "${source_dir}\contactmgr.lng"
-  ;File "${source_dir}\FAQ.txt"
   Rename /REBOOTOK "$prg_to_inst" "$INSTDIR\contactmgr.exe"
   Delete /REBOOTOK "$prg_to_del"
 
@@ -180,7 +183,6 @@ Delete "$INSTDIR\ssleay32.dll"
 Delete "$INSTDIR\licensf.txt"
 Delete "$INSTDIR\license.txt"
 Delete "$INSTDIR\OpenSSL License.txt"
-;Delete "$INSTDIR\FAQ.txt"
 Delete "$INSTDIR\uninst.exe"
 
 ; remove shortcuts, if any.

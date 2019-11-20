@@ -268,9 +268,7 @@ var
   s: string;
 begin
   First := True;
-  // Compilation date/time
-  CompileDateTime:= StringToDateTime({$I %DATE%}+' '+{$I %TIME%}, 'yyyy/mm/dd hh:nn:ss');
-  OS := 'Unk';
+   OS := 'Unk';
   UserPath := GetUserDir;
   UserAppsDataPath := UserPath;
   {$IFDEF Linux}
@@ -384,6 +382,11 @@ var
   errmsg: string;
 begin
   inherited;
+  try
+    CompileDateTime:= StringToDateTime({$I %DATE%}+' '+{$I %TIME%}, 'yyyy/mm/dd hh:nn:ss');
+  except
+    CompileDateTime:=  now();
+  end;
   // The following has to be executed only the first time
   if not First then exit;
   First:= false;
@@ -466,9 +469,12 @@ begin
   begin
     Settings.LastUpdChk := Trunc(Now);
     s := GetLastVersion(ChkVerURL, 'contactmgr', errmsg);
-    if length(s) = 0 then MsgDlg(Caption, use64bitcaption, mtInformation,  [mbOK], [OKBtn]);
+    if length(s)=0 then
     begin
-      MsgDlg(Caption, TranslateHttpErrorMsg(errmsg, HttpErrMsgNames ), mtError,  [mbOK], [OKBtn]);
+      if length(errmsg)=0 then MsgDlg(Caption, 'Cannot get new versions list',
+          mtError,  [mbOK], [OKBtn])
+      else MsgDlg(Caption, TranslateHttpErrorMsg(errmsg, HttpErrMsgNames ),
+          mtError,  [mbOK], [OKBtn]);
       exit;
     end;
     NewVer := VersionToInt(s);
