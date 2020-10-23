@@ -3,4 +3,6 @@ lib/
 C:\Users\Bernard\Documents\Lazarus\contactmanager\libeay32.dll
 C:\Users\Bernard\Documents\Lazarus\contactmanager\ssleay32.dll
 C:\Users\Bernard\Documents\Lazarus\contactmanager\OpenSSL License.txt
-
+InstallContactsmgr.exe
+contactmgrwin32.exe
+contactmgrwin64.exe
