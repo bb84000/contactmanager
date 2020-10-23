@@ -10,13 +10,13 @@ unit settings1;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, laz2_DOM ,
-       laz2_XMLRead, laz2_XMLWrite, lazbbutils;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  Buttons, laz2_DOM, laz2_XMLRead, laz2_XMLWrite, lazbbutils;
 
 type
 
   // Define the classes in this Unit at the very start for clarity
-  TFPrefs = Class;          // This is a forward class definition
+  TFSettings = Class;          // This is a forward class definition
 
   // Settings record management
   TConfig = class
@@ -66,11 +66,11 @@ type
 end;
 
 
-  { TFPrefs }
+  { TFSettings }
 
-  TFPrefs = class(TForm)
-    BtnOK: TButton;
-    BtnCancel: TButton;
+  TFSettings = class(TForm)
+    BtnCancel: TBitBtn;
+    BtnOK: TBitBtn;
     CBSavePos: TCheckBox;
     CBStartup: TCheckBox;
     CBMinimized: TCheckBox;
@@ -91,7 +91,7 @@ end;
   end;
 
 var
-  FPrefs: TFPrefs;
+  FSettings: TFSettings;
 
 implementation
 
@@ -193,7 +193,7 @@ begin
     TDOMElement(iNode).SetAttribute ('version', FVersion);
     TDOMElement(iNode).SetAttribute ('savsizepos', BoolToString(FSavSizePos));
     TDOMElement(iNode).SetAttribute ('wstate', FWState);
-    TDOMElement(iNode).SetAttribute ('lastupdchk', DateTimeToString(FLastUpdChk));
+    TDOMElement(iNode).SetAttribute ('lastupdchk', TimeDateToString(FLastUpdChk));
     TDOMElement(iNode).SetAttribute ('nochknewver', BoolToString(FNoChkNewVer));
     TDOMElement(iNode).SetAttribute ('startwin', BoolToString(FStartWin));
     TDOMElement(iNode).SetAttribute ('startmini',BoolToString(FStartMini));
@@ -245,7 +245,7 @@ begin
     if UpCaseAttrib='VERSION' then FVersion:= iNode.Attributes.Item[i].NodeValue;
     if UpCaseAttrib='SAVSIZEPOS' then FSavSizePos:= StringToBool(iNode.Attributes.Item[i].NodeValue);
     if UpCaseAttrib='WSTATE' then  FWState:= iNode.Attributes.Item[i].NodeValue;
-    if UpCaseAttrib='LASTUPDCHK' then FLastUpdChk:= StringToDateTime(iNode.Attributes.Item[i].NodeValue,'dd/mm/yyyy hh:nn:ss');
+    if UpCaseAttrib='LASTUPDCHK' then FLastUpdChk:= StringToTimeDate(iNode.Attributes.Item[i].NodeValue,'dd/mm/yyyy hh:nn:ss');
     if UpCaseAttrib='NOCHKNEWVER' then FNoChkNewVer:= StringToBool(iNode.Attributes.Item[i].NodeValue);
     if UpCaseAttrib='STARTWIN' then FStartWin:= StringToBool(iNode.Attributes.Item[i].NodeValue);
     if UpCaseAttrib='STARTMINI' then FStartMini:= StringToBool(iNode.Attributes.Item[i].NodeValue);
@@ -276,9 +276,9 @@ begin
   result:= true;
 end;
 
-{ TFPrefs : Settings dialog }
+{ TFSettings : Settings dialog }
 
-procedure TFPrefs.CBStartupChange(Sender: TObject);
+procedure TFSettings.CBStartupChange(Sender: TObject);
 begin
   CBMinimized.Enabled:= CBStartup.Checked;
 end;

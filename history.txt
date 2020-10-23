@@ -253,6 +253,17 @@ Version 1.0.0.12 - 19/11/2019
 - Corrected error in new version search
 - Proper windows install of openssl libraries (32bit or 64bit according windows OS)
 
+Version 1.0.0.13 - 27/11/2019
+- Buttons have new glyphs
+- New name for settings form
+- deallocate memory in contacts1 unit (new - dispose)
+- In Lazzbbutils changed DateTimeToString function name to TimeDateToString
+  to avoid conflict with DateTimeToString procedure, and StringToDateTime to
+  StringToTimeDate for coherency
+
+Version 1.0.0.14 - 23/10/2020
+- Updated windows version info
+
 
 
  

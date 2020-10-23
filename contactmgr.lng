@@ -105,14 +105,14 @@ LastUpdateSearch=Last update check
 UpdateAlertBox=Current version: %sA new version %s is available
 
 ;Settings
-FPrefs.Caption=Contact Manager settings
-FPrefs.GroupBox1.Caption=System
-FPrefs.LDataFolder.Caption=Data folder
-FPrefs.CBStartup.Caption=Launch at system startup
-FPrefs.CBMinimized.Caption=Launch minimized
-FPrefs.CBSavePos.Caption=Save size and position
-FPrefs.CBUpdate.Caption=Don't search update
-FPrefs.LLangue.Caption=Language
+FSettings.Caption=Contact Manager settings
+FSettings.GroupBox1.Caption=System
+FSettings.LDataFolder.Caption=Data folder
+FSettings.CBStartup.Caption=Launch at system startup
+FSettings.CBMinimized.Caption=Launch minimized
+FSettings.CBSavePos.Caption=Save size and position
+FSettings.CBUpdate.Caption=Don't search update
+FSettings.LLangue.Caption=Language
 
 ;Http error messages
 SErrInvalidProtocol=Invalid protocol "%s"
@@ -253,15 +253,15 @@ LastUpdateSearch=Dernière recherche de mise à jour
 UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
 
 ;Settings
-FPrefs.Caption=Préférences du gestionnaire de contacts
-FPrefs.GroupBox1.Caption=Système
-FPrefs.LDataFolder.Caption=Dossier de données
-FPrefs.CBStartup.Caption=Lancer au démarrage du système
-FPrefs.CBMinimized.Caption=Démarrage minimisé
-FPrefs.CBSavePos.Caption=Sauvegarde taille et position
-FPrefs.CBUpdate.Caption=Ne pas rechercher de mise à jour
-FPrefs.LLangue.Caption=Langue
-FPrefs.BtnCancel.Caption=Annuler
+FSettings.Caption=Préférences du gestionnaire de contacts
+FSettings.GroupBox1.Caption=Système
+FSettings.LDataFolder.Caption=Dossier de données
+FSettings.CBStartup.Caption=Lancer au démarrage du système
+FSettings.CBMinimized.Caption=Démarrage minimisé
+FSettings.CBSavePos.Caption=Sauvegarde taille et position
+FSettings.CBUpdate.Caption=Ne pas rechercher de mise à jour
+FSettings.LLangue.Caption=Langue
+FSettings.BtnCancel.Caption=Annuler
 
 ;Http error messages
 SErrInvalidProtocol=Protocole "%s" invalide

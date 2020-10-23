@@ -259,16 +259,15 @@ implementation
 
 {$R *.lfm}
 
-
-
-{ TFContactManager }
+// TFContactManager : This is the main form of the program
 
 procedure TFContactManager.FormCreate(Sender: TObject);
 var
   s: string;
 begin
   First := True;
-   OS := 'Unk';
+  CompileDateTime:= StringToTimeDate({$I %DATE%}+' '+{$I %TIME%}, 'yyyy/mm/dd hh:nn:ss');
+  OS := 'Unk';
   UserPath := GetUserDir;
   UserAppsDataPath := UserPath;
   {$IFDEF Linux}
@@ -382,11 +381,7 @@ var
   errmsg: string;
 begin
   inherited;
-  try
-    CompileDateTime:= StringToDateTime({$I %DATE%}+' '+{$I %TIME%}, 'yyyy/mm/dd hh:nn:ss');
-  except
-    CompileDateTime:=  now();
-  end;
+
   // The following has to be executed only the first time
   if not First then exit;
   First:= false;
@@ -419,7 +414,7 @@ begin
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
   AboutBox.LUpdate.Hint := LastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
   AboutBox.UrlWebsite := GetVersionInfo.Comments;
-  FPrefs.LStatus.Caption := OsInfo.VerDetail;
+  FSettings.LStatus.Caption := OsInfo.VerDetail;
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
   else
@@ -490,6 +485,7 @@ begin
         OpenURL(Format(BaseUpdateURl, [version, Settings.LangStr]));
         Settings.NoChkNewVer := AlertBox.CBNoShowAlert.Checked;
       end;
+
     end;
   end;
 end;
@@ -544,9 +540,27 @@ end;
 
 function TFContactManager.ShowAlert(Title, AlertStr, StReplace, NoShow: string;
   var Alert: boolean): boolean;
+var
+  NoNewVer: Boolean;
+  AlRes: Integer;
 begin
   Result := False;
-  with AlertBox do
+  NoNewVer:= true  ;
+  AlRes:= AlertDlg(Title, Format(UpdateAlertBox, [version + #10, streplace]) , ['OK', CancelBtn,  NoShow],
+                  NoNewVer, mtError);
+  Case AlRes of
+    mrOK: begin
+            Result:= true;
+            Alert:= false;
+          end;
+    mrYesToAll: begin
+                  Result:= true;
+                  Alert:= true;
+                end;
+  end;
+
+
+  {with AlertBox do
   begin
     Caption := Title;
     Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
@@ -557,9 +571,9 @@ begin
       if ShowModal = mrOk then
       begin
         Result := True;
-        Alert := CBNoShowAlert.Checked;
+        CBNoShowAlert.Checked;
       end;
-  end;
+  end; }
 end;
 
 // Load configuration and database from file
@@ -591,7 +605,7 @@ begin
   if LangNums.Count > 1 then
     for i := 0 to LangNums.Count - 1 do
     begin
-      FPrefs.CBLangue.Items.Add(LangFile.ReadString(LangNums.Strings[i], 'Language',
+      FSettings.CBLangue.Items.Add(LangFile.ReadString(LangNums.Strings[i], 'Language',
         'Aucune'));
       if LangNums.Strings[i] = Settings.LangStr then
         LangFound := True;
@@ -803,7 +817,7 @@ begin
           MyEdit.Text := ListeContacts.GetItemFieldString(n, AFieldNames[i]);
       // Replace with date locale format
       EDate.Text:= DateTimeToStr(ListeContacts.GetItem(n).Date);
-      EDatemodif.text:= DateTimeToString(ListeContacts.GetItem(n).DateModif);
+      EDatemodif.text:= TimeDateToString(ListeContacts.GetItem(n).DateModif);
     end else
     begin
       if Assigned(MyEdit) then
@@ -916,7 +930,7 @@ begin
     Web := EWeb.Text;
     Longitude := StringToFloat(ELongitude.Text);
     Latitude := StringToFloat(ELatitude.Text);
-    Date := StringToDateTime(EDate.Text);
+    Date := StringToTimeDate(EDate.Text);
     DateModif := now();
     //image
     fonction := EFonction.Text;
@@ -1359,22 +1373,22 @@ procedure TFContactManager.BtnPrefsClick(Sender: TObject);
 var
   oldndx: integer;
 begin
-  Fprefs.Edatafolder.Text := ContactMgrAppsData;
-  Fprefs.CBStartup.Checked := Settings.StartWin;
-  Fprefs.CBSavePos.Checked := Settings.SavSizePos;
-  Fprefs.CBMinimized.Checked := Settings.StartMini;
-  Fprefs.CBUpdate.Checked := Settings.NoChkNewVer;
-  FPrefs.CBLangue.ItemIndex := LangNums.IndexOf(Settings.LangStr);
-  oldndx := FPrefs.CBLangue.ItemIndex;
-  FPrefs.CBMinimized.Enabled := FPrefs.CBStartup.Checked;
-  if FPrefs.ShowModal = mrOk then
+  FSettings.Edatafolder.Text := ContactMgrAppsData;
+  FSettings.CBStartup.Checked := Settings.StartWin;
+  FSettings.CBSavePos.Checked := Settings.SavSizePos;
+  FSettings.CBMinimized.Checked := Settings.StartMini;
+  FSettings.CBUpdate.Checked := Settings.NoChkNewVer;
+  FSettings.CBLangue.ItemIndex := LangNums.IndexOf(Settings.LangStr);
+  oldndx := FSettings.CBLangue.ItemIndex;
+  FSettings.CBMinimized.Enabled := FSettings.CBStartup.Checked;
+  if FSettings.ShowModal = mrOk then
   begin
-    Settings.StartWin := Fprefs.CBStartup.Checked;
-    Settings.SavSizePos := Fprefs.CBSavePos.Checked;
-    Settings.StartMini := Fprefs.CBMinimized.Checked;
-    Settings.NoChkNewVer := Fprefs.CBUpdate.Checked;
-    Settings.LangStr := LangNums.Strings[FPrefs.CBLangue.ItemIndex];
-    if FPrefs.CBLangue.ItemIndex <> oldndx then
+    Settings.StartWin := FSettings.CBStartup.Checked;
+    Settings.SavSizePos := FSettings.CBSavePos.Checked;
+    Settings.StartMini := FSettings.CBMinimized.Checked;
+    Settings.NoChkNewVer := FSettings.CBUpdate.Checked;
+    Settings.LangStr := LangNums.Strings[FSettings.CBLangue.ItemIndex];
+    if FSettings.CBLangue.ItemIndex <> oldndx then
       ModLangue;
     DisplayContact;                                // Needed to change language on hints
   end;
@@ -1578,15 +1592,15 @@ begin
     UpdateAlertBox:=ReadString(LangStr,'UpdateAlertBox',
       'Version actuelle: %sUne nouvelle version %s est disponible');
     // Settings
-    FPrefs.Caption:=ReadString(LangStr,'FPrefs.Caption',FPrefs.Caption);
-    FPrefs.GroupBox1.Caption:=ReadString(LangStr,'FPrefs.GroupBox1.Caption',FPrefs.GroupBox1.Caption);
-    FPrefs.LDataFolder.Caption:=ReadString(LangStr,'FPrefs.LDataFolder.Caption',FPrefs.LDataFolder.Caption);
-    FPrefs.CBStartup.Caption:=ReadString(LangStr,'FPrefs.CBStartup.Caption',FPrefs.CBStartup.Caption);
-    FPrefs.CBMinimized.Caption:=ReadString(LangStr,'FPrefs.CBMinimized.Caption',FPrefs.CBMinimized.Caption);
-    FPrefs.CBSavePos.Caption:=ReadString(LangStr,'FPrefs.CBSavePos.Caption',FPrefs.CBSavePos.Caption);
-    FPrefs.CBUpdate.Caption:=ReadString(LangStr,'FPrefs.CBUpdate.Caption',FPrefs.CBUpdate.Caption);
-    FPrefs.LLangue.Caption:=ReadString(LangStr,'FPrefs.LLangue.Caption',FPrefs.LLangue.Caption);
-    FPrefs.BtnCancel.Caption:=CancelBtn;
+    FSettings.Caption:=ReadString(LangStr,'FSettings.Caption',FSettings.Caption);
+    FSettings.GroupBox1.Caption:=ReadString(LangStr,'FSettings.GroupBox1.Caption',FSettings.GroupBox1.Caption);
+    FSettings.LDataFolder.Caption:=ReadString(LangStr,'FSettings.LDataFolder.Caption',FSettings.LDataFolder.Caption);
+    FSettings.CBStartup.Caption:=ReadString(LangStr,'FSettings.CBStartup.Caption',FSettings.CBStartup.Caption);
+    FSettings.CBMinimized.Caption:=ReadString(LangStr,'FSettings.CBMinimized.Caption',FSettings.CBMinimized.Caption);
+    FSettings.CBSavePos.Caption:=ReadString(LangStr,'FSettings.CBSavePos.Caption',FSettings.CBSavePos.Caption);
+    FSettings.CBUpdate.Caption:=ReadString(LangStr,'FSettings.CBUpdate.Caption',FSettings.CBUpdate.Caption);
+    FSettings.LLangue.Caption:=ReadString(LangStr,'FSettings.LLangue.Caption',FSettings.LLangue.Caption);
+    FSettings.BtnCancel.Caption:=CancelBtn;
     // Import/export
     FImpex.Caption:=ReadString(LangStr,'FImpex.Caption',FImpex.Caption);
     FImpex.RBImport.Caption:=ReadString(LangStr,'FImpex.RBImport.Caption',FImpex.RBImport.Caption);
@@ -1603,7 +1617,7 @@ begin
     FImpex.SD1.Title:=ReadString(LangStr,'FImpex.SD1.Title',FImpex.SD1.Title);
     FImpex_ImportBtn_Caption:=ReadString(LangStr,'FImpex.ImportBtn.Caption','Importation');
     FImpex_ExportBtn_Caption:=ReadString(LangStr,'FImpex.ExportBtn.Caption','Exportation');
-    FImpex.BtnCancel.Caption:=FPrefs.BtnCancel.Caption;
+    FImpex.BtnCancel.Caption:=FSettings.BtnCancel.Caption;
     // popup menus
     MnuRetrieveGPSCaption:=ReadString(LangStr,'MnuRetrieveGPSCaption','Récupérer les données GPS de %s');
     MnuLocateCaption:=ReadString(LangStr,'MnuLocateCaption','Localiser %s sur une carte');

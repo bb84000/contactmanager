@@ -1,7 +1,7 @@
 object FContactManager: TFContactManager
-  Left = 831
+  Left = 456
   Height = 500
-  Top = 127
+  Top = 180
   Width = 685
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -14,7 +14,7 @@ object FContactManager: TFContactManager
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poDesktopCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.0.6.0'
   object PnlOrder: TPanel
     Left = 0
     Height = 70

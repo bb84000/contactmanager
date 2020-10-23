@@ -287,6 +287,7 @@ begin
   K^:= Contact;
   add(K);
   DoSort;
+  K:= nil;
   if Assigned(FOnChange) then FOnChange(Self);
 end;
 
@@ -365,8 +366,8 @@ begin
   if field='AUTRE' then result:= TContact(Items[i]^).Autre;
   if field='EMAIL' then result:= TContact(Items[i]^).Email;
   if field='WEB' then result:= TContact(Items[i]^).Web;
-  if field='DATE' then result:= DateTimeToString(TContact(Items[i]^).Date, 'dd/mm/yyyy hh:nn:ss');
-  if field='DATEMODIF' then result:= DateTimeToString(TContact(Items[i]^).DateModif, 'dd/mm/yyyy hh:nn:ss');
+  if field='DATE' then result:= TimeDateToString(TContact(Items[i]^).Date, 'dd/mm/yyyy hh:nn:ss');
+  if field='DATEMODIF' then result:= TimeDateToString(TContact(Items[i]^).DateModif, 'dd/mm/yyyy hh:nn:ss');
   if field='COMMENT' then result:= TContact(Items[i]^).Comment ;
   if field='INDEX1' then result:= IntToStr(TContact(Items[i]^).Index1);
   if field='LONGITUDE' then result:= FloatToString(TContact(Items[i]^).Longitude);
@@ -434,8 +435,8 @@ begin
         if upNodeName = 'AUTRE' then K^.Autre:= s;
         if upNodeName = 'EMAIL' then K^.Email := s;
         if upNodeName = 'WEB' then K^.Web:= s;
-        if upNodeName = 'DATE' then K^.Date := StringToDateTime(s);
-        if upNodeName = 'DATEMODIF' then K^.DateModif:= StringToDateTime(s);
+        if upNodeName = 'DATE' then K^.Date := StringToTimeDate(s);
+        if upNodeName = 'DATEMODIF' then K^.DateModif:= StringToTimeDate(s);
         if upNodeName = 'COMMENT' then K^.Comment:= s;
         if upNodeName = 'INDEX1' then K^.Index1 := StringToInt(s);
         if upNodeName = 'LONGITUDE' then K^.Longitude:= StringToFloat(s);
@@ -466,6 +467,7 @@ begin
       add(K);
     finally
       chNode := chNode.NextSibling;
+      K:= nil;
     end;
   end;
   result:= true;

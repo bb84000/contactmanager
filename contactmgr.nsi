@@ -13,8 +13,9 @@
   ;General
   Name "Contacts Manager"
   OutFile "InstallContactsmgr.exe"
-  !define source_dir "C:\Users\Bernard\Documents\Lazarus\contactmanager"
-
+  !define lazarus_dir "C:\Users\Bernard\Documents\Lazarus"
+  !define source_dir "${lazarus_dir}\contactmanager"
+  
   RequestExecutionLevel admin
   
   ;Windows vista.. 10 manifest
@@ -115,16 +116,16 @@ Section "" ;No components page, name is not important
      !getdllversion  "${source_dir}\contactmgrwin64.exe" expv_
      StrCpy "$prg_to_inst" "$INSTDIR\contactmgrwin64.exe"
      StrCpy "$prg_to_del" "$INSTDIR\contactmgrwin32.exe"
-     File "${source_dir}\openssl\win64\libeay32.dll"
-     File "${source_dir}\openssl\win64\ssleay32.dll"
-     File "${source_dir}\openssl\win64\OpenSSL License.txt"
+     File "${lazarus_dir}\openssl\win64\libeay32.dll"
+     File "${lazarus_dir}\openssl\win64\ssleay32.dll"
+     File "${lazarus_dir}\openssl\OpenSSL License.txt"
   ${Else}
      !getdllversion  "${source_dir}\contactmgrwin32.exe" expv_
      StrCpy "$prg_to_inst" "$INSTDIR\contactmgrwin32.exe"
      StrCpy "$prg_to_del" "$INSTDIR\contactmgrwin64.exe"
-     File "${source_dir}\\openssl\win32\libeay32.dll"
-     File "${source_dir}\\openssl\win32\ssleay32.dll"
-     File "${source_dir}\openssl\win32\OpenSSL License.txt"
+     File "${lazarus_dir}\openssl\win32\libeay32.dll"
+     File "${lazarus_dir}\openssl\win32\ssleay32.dll"
+     File "${lazarus_dir}\openssl\OpenSSL License.txt"
    ${EndIf}
 
   ; Dans le cas ou on n'aurait pas pu fermer l'application
@@ -173,6 +174,9 @@ SectionEnd
 
 Section Uninstall
 SetShellVarContext all
+${If} ${RunningX64}
+  SetRegView 64    ; change registry entries and install dir for 64 bit
+${EndIf}
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
 Delete /REBOOTOK "$INSTDIR\contactmgr.exe"
 Delete "$INSTDIR\history.txt"

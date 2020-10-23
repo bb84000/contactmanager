@@ -21,7 +21,7 @@ begin
   Application.CreateForm(TAboutBox, AboutBox);
   Application.CreateForm(TAlertBox, AlertBox);
   Application.CreateForm(TFImpex, FImpex);
-  Application.CreateForm(TFPrefs, FPrefs);
+  Application.CreateForm(TFSettings, FSettings);
   Application.Run;
 end.
 

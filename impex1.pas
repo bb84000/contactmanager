@@ -18,11 +18,11 @@ type
   { TFImpex }
 
   TFImpex = class(TForm)
-    BtnCancel: TButton;
-    BtnImpex: TButton;
-    BtnUp: TButton;
-    BtnEmpty: TButton;
-    BtnDown: TButton;
+    BtnEmpty: TBitBtn;
+    BtnDown: TBitBtn;
+    BtnUp: TBitBtn;
+    BtnCancel: TBitBtn;
+    BtnImpex: TBitBtn;
     CBType: TComboBox;
     CBCode: TComboBox;
     CBFirstline: TCheckBox;
@@ -35,7 +35,7 @@ type
     LBImpex: TListBox;
     LSepar: TLabel;
     OD1: TOpenDialog;
-    Panel1: TPanel;
+    PnlBtns: TPanel;
     Panel2: TPanel;
     PnlTop: TPanel;
     RBExport: TRadioButton;
@@ -470,7 +470,7 @@ end;
 function TFImpex.getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
 begin
   try
-    result:= StringToDateTime(doc.Cells[ContactFldArray[fld],ndx]);
+    result:= StringToTimeDate(doc.Cells[ContactFldArray[fld],ndx]);
   except
     result:= now();
   end;
