@@ -261,8 +261,9 @@ Version 1.0.0.13 - 27/11/2019
   to avoid conflict with DateTimeToString procedure, and StringToDateTime to
   StringToTimeDate for coherency
 
-Version 1.0.0.14 - 23/10/2020
-- Updated windows version info
+Version 1.0.0.15 - 04/11/2020
+- Changed windows version info unit with translation strings
+
 
 
 

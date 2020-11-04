@@ -13,7 +13,7 @@ uses
   Win32Proc,
   {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
   ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead,
-  Types, lazbbosversion,
+  Types, lazbbosver,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl,
   openssl, strutils, lazbbabout, settings1, lazbbinifiles,
   LazUTF8, Clipbrd, UniqueInstance, lazbbalert, lazbbchknewver, lazbbautostart;
@@ -207,7 +207,7 @@ type
     LangFile: TBbIniFile;
     LangNums: TStringList;
     LangFound: boolean;
-    OsInfo: TOSInfo;
+    OsVersion: TOSVersion;
     Newsearch: boolean;
     previndex: integer;
     MnuRetrieveGPSCaption: string;
@@ -289,17 +289,18 @@ begin
     else
     UserAppsDataPath := ExtractFilePath(ExcludeTrailingPathDelimiter(s)) + 'Roaming'; // Vista to W10
     LazGetShortLanguageID(LangStr);
-    {$IFDEF WIN32}
-      OSTarget := '32 bits';
+    {$IFDEF CPU32}
+       OSTarget := '32 bits';
     {$ENDIF}
-    {$IFDEF WIN64}
-      OSTarget := '64 bits';
+    {$IFDEF CPU64}
+       OSTarget := '64 bits';
     {$ENDIF}
   {$ENDIF}
-  GetSysInfo(OsInfo);
+  //GetSysInfo(OsInfo);
   ProgName := 'ContactMgr';
   // Chargement des chaînes de langue...
   LangFile := TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'contactmgr.lng');
+  OSVersion:= TOSVersion.Create(LangStr, LangFile);
   LangNums := TStringList.Create;
   ContactMgrAppsData := UserAppsDataPath + PathDelim + ProgName + PathDelim;
   if not DirectoryExists(ContactMgrAppsData) then
@@ -414,7 +415,7 @@ begin
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
   AboutBox.LUpdate.Hint := LastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
   AboutBox.UrlWebsite := GetVersionInfo.Comments;
-  FSettings.LStatus.Caption := OsInfo.VerDetail;
+  FSettings.LStatus.Caption := OsVersion.VerDetail;
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
   else
@@ -455,8 +456,8 @@ begin
   ContactsChanged := False;
 
   Application.Title := Caption;
-  if (OSINfo.Architecture = 'x86_64') and (OsTarget = '32 bits') then
-     MsgDlg(Caption, use64bitcaption, mtInformation,  [mbOK], [OKBtn]);
+   if (Pos('64', OSVersion.Architecture)>0) and (OsTarget='32 bits') then
+    MsgDlg(Caption, use64bitcaption, mtInformation,  [mbOK], [OKBtn]);
   Application.ProcessMessages;
   //Dernière recherche il y a plus de 7 jours ?
   errmsg := '';
@@ -1485,9 +1486,10 @@ const
   dquot = '"';     // Double quote
   dquotv = '","';   // Double cote  plus comma plus double quote
 begin
+  LangStr:=Settings.LangStr;
+  OSVersion:= TOSVersion.Create(LangStr, LangFile);
   with LangFile do
   begin
-    LangStr:=Settings.LangStr;
     //Main Form
     Caption:=ReadString(LangStr,'Caption','Gestionnaire de Contacts');
     // Components
@@ -1618,6 +1620,9 @@ begin
     FImpex_ImportBtn_Caption:=ReadString(LangStr,'FImpex.ImportBtn.Caption','Importation');
     FImpex_ExportBtn_Caption:=ReadString(LangStr,'FImpex.ExportBtn.Caption','Exportation');
     FImpex.BtnCancel.Caption:=FSettings.BtnCancel.Caption;
+    FSettings.Lstatus.Caption:= OSVersion.VerDetail;
+
+
     // popup menus
     MnuRetrieveGPSCaption:=ReadString(LangStr,'MnuRetrieveGPSCaption','Récupérer les données GPS de %s');
     MnuLocateCaption:=ReadString(LangStr,'MnuLocateCaption','Localiser %s sur une carte');
