@@ -14,7 +14,7 @@ object FContactManager: TFContactManager
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poDesktopCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.0.10.0'
   object PnlOrder: TPanel
     Left = 0
     Height = 70
@@ -2296,8 +2296,8 @@ object FContactManager: TFContactManager
     end
   end
   object PMnuImg: TPopupMenu
-    left = 608
-    top = 376
+    Left = 608
+    Top = 376
     object PMnuChooseImg: TMenuItem
       Caption = 'Choisir une image'
       Bitmap.Data = {
@@ -2420,13 +2420,13 @@ object FContactManager: TFContactManager
     end
   end
   object OPictDialog: TOpenPictureDialog
-    left = 496
-    top = 384
+    Left = 496
+    Top = 384
   end
   object PMnuList: TPopupMenu
     OnPopup = PMnuListPopup
-    left = 152
-    top = 91
+    Left = 152
+    Top = 91
     object MnuCoord: TMenuItem
       Caption = 'Récupérer les données GPS du contact'
       OnClick = BtnLocateClick
@@ -2493,7 +2493,7 @@ object FContactManager: TFContactManager
   end
   object UniqueInstance1: TUniqueInstance
     Enabled = True
-    left = 71
-    top = 148
+    Left = 71
+    Top = 148
   end
 end

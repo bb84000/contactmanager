@@ -99,10 +99,12 @@ MailSubject=Mail from Contacts Manager
 ConfirmDeleteContact=Do you really want to delete the contact %s ?
 CanCloseMsg=A change is pending.%sTo validate the change and quit, click on the "Yes" button.%To cancel the change and quit, click on the "No" button.%sTo return to the program, click on the "Cancel" button.
 Use64bitcaption=Use the 64bit version of the program
-UpdateAvailable=New version %s available
+AboutBox.UpdateAvailable=New version %s available
 NoLongerChkUpdates=No longer check updates
-LastUpdateSearch=Last update check
+AboutBox.LastUpdateSearch=Last update check
+AboutBox.NoUpdateAvailable=Contacts manager is up to date
 UpdateAlertBox=Current version: %sA new version %s is available
+CannotGetNewVerList=Cannot get new versions list
 
 ;Settings
 FSettings.Caption=Contact Manager settings
@@ -266,10 +268,12 @@ MailSubject=Courrier du gestionnaire de contacts
 ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
 CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez sur le bouton 'Oui'.%sPour l'annuler et quitter, cliquer sur le bouton 'Non'.%sPour revenir au programme, cliquer sur le bouton 'Annuler'.
 Use64bitcaption=Utilisez la version 64 bits de ce programme
-UpdateAvailable=Nouvelle version %s disponible
+AboutBox.UpdateAvailable=Nouvelle version %s disponible
 NoLongerChkUpdates=Ne plus rechercher de mise à jour
-LastUpdateSearch=Dernière recherche de mise à jour
+AboutBox.LastUpdateSearch=Dernière recherche de mise à jour
+AboutBox.NoUpdateAvailable=Gestionnaire de contacts est à jour
 UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
+CannotGetNewVerList=Liste des nouvelles versions indisponible
 
 ;Settings
 FSettings.Caption=Préférences du gestionnaire de contacts

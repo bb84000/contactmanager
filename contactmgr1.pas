@@ -15,8 +15,9 @@ uses
   ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead,
   Types, lazbbosver,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl,
-  openssl, strutils, lazbbabout, settings1, lazbbinifiles,
-  LazUTF8, Clipbrd, UniqueInstance, lazbbalert, lazbbchknewver, lazbbautostart;
+  openssl, strutils, lazbbaboutupdate, settings1, lazbbinifiles,
+  LazUTF8, Clipbrd, UniqueInstance, lazbbalert, lazbbchknewver, lazbbautostart,
+  opensslsockets;
 
 type
   TSaveMode = (None, Setting, All);
@@ -193,7 +194,7 @@ type
     BaseUpdateUrl, ChkVerURL: string;
     UpdateAvailable, UpdateAlertBox: string;
 
-    NoLongerChkUpdates, LastUpdateSearch: string;
+    sNoLongerChkUpdates, LastUpdateSearch: string;
     NoChkNewVer: boolean;
     LieuditCaption, BPCaption: string;
     CPCaption, TownCaption: string;
@@ -227,6 +228,7 @@ type
     Use64bitcaption: string;
 
     HttpErrMsgNames: array [0..16] of string;
+    sCannotGetNewVerList: string;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
     procedure DisplayContact;
@@ -244,6 +246,7 @@ type
       var Alert: boolean): boolean;
     procedure EnableLocBtns;
     procedure EnableEdits(Enable: Boolean);
+    procedure CheckUpdate;
   public
     FImpex_ImportBtn_Caption: string;
     FImpex_ExportBtn_Caption: string;
@@ -400,13 +403,17 @@ begin
             ContactMgrAppsData + ProgName + '.bk' + IntToStr(i - 1));
     end else SaveConfig(All);
   end;
-  BaseUpdateUrl :='https://www.sdtp.com/versions/version.php?program=contactmgr&version=%s&language=%s';
-  ChkVerURL := 'https://www.sdtp.com/versions/versions.csv';
+  //BaseUpdateUrl :='https://www.sdtp.com/versions/version.php?program=contactmgr&version=%s&language=%s';
+  //ChkVerURL := 'https://www.sdtp.com/versions/versions.csv';
   version := GetVersionInfo.ProductVersion;
   LoadCfgFile(ConfigFile);
+   if length(Settings.LastVersion)=0 then Settings.LastVersion:= version;
   // AboutBox.UrlUpdate:= BaseUpdateURl+Version+'&language='+Settings.LangStr;    // In Modlang
   // AboutBox.LUpdate.Caption:= 'Recherche de mise à jour';      // in Modlangue
   // Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
+  AboutBox.Version:= Version;
+  AboutBox.ChkVerURL := 'https://github.com/bb84000/contactmanager/releases/latest';
+  AboutBox.UrlWebsite:= 'https://www.sdtp.com';
   AboutBox.Width:= 340; // to have more place for the long product name
   AboutBox.Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
   AboutBox.LProductName.Caption := GetVersionInfo.FileDescription;
@@ -414,7 +421,6 @@ begin
     GetVersionInfo.CompanyName + ' - ' + DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
   AboutBox.LUpdate.Hint := LastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
-  AboutBox.UrlWebsite := GetVersionInfo.Comments;
   FSettings.LStatus.Caption := OsVersion.VerDetail;
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
@@ -459,8 +465,9 @@ begin
    if (Pos('64', OSVersion.Architecture)>0) and (OsTarget='32 bits') then
     MsgDlg(Caption, use64bitcaption, mtInformation,  [mbOK], [OKBtn]);
   Application.ProcessMessages;
+  CheckUpdate;
   //Dernière recherche il y a plus de 7 jours ?
-  errmsg := '';
+  {errmsg := '';
   if (Trunc(Now)>Trunc(Settings.LastUpdChk+7)) and (not Settings.NoChkNewVer) then
   begin
     Settings.LastUpdChk := Trunc(Now);
@@ -481,16 +488,73 @@ begin
     if NewVer > CurVer then
     begin
       AboutBox.LUpdate.Caption := Format(UpdateAvailable, [s]);
-      if ShowAlert(Caption, UpdateAlertBox, s, NoLongerChkUpdates, NoChkNewVer) then
+      if ShowAlert(Caption, UpdateAlertBox, s, sNoLongerChkUpdates, NoChkNewVer) then
       begin
         OpenURL(Format(BaseUpdateURl, [version, Settings.LangStr]));
         Settings.NoChkNewVer := AlertBox.CBNoShowAlert.Checked;
       end;
 
     end;
-  end;
+  end;}
 end;
 
+procedure TFContactManager.CheckUpdate;
+var
+  errmsg: string;
+  sNewVer: string;
+  CurVer, NewVer: int64;
+  alertpos: TPosition;
+  alertmsg: string;
+begin
+  //Dernière recherche il y a plus de 1 jours ?
+  errmsg := '';
+  alertmsg:= '';
+  if not visible then alertpos:= poDesktopCenter
+  else alertpos:= poMainFormCenter;
+  if (Trunc(Now)>Trunc(Settings.LastUpdChk)+1) and (not Settings.NoChkNewVer) then
+  begin
+     Settings.LastUpdChk := Trunc(Now);
+     //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(FSettings.Settings.LastUpdChk);
+     AboutBox.Checked:= true;
+     AboutBox.ErrorMessage:='';
+     sNewVer:= AboutBox.ChkNewVersion;
+     errmsg:= AboutBox.ErrorMessage;
+     if length(sNewVer)=0 then
+     begin
+       if length(errmsg)=0 then alertmsg:= sCannotGetNewVerList
+       else alertmsg:= TranslateHttpErrorMsg(errmsg, HttpErrMsgNames);
+       if AlertDlg(Caption,  alertmsg, [OKBtn, CancelBtn, sNoLongerChkUpdates],
+                    true, mtError, alertpos)= mrYesToAll then Settings.NoChkNewVer:= true;
+       //LogAddLine(-1, now, alertmsg);
+       exit;
+     end;
+     NewVer := VersionToInt(sNewVer);
+     // Cannot get new version
+     if NewVer < 0 then exit;
+     //CurVer := VersionToInt('0.1.0.0');     //Test version check
+     CurVer := VersionToInt(version);
+     if NewVer > CurVer then
+     begin
+       Settings.LastVersion:= sNewVer;
+       AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [sNewVer]);
+       //LogAddLine(-1, now, AboutBox.LUpdate.Caption);
+       AboutBox.NewVersion:= true;
+       AboutBox.ShowModal;
+     end else
+     begin
+       AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
+       //LogAddLine(-1, now, AboutBox.sNoUpdateAvailable);
+     end;
+     Settings.LastUpdChk:= now;
+   end else
+   begin
+    if VersionToInt(Settings.LastVersion)>VersionToInt(version) then
+       AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [Settings.LastVersion]) else
+       AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
+       //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(FSettings.Settings.LastUpdChk);
+   end;
+   AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
+end;
 
 procedure TFContactManager.EnableEdits(Enable: Boolean);
 var
@@ -1343,11 +1407,37 @@ end;
 // lanch aboutbox form
 
 procedure TFContactManager.BtnAboutClick(Sender: TObject);
+var
+  chked: Boolean;
+  alertmsg: String;
 begin
-  AboutBox.LastUpdate:= Settings.LastUpdChk;
-  AboutBox.ShowModal;
+  //AboutBox.LastUpdate:= Settings.LastUpdChk;
+  //AboutBox.ShowModal;
   // Truncate date to avoid changes if there is the same day (hh:mm are in the decimal part of the date)
-  if trunc(AboutBox.LastUpdate) > trunc(Settings.LastUpdChk) then Settings.LastUpdChk:= AboutBox.LastUpdate;
+  //if trunc(AboutBox.LastUpdate) > trunc(Settings.LastUpdChk) then Settings.LastUpdChk:= AboutBox.LastUpdate;
+    // If main windows is hidden, place the about box at the center of desktop,
+  // else at the center of main windows
+  if (Sender.ClassName= 'TMenuItem') and not visible then AboutBox.Position:= poDesktopCenter
+  else AboutBox.Position:= poMainFormCenter;
+  AboutBox.LastUpdate:= Settings.LastUpdChk;
+  chked:= AboutBox.Checked;
+  AboutBox.ErrorMessage:='';
+  AboutBox.ShowModal;
+  // If we have checked update and got an error
+  if length(AboutBox.ErrorMessage)>0 then
+  begin
+    alertmsg := TranslateHttpErrorMsg(AboutBox.ErrorMessage, HttpErrMsgNames);
+    if AlertDlg(Caption,  alertmsg, [OKBtn, CancelBtn, sNoLongerChkUpdates],
+                    true, mtError)= mrYesToAll then Settings.NoChkNewVer:= true;
+    //LogAddLine(-1, now, alertmsg);
+  end;
+  // Truncate date to avoid changes if there is the same day (hh:mm are in the decimal part of the date)
+  if (not chked) and AboutBox.Checked then Settings.LastVersion:= AboutBox.LastVersion;
+  if trunc(AboutBox.LastUpdate) > trunc(Settings.LastUpdChk) then
+  begin
+    Settings.LastUpdChk:= AboutBox.LastUpdate;
+    //LogAddLine(-1, FSettings.Settings.LastUpdChk, AboutBox.LastVersion);
+  end;
 end;
 
 // Click on one of the four navigation buttons
@@ -1500,7 +1590,7 @@ begin
     // AboutBox
     Aboutbox.Caption:=ReadString(LangStr,'Aboutbox.Caption','A propos du Gestionnaire de Contacts');
     AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption','Recherche de mise à jour');
-    AboutBox.UrlUpdate:=Format(BaseUpdateURl,[Version,LangStr]);
+    //AboutBox.UrlUpdate:=Format(BaseUpdateURl,[Version,LangStr]);
     // Main form
     PPerso.Caption:=ReadString(LangStr,'PPerso.Caption',PPerso.Caption);
     PWork.Caption:=ReadString(LangStr,'PWork.Caption',PWork.Caption);
@@ -1588,11 +1678,25 @@ begin
       'Pour l''annuler et quitter, cliquer sur le bouton "Non".%s' +
       'Pour revenir au programme, cliquer sur le bouton "Annuler".');
     Use64bitcaption:=ReadString(LangStr,'Use64bitcaption','Utilisez la version 64 bits de ce programme');
-    NoLongerChkUpdates:=ReadString(LangStr,'NoLongerChkUpdates','Ne plus rechercher les mises à jour');
-    LastUpdateSearch:=ReadString(LangStr,'LastUpdateSearch','Dernière recherche de mise à jour');
-    UpdateAvailable:=ReadString(LangStr,'UpdateAvailable','Nouvelle version %s disponible');
+    sNoLongerChkUpdates:=ReadString(LangStr,'NoLongerChkUpdates','Ne plus rechercher les mises à jour');
+    //LastUpdateSearch:=ReadString(LangStr,'LastUpdateSearch','Dernière recherche de mise à jour');
+    //UpdateAvailable:=ReadString(LangStr,'UpdateAvailable','Nouvelle version %s disponible');
     UpdateAlertBox:=ReadString(LangStr,'UpdateAlertBox',
       'Version actuelle: %sUne nouvelle version %s est disponible');
+    sCannotGetNewVerList:=ReadString(LangStr,'CannotGetNewVerList','Liste des nouvelles versions indisponible');
+    AboutBox.sLastUpdateSearch:=ReadString(LangStr,'AboutBox.LastUpdateSearch','Dernière recherche de mise à jour');
+    AboutBox.sUpdateAvailable:=ReadString(LangStr,'AboutBox.UpdateAvailable','Nouvelle version %s disponible');
+    AboutBox.sNoUpdateAvailable:=ReadString(LangStr,'AboutBox.NoUpdateAvailable','Gestionnaire de contacts est à jour');
+    Aboutbox.Caption:=ReadString(LangStr,'Aboutbox.Caption','A propos de Courriels en attente');
+    AboutBox.LProductName.Caption:= caption;
+    if not AboutBox.checked then AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption',AboutBox.LUpdate.Caption) else
+    begin
+      if AboutBox.NewVersion then AboutBox.LUpdate.Caption:= Format(AboutBox.sUpdateAvailable, [AboutBox.LastVersion])
+      else AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
+    end;
+    AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
+
+
     // Settings
     FSettings.Caption:=ReadString(LangStr,'FSettings.Caption',FSettings.Caption);
     FSettings.GroupBox1.Caption:=ReadString(LangStr,'FSettings.GroupBox1.Caption',FSettings.GroupBox1.Caption);

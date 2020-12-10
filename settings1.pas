@@ -33,7 +33,7 @@ type
     FDataFolder: String;
     FAppName: String;
     FVersion: String;
-
+    FLastVersion: String;
   public
     constructor Create (AppName: string);
     procedure SetSavSizePos (b: Boolean);
@@ -45,6 +45,7 @@ type
     procedure SetLangStr (s: string);
     procedure SetDataFolder(s: string);
     procedure SetVersion(s: string);
+    procedure SetLastVersion(s: String);
     function SaveXMLnode(iNode: TDOMNode): Boolean;
     function SaveToXMLfile(filename: string): Boolean;
     function LoadXMLNode(iNode: TDOMNode): Boolean;
@@ -62,6 +63,7 @@ type
     property DataFolder: string read FDataFolder write setDataFolder;
     property AppName: string read FAppName write FAppName;
     property Version: string read FVersion write SetVersion;
+    property LastVersion: string read FLastVersion write SetLastVersion;
 
 end;
 
@@ -185,12 +187,20 @@ begin
   end;
 end;
 
-
+procedure TConfig.SetLastVersion(s:string);
+begin
+  if FLastVersion <> s then
+  begin
+    FLastVersion:= s;
+    if Assigned(FOnChange) then FOnChange(Self);
+  end;
+end;
 
 function TConfig.SaveXMLnode(iNode: TDOMNode): Boolean;
 begin
   Try
     TDOMElement(iNode).SetAttribute ('version', FVersion);
+    TDOMElement(iNode).SetAttribute ('lastversion', FLastVersion);
     TDOMElement(iNode).SetAttribute ('savsizepos', BoolToString(FSavSizePos));
     TDOMElement(iNode).SetAttribute ('wstate', FWState);
     TDOMElement(iNode).SetAttribute ('lastupdchk', TimeDateToString(FLastUpdChk));
@@ -243,6 +253,7 @@ begin
   try
     UpCaseAttrib:=UpperCase(iNode.Attributes.Item[i].NodeName);
     if UpCaseAttrib='VERSION' then FVersion:= iNode.Attributes.Item[i].NodeValue;
+    if UpCaseAttrib='LASTVERSION' then FLastVersion:= iNode.Attributes.Item[i].NodeValue;
     if UpCaseAttrib='SAVSIZEPOS' then FSavSizePos:= StringToBool(iNode.Attributes.Item[i].NodeValue);
     if UpCaseAttrib='WSTATE' then  FWState:= iNode.Attributes.Item[i].NodeValue;
     if UpCaseAttrib='LASTUPDCHK' then FLastUpdChk:= StringToTimeDate(iNode.Attributes.Item[i].NodeValue,'dd/mm/yyyy hh:nn:ss');
