@@ -103,6 +103,9 @@ AboutBox.UpdateAvailable=New version %s available
 NoLongerChkUpdates=No longer check updates
 AboutBox.LastUpdateSearch=Last update check
 AboutBox.NoUpdateAvailable=Contacts manager is up to date
+AboutBox.UrlProgSite=https://github.com/bb84000/contactmanager/wiki
+AboutBox.LWebSite.Caption=Web site home page
+AboutBox.LSourceCode.Caption=Source code Web page
 UpdateAlertBox=Current version: %sA new version %s is available
 CannotGetNewVerList=Cannot get new versions list
 
@@ -272,6 +275,9 @@ AboutBox.UpdateAvailable=Nouvelle version %s disponible
 NoLongerChkUpdates=Ne plus rechercher de mise à jour
 AboutBox.LastUpdateSearch=Dernière recherche de mise à jour
 AboutBox.NoUpdateAvailable=Gestionnaire de contacts est à jour
+AboutBox.UrlProgSite=https://github.com/bb84000/contactmanager/wiki/Accueil
+AboutBox.LWebSite.Caption=Page d'accueil du site Web
+AboutBox.LSourceCode.Caption=Page Web du code source
 UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
 CannotGetNewVerList=Liste des nouvelles versions indisponible
 

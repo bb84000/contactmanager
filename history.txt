@@ -270,6 +270,10 @@ Version 1.0.1.0 - 10/12/2020
 - Changed name of lazbbabout unit to lazbbaboutupdate tro avoid confusion with previous aboutbox unit
 - Changed automatic update check to every two days.
 
+Version 1.0.1.1 - 07/06/2021
+- Corrected lazbbosver bug with Win 10 21H1
+
+
 
 
 
