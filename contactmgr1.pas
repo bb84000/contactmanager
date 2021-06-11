@@ -405,7 +405,7 @@ begin
   // AboutBox.LUpdate.Caption:= 'Recherche de mise à jour';      // in Modlangue
   // Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
   AboutBox.Version:= Version;
-  AboutBox.ChkVerURL := 'https://github.com/bb84000/contactmanager/raw/master/history.txt';
+  AboutBox.ChkVerURL := 'https://github.com/bb84000/contactmanager/releases/latest';
   AboutBox.UrlWebsite:= 'https://www.sdtp.com';
   AboutBox.UrlSourceCode:= 'https://github.com/bb84000/contactmanager';
   AboutBox.Width:= 340; // to have more place for the long product name
@@ -1618,6 +1618,7 @@ begin
     Aboutbox.Caption:=ReadString(LangStr,'Aboutbox.Caption','A propos du Gestionnaire de contacts');
     AboutBox.LProductName.Caption:= caption;
     AboutBox.UrlProgSite:= ReadString(LangStr,'AboutBox.UrlProgSite','https://github.com/bb84000/contactmanager/wiki/Accueil');
+    AboutBox.LProgPage.Caption:= ReadString(LangStr,'AboutBox.LProgPage.Caption', AboutBox.LProgPage.Caption);
     AboutBox.LWebSite.Caption:= ReadString(LangStr,'AboutBox.LWebSite.Caption', AboutBox.LWebSite.Caption);
     AboutBox.LSourceCode.Caption:= ReadString(LangStr,'AboutBox.LSourceCode.Caption', AboutBox.LSourceCode.Caption);
     if not AboutBox.checked then AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption',AboutBox.LUpdate.Caption) else

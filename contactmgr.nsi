@@ -102,6 +102,19 @@
   !define MUI_LANGDLL_INFO "$(LangDialog_Text)"
 ;--------------------------------
 
+  !getdllversion  "${source_dir}\contactmgrwin64.exe" expv_
+  !define FileVersion "${expv_1}.${expv_2}.${expv_3}.${expv_4}"
+
+  VIProductVersion "${FileVersion}"
+  VIAddVersionKey "FileVersion" "${FileVersion}"
+  VIAddVersionKey "ProductName" "InstallContactsmgr.exe"
+  VIAddVersionKey "FileDescription" "ContactManager Installer"
+  VIAddVersionKey "LegalCopyright" "sdtp - bb"
+  VIAddVersionKey "ProductVersion" "${FileVersion}"
+
+  ; Change nsis brand line
+  BrandingText "$(ProgramDescStr) version ${FileVersion} - bb - sdtp"
+
 ; The stuff to install
 Section "" ;No components page, name is not important
   SetShellVarContext all
@@ -114,14 +127,12 @@ Section "" ;No components page, name is not important
   Var /GLOBAL prg_to_del
   
   ${If} ${RunningX64}  ; change registry entries and install dir for 64 bit
-     !getdllversion  "${source_dir}\contactmgrwin64.exe" expv_
      StrCpy "$prg_to_inst" "$INSTDIR\contactmgrwin64.exe"
      StrCpy "$prg_to_del" "$INSTDIR\contactmgrwin32.exe"
      File "${lazarus_dir}\openssl\win64\libeay32.dll"
      File "${lazarus_dir}\openssl\win64\ssleay32.dll"
      File "${lazarus_dir}\openssl\OpenSSL License.txt"
   ${Else}
-     !getdllversion  "${source_dir}\contactmgrwin32.exe" expv_
      StrCpy "$prg_to_inst" "$INSTDIR\contactmgrwin32.exe"
      StrCpy "$prg_to_del" "$INSTDIR\contactmgrwin64.exe"
      File "${lazarus_dir}\openssl\win32\libeay32.dll"
@@ -151,7 +162,7 @@ Section "" ;No components page, name is not important
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "DisplayIcon" "$INSTDIR\uninst.exe"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "DisplayName" "$(RemoveStr)"
-  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "DisplayVersion" "${expv_1}.${expv_2}.${expv_3}.${expv_4}"
+  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "DisplayVersion" "${FileVersion}"
   WriteRegDWORD HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "EstimatedSize" "$0"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "Publisher" "SDTP"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\contactmgr" "URLInfoAbout" "www.sdtp.com"

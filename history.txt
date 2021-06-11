@@ -273,6 +273,10 @@ Version 1.0.1.0 - 10/12/2020
 Version 1.0.1.1 - 07/06/2021
 - Corrected lazbbosver bug with Win 10 21H1
 
+Version 1.0.1.2 - 11/06/2021
+- Corrected version check on Github
+
+
 
 
 
