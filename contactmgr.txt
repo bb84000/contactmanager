@@ -1,4 +1,4 @@
-Gestionnaire de contacts - version 1.0.1.2
+Gestionnaire de contacts - version 1.0.1.3
 
 >>> English text at the end of french text >>>
 

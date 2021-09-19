@@ -193,7 +193,8 @@ type
     version: string;
     UpdateAlertBox: string;
 
-    sNoLongerChkUpdates, LastUpdateSearch: string;
+    sNoLongerChkUpdates: string;
+    //LastUpdateSearch: string;
     LieuditCaption, BPCaption: string;
     CPCaption, TownCaption: string;
     CommentCaption, ImageFileCaption: string;
@@ -1509,6 +1510,7 @@ const
 begin
   LangStr:=Settings.LangStr;
   OSVersion:= TOSVersion.Create(LangStr, LangFile);
+  AboutBox.LVersion.Hint:= OSVersion.VerDetail;
   with LangFile do
   begin
     //Main Form
@@ -1626,7 +1628,7 @@ begin
       if AboutBox.NewVersion then AboutBox.LUpdate.Caption:= Format(AboutBox.sUpdateAvailable, [AboutBox.LastVersion])
       else AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
     end;
-    AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
+   // AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
 
 
     // Settings

@@ -276,6 +276,12 @@ Version 1.0.1.1 - 07/06/2021
 Version 1.0.1.2 - 11/06/2021
 - Corrected version check on Github
 
+Version 1.0.1.3 - 19/09/2021
+- Added windows version on About box version hint
+- Updated lazbbosver with Win 10 21H2 and Win 11 21H2
+
+
+
 
 
 
