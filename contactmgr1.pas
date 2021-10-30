@@ -1,5 +1,5 @@
 {****************************************************************************** }
-{ Contacts manager main form  - bb - sdtp - june 2021                       }
+{ Contacts manager main form  - bb - sdtp - october 2021                       }
 {*******************************************************************************}
 
 unit contactmgr1;
@@ -970,6 +970,7 @@ begin
   begin
     RestoreButtonStates;
     ListeContacts.AddContact(tmpContact);
+
   end else ListeContacts.ModifyContact(LBContacts.ItemIndex, tmpContact);
   Esearch.Enabled := True;
   RBSortClick(Sender);
@@ -1312,6 +1313,7 @@ begin
   EDate.Text := DateTimeToStr(now);
   EDatemodif.Text := DateTimeToStr(now);
   ImgContact.Picture := nil;
+  LImageFile.Caption:= '';
   EFonction.Text := '';
   ECompany.Text := '';
   EService.Text := '';
