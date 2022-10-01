@@ -1,5 +1,5 @@
 {****************************************************************************** }
-{ Contacts manager main form  - bb - sdtp - october 2021                       }
+{ Contacts manager main form  - bb - sdtp - october 2022                       }
 {*******************************************************************************}
 
 unit contactmgr1;
@@ -11,12 +11,11 @@ interface
 uses
   {$IFDEF WINDOWS}
   Win32Proc,
-  {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead,
-  Types, lazbbosver,
-  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl,
-  openssl, strutils, lazbbaboutupdate, settings1, lazbbinifiles,
-  LazUTF8, Clipbrd, UniqueInstance, lazbbchknewver, lazbbautostart,
+  {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types,
+  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
+  strutils, lazbbaboutupdate, settings1, lazbbinifiles, LazUTF8, Clipbrd,
+  UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion,
   opensslsockets;
 
 type
@@ -24,6 +23,7 @@ type
   { TFContactManager }
 
   TFContactManager = class(TForm)
+    OsVersion: TbbOsVersion;
     BtnDelete: TSpeedButton;
     BtnAbout: TSpeedButton;
     BtnEmailWk: TSpeedButton;
@@ -194,7 +194,6 @@ type
     UpdateAlertBox: string;
 
     sNoLongerChkUpdates: string;
-    //LastUpdateSearch: string;
     LieuditCaption, BPCaption: string;
     CPCaption, TownCaption: string;
     CommentCaption, ImageFileCaption: string;
@@ -207,7 +206,6 @@ type
     LangFile: TBbIniFile;
     LangNums: TStringList;
     LangFound: boolean;
-    OsVersion: TOSVersion;
     Newsearch: boolean;
     previndex: integer;
     MnuRetrieveGPSCaption: string;
@@ -302,7 +300,6 @@ begin
   ProgName := 'ContactMgr';
   // Chargement des chaînes de langue...
   LangFile := TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'contactmgr.lng');
-  OSVersion:= TOSVersion.Create(LangStr, LangFile);
   LangNums := TStringList.Create;
   ContactMgrAppsData := UserAppsDataPath + PathDelim + ProgName + PathDelim;
   if not DirectoryExists(ContactMgrAppsData) then
@@ -456,7 +453,7 @@ begin
   NewContact := False;
   ContactsChanged := False;
   Application.Title := Caption;
-   if (Pos('64', OSVersion.Architecture)>0) and (OsTarget='32 bits') then
+  if (Pos('64', OSVersion.Architecture)>0) and (OsTarget='32 bits') then
     MsgDlg(Caption, use64bitcaption, mtInformation,  [mbOK], [OKBtn]);
   Application.ProcessMessages;
   CheckUpdate;
@@ -488,6 +485,10 @@ begin
        else alertmsg:= TranslateHttpErrorMsg(errmsg, HttpErrMsgNames);
        if AlertDlg(Caption,  alertmsg, [OKBtn, CancelBtn, sNoLongerChkUpdates],
                     true, mtError, alertpos)= mrYesToAll then Settings.NoChkNewVer:= true;
+
+
+
+
         exit;
      end;
      NewVer := VersionToInt(sNewVer);
@@ -1153,7 +1154,8 @@ var
   sstreet, slieu, spost, stown, scountry: string;
   A: TStringArray;
 begin
-  smap := 'https://www.google.fr/maps/search/';
+  //smap := 'https://www.google.fr/maps/search/';
+  smap := 'https://www.google.fr/maps/place/';
   // check if perso or work
   if PCtrl1.ActivePage = TSPerso then
   begin
@@ -1509,12 +1511,21 @@ procedure TFContactManager.ModLangue;
 const
   dquot = '"';     // Double quote
   dquotv = '","';   // Double cote  plus comma plus double quote
+var
+  i: Integer;
 begin
   LangStr:=Settings.LangStr;
-  OSVersion:= TOSVersion.Create(LangStr, LangFile);
-  AboutBox.LVersion.Hint:= OSVersion.VerDetail;
   with LangFile do
   begin
+    with OsVersion do
+    begin
+      ProdStr[1]:= ReadString(LangStr,'Home','Famille');
+      ProdStr[2]:= ReadString(LangStr,'Professional','Entreprise');
+      ProdStr[3]:= ReadString(LangStr,'Server','Serveur');
+      for i:= 0 to high(Win10Build) do Win10Build[i,1]:= ReadString(LangStr,Win10Build[i,0],Win10Build[i,1]);
+      for i:= 0 to high(Win11Build) do Win11Build[i,1]:= ReadString(LangStr,Win11Build[i,0],Win11Build[i,1]);
+      GetSysInfo;
+    end;
     //Main Form
     Caption:=ReadString(LangStr,'Caption','Gestionnaire de Contacts');
     // Components
@@ -1625,11 +1636,13 @@ begin
     AboutBox.LProgPage.Caption:= ReadString(LangStr,'AboutBox.LProgPage.Caption', AboutBox.LProgPage.Caption);
     AboutBox.LWebSite.Caption:= ReadString(LangStr,'AboutBox.LWebSite.Caption', AboutBox.LWebSite.Caption);
     AboutBox.LSourceCode.Caption:= ReadString(LangStr,'AboutBox.LSourceCode.Caption', AboutBox.LSourceCode.Caption);
+
     if not AboutBox.checked then AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption',AboutBox.LUpdate.Caption) else
     begin
       if AboutBox.NewVersion then AboutBox.LUpdate.Caption:= Format(AboutBox.sUpdateAvailable, [AboutBox.LastVersion])
       else AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
     end;
+    AboutBox.LVersion.Hint:= OSVersion.VerDetail;
    // AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
 
 
@@ -1751,6 +1764,8 @@ begin
                        LLongitudeWk.Caption+dquotv+
                        LLatitudeWk.Caption+dquotv+
                        'Version'+dquotv+'Tag'+dquot;
+
+
   end;
 end;
 
