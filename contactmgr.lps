@@ -8,7 +8,8 @@
       <Unit0>
         <Filename Value="contactmgr.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
         <CursorPos Y="25"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -19,8 +20,8 @@
         <ComponentName Value="FContactManager"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="1501"/>
-        <CursorPos Y="1521"/>
+        <TopLine Value="1514"/>
+        <CursorPos X="19" Y="1516"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -50,10 +51,11 @@
         <ComponentName Value="FSettings"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="240"/>
-        <CursorPos X="45" Y="256"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="58" Y="21"/>
         <UsageCount Value="66"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="vcards1.pas"/>
@@ -263,9 +265,9 @@
       </Unit31>
       <Unit32>
         <Filename Value="history.txt"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="270"/>
-        <CursorPos X="53" Y="289"/>
+        <CursorPos X="66" Y="292"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -316,9 +318,8 @@
       </Unit38>
       <Unit39>
         <Filename Value="contactmgr.txt"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
-        <CursorPos X="43"/>
+        <EditorIndex Value="4"/>
+        <CursorPos Y="27"/>
         <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -495,127 +496,131 @@
       <Unit63>
         <Filename Value="..\Packets\Lazbbcomponents\lazbbosversion.pas"/>
         <UnitName Value="lazbbOsVersion"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
       </Unit63>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="1520" Column="5" TopLine="1505"/>
+        <Caret Line="303" TopLine="279"/>
       </Position1>
       <Position2>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="1667" Column="33" TopLine="1652"/>
+        <Caret Line="15" Column="119" TopLine="8"/>
       </Position2>
       <Position3>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="209" Column="11" TopLine="183"/>
+        <Caret Line="240" Column="24" TopLine="217"/>
       </Position3>
       <Position4>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="18" Column="65" TopLine="3"/>
+        <Caret Line="403" Column="82" TopLine="380"/>
       </Position4>
       <Position5>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="26" Column="31" TopLine="3"/>
+        <Caret Line="404" Column="91" TopLine="380"/>
       </Position5>
       <Position6>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="209" TopLine="186"/>
+        <Caret Line="9" Column="96"/>
       </Position6>
       <Position7>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="303" TopLine="279"/>
+        <Caret Line="18" Column="65"/>
       </Position7>
       <Position8>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="15" Column="119" TopLine="8"/>
+        <Caret Line="26" Column="31" TopLine="2"/>
       </Position8>
       <Position9>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="240" Column="24" TopLine="217"/>
+        <Caret Line="416" Column="41" TopLine="392"/>
       </Position9>
       <Position10>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="403" Column="82" TopLine="380"/>
+        <Caret Line="457" Column="2" TopLine="432"/>
       </Position10>
       <Position11>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="404" Column="91" TopLine="380"/>
+        <Caret Line="18" Column="61" TopLine="3"/>
       </Position11>
       <Position12>
-        <Filename Value="contactmgr1.pas"/>
-        <Caret Line="9" Column="96"/>
+        <Filename Value="..\Packets\Lazbbcomponents\lazbbosversion.pas"/>
       </Position12>
       <Position13>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="18" Column="65"/>
+        <Caret Line="18" Column="51" TopLine="3"/>
       </Position13>
       <Position14>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="26" Column="31" TopLine="2"/>
+        <Caret Line="416" Column="32" TopLine="401"/>
       </Position14>
       <Position15>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="416" Column="41" TopLine="392"/>
+        <Caret Line="1764" Column="6" TopLine="1741"/>
       </Position15>
       <Position16>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="457" Column="2" TopLine="432"/>
+        <Caret Line="12" Column="75"/>
       </Position16>
       <Position17>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="18" Column="61" TopLine="3"/>
+        <Caret Line="240" Column="24" TopLine="217"/>
       </Position17>
       <Position18>
-        <Filename Value="..\Packets\Lazbbcomponents\lazbbosversion.pas"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="171" Column="52" TopLine="158"/>
       </Position18>
       <Position19>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="18" Column="51" TopLine="3"/>
+        <Caret Line="240" Column="24" TopLine="217"/>
       </Position19>
       <Position20>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="416" Column="32" TopLine="401"/>
+        <Caret Line="401" Column="12" TopLine="378"/>
       </Position20>
       <Position21>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="1764" Column="6" TopLine="1741"/>
+        <Caret Line="404" Column="82" TopLine="380"/>
       </Position21>
       <Position22>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="12" Column="75"/>
+        <Caret Line="405" Column="91" TopLine="381"/>
       </Position22>
       <Position23>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="240" Column="24" TopLine="217"/>
+        <Caret Line="1521" TopLine="1501"/>
       </Position23>
       <Position24>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="171" Column="52" TopLine="158"/>
+        <Caret Line="416" Column="2" TopLine="402"/>
       </Position24>
       <Position25>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="240" Column="24" TopLine="217"/>
+        <Caret Line="1528" Column="57" TopLine="1504"/>
       </Position25>
       <Position26>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="401" Column="12" TopLine="378"/>
+        <Caret Line="1529" Column="55" TopLine="1505"/>
       </Position26>
       <Position27>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="404" Column="82" TopLine="380"/>
+        <Caret Line="1678" TopLine="1654"/>
       </Position27>
       <Position28>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="405" Column="91" TopLine="381"/>
+        <Caret Line="1528" Column="51" TopLine="1514"/>
       </Position28>
       <Position29>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="1521" TopLine="1501"/>
+        <Caret Line="17" Column="36"/>
       </Position29>
+      <Position30>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="1666" TopLine="1638"/>
+      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

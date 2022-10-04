@@ -413,7 +413,7 @@ begin
     GetVersionInfo.CompanyName + ' - ' + DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
   AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
-  FSettings.LStatus.Caption := OsVersion.VerDetail;
+
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
   else
@@ -1513,18 +1513,26 @@ const
   dquotv = '","';   // Double cote  plus comma plus double quote
 var
   i: Integer;
+  A: TStringArray;
 begin
   LangStr:=Settings.LangStr;
   with LangFile do
   begin
     with OsVersion do
     begin
-      ProdStr[1]:= ReadString(LangStr,'Home','Famille');
-      ProdStr[2]:= ReadString(LangStr,'Professional','Entreprise');
-      ProdStr[3]:= ReadString(LangStr,'Server','Serveur');
-      for i:= 0 to high(Win10Build) do Win10Build[i,1]:= ReadString(LangStr,Win10Build[i,0],Win10Build[i,1]);
-      for i:= 0 to high(Win11Build) do Win11Build[i,1]:= ReadString(LangStr,Win11Build[i,0],Win11Build[i,1]);
-      GetSysInfo;
+      ProdStrs.Strings[1]:= ReadString(LangStr,'Home','Famille'); ;
+      ProdStrs.Strings[2]:= ReadString(LangStr,'Professional','Entreprise');
+      ProdStrs.Strings[3]:= ReadString(LangStr,'Server','Serveur');
+      for i:= 0 to Win10Strs.count-1 do
+      begin
+        A:= Win10Strs.Strings[i].split('=');
+        Win10Strs.Strings[i]:= A[0]+'='+ReadString(LangStr,A[0],A[1]);
+      end;
+      for i:= 0 to Win11Strs.count-1 do
+      begin
+        A:= Win11Strs.Strings[i].split('=');
+        Win11Strs.Strings[i]:= A[0]+'='+ReadString(LangStr,A[0],A[1]);
+      end;
     end;
     //Main Form
     Caption:=ReadString(LangStr,'Caption','Gestionnaire de Contacts');
@@ -1636,13 +1644,13 @@ begin
     AboutBox.LProgPage.Caption:= ReadString(LangStr,'AboutBox.LProgPage.Caption', AboutBox.LProgPage.Caption);
     AboutBox.LWebSite.Caption:= ReadString(LangStr,'AboutBox.LWebSite.Caption', AboutBox.LWebSite.Caption);
     AboutBox.LSourceCode.Caption:= ReadString(LangStr,'AboutBox.LSourceCode.Caption', AboutBox.LSourceCode.Caption);
-
+    AboutBox.LVersion.Hint:= OSVersion.VerDetail;
     if not AboutBox.checked then AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption',AboutBox.LUpdate.Caption) else
     begin
       if AboutBox.NewVersion then AboutBox.LUpdate.Caption:= Format(AboutBox.sUpdateAvailable, [AboutBox.LastVersion])
       else AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
     end;
-    AboutBox.LVersion.Hint:= OSVersion.VerDetail;
+
    // AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
 
 
@@ -1656,6 +1664,7 @@ begin
     FSettings.CBUpdate.Caption:=ReadString(LangStr,'FSettings.CBUpdate.Caption',FSettings.CBUpdate.Caption);
     FSettings.LLangue.Caption:=ReadString(LangStr,'FSettings.LLangue.Caption',FSettings.LLangue.Caption);
     FSettings.BtnCancel.Caption:=CancelBtn;
+    FSettings.LStatus.Caption := OsVersion.VerDetail;
     // Import/export
     FImpex.Caption:=ReadString(LangStr,'FImpex.Caption',FImpex.Caption);
     FImpex.RBImport.Caption:=ReadString(LangStr,'FImpex.RBImport.Caption',FImpex.RBImport.Caption);
@@ -1673,9 +1682,6 @@ begin
     FImpex_ImportBtn_Caption:=ReadString(LangStr,'FImpex.ImportBtn.Caption','Importation');
     FImpex_ExportBtn_Caption:=ReadString(LangStr,'FImpex.ExportBtn.Caption','Exportation');
     FImpex.BtnCancel.Caption:=FSettings.BtnCancel.Caption;
-    FSettings.Lstatus.Caption:= OSVersion.VerDetail;
-
-
     // popup menus
     MnuRetrieveGPSCaption:=ReadString(LangStr,'MnuRetrieveGPSCaption','Récupérer les données GPS de %s');
     MnuLocateCaption:=ReadString(LangStr,'MnuLocateCaption','Localiser %s sur une carte');
