@@ -12,16 +12,20 @@
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
+      <XPManifest>
+        <TextName Value="bb-sdtp.ContactMgr"/>
+        <TextDesc Value="Contacts manager"/>
+      </XPManifest>
       <Icon Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="7"/>
       <Language Value="040C"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.1.6"/>
+      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.1.7"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>

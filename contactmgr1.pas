@@ -1,6 +1,7 @@
-{****************************************************************************** }
-{ Contacts manager main form  - bb - sdtp - october 2022                       }
-{*******************************************************************************}
+//******************************************************************************
+// Contacts manager main form
+//- bb - sdtp - october 2022
+//*******************************************************************************
 
 unit contactmgr1;
 
@@ -11,14 +12,26 @@ interface
 uses
   {$IFDEF WINDOWS}
   Win32Proc,
-  {$ENDIF} Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  {$ENDIF} LMessages, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
   strutils, lazbbaboutupdate, settings1, lazbbinifiles, LazUTF8, Clipbrd,
   UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion,
   opensslsockets;
 
+const
+  // Message post at the end of activation procedure, processed once the form is shown
+  WM_FORMSHOWN = WM_USER + 1;
+
 type
+
+    { int64 or longint type for Application.QueueAsyncCall }
+  {$IFDEF CPU32}
+    iDays= LongInt;
+  {$ENDIF}
+  {$IFDEF CPU64}
+    iDays= Int64;
+  {$ENDIF}
   TSaveMode = (None, Setting, All);
   { TFContactManager }
 
@@ -192,7 +205,6 @@ type
     NewContact: boolean;
     version: string;
     UpdateAlertBox: string;
-
     sNoLongerChkUpdates: string;
     LieuditCaption, BPCaption: string;
     CPCaption, TownCaption: string;
@@ -223,9 +235,10 @@ type
     canCloseMsg: string;
     OKBtn, YesBtn, NoBtn, CancelBtn: string;
     Use64bitcaption: string;
-
     HttpErrMsgNames: array [0..16] of string;
     sCannotGetNewVerList: string;
+    ChkVerInterval: Int64;
+    StartMini: Boolean;
     procedure LoadCfgFile(filename: string);
     procedure DisplayList;
     procedure DisplayContact;
@@ -243,7 +256,8 @@ type
       var Alert: boolean): boolean;
     procedure EnableLocBtns;
     procedure EnableEdits(Enable: Boolean);
-    procedure CheckUpdate;
+    procedure CheckUpdate(days: iDays);
+    procedure OnFormShown(var Msg: TLMessage); message WM_FORMSHOWN;
   public
     FImpex_ImportBtn_Caption: string;
     FImpex_ExportBtn_Caption: string;
@@ -260,6 +274,15 @@ implementation
 {$R *.lfm}
 
 // TFContactManager : This is the main form of the program
+
+// Procedure to answer post message at the end of activation procedure
+// so once form is shown
+
+procedure TFContactManager.OnFormShown(var Msg: TLMessage);
+begin
+  if StartMini then Application.minimize;
+  StartMini:= false;
+end;
 
 procedure TFContactManager.FormCreate(Sender: TObject);
 var
@@ -406,6 +429,7 @@ begin
   AboutBox.ChkVerURL := 'https://github.com/bb84000/contactmanager/releases/latest';
   AboutBox.UrlWebsite:= 'https://www.sdtp.com';
   AboutBox.UrlSourceCode:= 'https://github.com/bb84000/contactmanager';
+  ChkVerInterval:=  3;
   AboutBox.Width:= 340; // to have more place for the long product name
   AboutBox.Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
   AboutBox.LProductName.Caption := GetVersionInfo.FileDescription;
@@ -456,10 +480,13 @@ begin
   if (Pos('64', OSVersion.Architecture)>0) and (OsTarget='32 bits') then
     MsgDlg(Caption, use64bitcaption, mtInformation,  [mbOK], [OKBtn]);
   Application.ProcessMessages;
-  CheckUpdate;
+  if StartMini then PostMessage(Handle, WM_FORMSHOWN, 0, 0) ;
+  Application.QueueAsyncCall(@CheckUpdate, ChkVerInterval);       // async call to let icons loading
  end;
 
-procedure TFContactManager.CheckUpdate;
+//Dernière recherche il y a "days" jours ou plus ?
+
+procedure TFContactManager.CheckUpdate(days: iDays);
 var
   errmsg: string;
   sNewVer: string;
@@ -467,12 +494,12 @@ var
   alertpos: TPosition;
   alertmsg: string;
 begin
-  //Dernière recherche il y a plus de 1 jours ?
+  //Dernière recherche il y a plus de days jours ?
   errmsg := '';
   alertmsg:= '';
   if not visible then alertpos:= poDesktopCenter
   else alertpos:= poMainFormCenter;
-  if (Trunc(Now)>Trunc(Settings.LastUpdChk)+1) and (not Settings.NoChkNewVer) then
+  if (Trunc(Now)>Trunc(Settings.LastUpdChk)+days) and (not Settings.NoChkNewVer) then
   begin
      Settings.LastUpdChk := Trunc(Now);
      AboutBox.Checked:= true;
@@ -485,11 +512,7 @@ begin
        else alertmsg:= TranslateHttpErrorMsg(errmsg, HttpErrMsgNames);
        if AlertDlg(Caption,  alertmsg, [OKBtn, CancelBtn, sNoLongerChkUpdates],
                     true, mtError, alertpos)= mrYesToAll then Settings.NoChkNewVer:= true;
-
-
-
-
-        exit;
+       exit;
      end;
      NewVer := VersionToInt(sNewVer);
      // Cannot get new version
@@ -596,7 +619,8 @@ begin
     try
       WinState := TWindowState(StrToInt('$' + Copy(Settings.WState, 1, 4)));
       if Winstate = wsMinimized then
-        Application.Minimize
+        //Application.Minimize
+        StartMini:= true
       else
         WindowState := WinState;
       Top := StrToInt('$' + Copy(Settings.WState, 5, 4));
@@ -605,7 +629,7 @@ begin
       Width := StrToInt('$' + Copy(Settings.WState, 17, 4));
     except
     end;
-  if Settings.StartWin and settings.StartMini then Application.Minimize;
+  if Settings.StartWin and settings.StartMini then StartMini:= true; //Application.Minimize;
   // Détermination de la langue (si pas dans settings, langue par défaut)
   if Settings.LangStr = '' then Settings.LangStr := LangStr;
   LangFile.ReadSections(LangNums);

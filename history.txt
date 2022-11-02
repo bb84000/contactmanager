@@ -291,6 +291,12 @@ Version 1.0.1.5 - 01/10/2022
 Version 1.0.1.6 - 04/10/2022
 - Some changes dues to TbbOsVersion component translation changes
 
+Version 1.0.1.7 - 02/11/2022
+- Corrected minimized startup on lazarus 2.2.2 and over. minimized window
+  remains on the desktop.  Post wm_user message at the end of form activation
+  procedure to minimize when the form is shown
+- Installer rewritten : better older versions management
+
 
 
 
