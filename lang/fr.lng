@@ -1,0 +1,194 @@
+;Fichier de langue
+;Il est possibled e créer un fichier de langue en utilisant l'ID de langue comme nom (exemple it.lng)
+;Danois	[da], Néerlandais [nl], Finois [fi], Allemand [de], Grec [el], Hongrois [hu]
+;Islandais [is], Italien [it], Norvégien [no], Polonais [pl], Portugais [pt]
+;Russe [ru], Serbo Croate [sr], Slovaque [sk], Suedois [sv], Turc [tr]
+
+; Le nom de la section doit être le même que celui du fichier : [fr] pour le fichier fr.lng
+; ProgName doit correspondre à la variable du même nom dans le code de l'application
+
+; Sauvegardez votre fichier, il peut être remplacé ou effacé lors d'une msie à jour !
+
+;proposez votre traduction sur GitHub
+
+;Français
+[fr]
+;General
+ProgName=ContactMgr
+Language=Français
+Caption=Gestionnaire de Contacts
+OKBtn=OK
+YesBtn=Oui
+NoBtn=Non
+CancelBtn=Annuler
+
+Aboutbox.Caption=A propos du Gestionnaire de Contacts
+AboutBox.LUpdate.Caption=Recherche de mise à jour
+PPerso.Caption=Personnel
+PWork.Caption=Travail et autres
+GBOrder.Caption=Ordre de tri
+RBNone.Caption=Pas de tri
+RBTown.Caption=Ville
+RBNameSurname.Caption=Nom, prénom
+RBCountry.Caption=Pays
+RBSurnameName.Caption=Prénom, nom
+RBPostcode.Caption=Code postal
+RBlongit.Caption=Longitude
+RBLatit.Caption=Latitude
+BtnImport.Hint=Importation et exportation de contacts
+BtnFirst.Hint=Premier contact
+BtnPrev.Hint=Contact précédent
+BtnNext.Hint=Contact suivant
+BtnLast.Hint=Dernier contact
+BtnDelete.Hint=Supprimer le contact sélectionné
+BtnAdd.Hint=Ajouter un contact
+BtnValid.Hint=Enregistrer la modification du contact sélectionné
+BtnCancel.Hint=Annuler la modification du contact sélectionné
+BtnCoord.Hint=Récupérer les coordonnées GPS du contact sélectionné
+BtnLocate.Hint=Localiser le contact sur la carte
+BtnPrefs.Hint=Modifier les préférences du programme
+BtnAbout.Hint=A propos du Gestionnaire de contacts
+BtnQuit.Hint=Quitter le gestionnaire de contacts
+BtnSearch.Hint=Rechercher un contact
+LName.Caption=Nom
+LSurname.Caption=Prénom
+LStreet.Caption=Rue
+BPCaption=BP
+LieuditCaption=Lieudit
+CPCaption=Code postal
+TownCaption=Ville
+LCountry.Caption=Pays
+LPhone.Caption=Téléphone
+LBox.Caption=Téléphone Box
+LMobile.Caption=Mobile
+LAutre.Caption=Autre téléphone
+LEmail.Caption=Courriel
+LWeb.Caption=Site Web
+LLongitude.Caption=Longitude
+LLatitude.Caption=Latitude
+LDateCre.Caption=Date création
+LDatemodif.Caption=Date modification
+CommentCaption=Commentaire
+ImageFileCaption=Fichier image
+LFonction.Caption=Fonction
+LCompany.Caption=Société
+LStreetWk.Caption=Adresse pro
+BPWkCaption=BP Pro
+LieuditWkCaption=Lieudit pro
+CPWkCaption=CP pro
+TownWkCaption=Ville pro
+LCountryWk.Caption=Pays pro
+LPhoneWk.Caption=Téléphone pro
+LBoxWk.Caption=Box pro
+LMobileWk.Caption=Mobile pro
+LAutreWk.Caption=Autre tél. pro
+LEmailWk.Caption=Courriel pro
+LWebWk.Caption=Site Web pro
+LLongitudeWk.Caption=Longitude pro
+LLatitudeWk.Caption=Latitude pro
+PMnuChoose.Caption=Choisir une image
+PMnuChange.Caption=Changer l'image
+PMnuDelete.Caption=Supprimer l'image
+OPictDialog.Title=Ouvrir un fichier existant
+ImgContactHintEmpty=Cliquer avec le bouton droit de la souris pour ajouter une image
+ImgContactHintFull=Cliquer avec le bouton droit de la souris pour changer ou supprimer cette image.%sFichier image: %s
+ContactNotFound=Pas de contact trouvé
+ContactNoOtherFound=Pas d''autre contact trouvé
+CntImportd=%d contact %s importé
+CntExportd=%d contact %s exporté
+CntImportds=%d contacts %s importés
+CntExportds=%d contacts %s exportés
+MailSubject=Courrier du gestionnaire de contacts
+ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
+CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez sur le bouton 'Oui'.%sPour l'annuler et quitter, cliquer sur le bouton 'Non'.%sPour revenir au programme, cliquer sur le bouton 'Annuler'.
+Use64bitcaption=Utilisez la version 64 bits de ce programme
+AboutBox.UpdateAvailable=Nouvelle version %s disponible
+NoLongerChkUpdates=Ne plus rechercher de mise à jour
+AboutBox.LastUpdateSearch=Dernière recherche de mise à jour
+AboutBox.NoUpdateAvailable=Gestionnaire de contacts est à jour
+AboutBox.UrlProgSite=https://github.com/bb84000/contactmanager/wiki/Accueil
+AboutBox.LProgPage.Caption=Page d'accueil du programme
+AboutBox.LWebSite.Caption=Page d'accueil du site Web
+AboutBox.LSourceCode.Caption=Page Web du code source
+UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
+CannotGetNewVerList=Liste des nouvelles versions indisponible
+
+;Settings
+FSettings.Caption=Préférences du gestionnaire de contacts
+FSettings.GroupBox1.Caption=Système
+FSettings.LDataFolder.Caption=Dossier de données
+FSettings.CBStartup.Caption=Lancer au démarrage du système
+FSettings.CBMinimized.Caption=Démarrage minimisé
+FSettings.CBSavePos.Caption=Sauvegarde taille et position
+FSettings.CBUpdate.Caption=Ne pas rechercher de mise à jour
+FSettings.LLangue.Caption=Langue
+FSettings.BtnCancel.Caption=Annuler
+
+;Http error messages
+SErrInvalidProtocol=Protocole "%s" invalide
+SErrReadingSocket=Erreur de lecture des données à partir du socket
+SErrInvalidProtocolVersion=Version de protocole invalide en réponse: %s
+SErrInvalidStatusCode=Code de statut de réponse invalide: %s
+SErrUnexpectedResponse=Code de statut de réponse non prévu: %s
+SErrChunkTooBig=Bloc trop grand
+SErrChunkLineEndMissing=Fin de ligne du bloc manquante
+SErrMaxRedirectsReached=Nombre maximum de redirections atteint: %s
+
+;Socket error messages
+strHostNotFound=Résolution du nom d'hôte pour "%s" impossible.
+strSocketCreationFailed=Echec de la création du socket: %s
+strSocketBindFailed=Echec de liaison du socket: %s
+strSocketListenFailed=Echec de l'écoute sur le port n° %s, erreur %s
+strSocketConnectFailed=Echec de la connexion à %s
+strSocketAcceptFailed=Connexion refusée d'un client sur le socket: %s, erreur %s
+strSocketAcceptWouldBlock=La connexion pourrait bloquer le socket: %s
+strSocketIOTimeOut=Impossible de fixer le timeout E/S à %s
+strErrNoStream=Flux du socket non assigné
+
+;FImpex
+FImpex.Caption=Importation et exportation de contacts
+FImpex.RBImport.Caption=Importation
+Fimpex.RBExport.Caption=Exportation
+FImpex.LSepar.Caption=Séparateur
+FImpex.LDelim.Caption=Délimiteur
+FImpex.LFilename.Caption=Fichier
+FImpex.LCode.Caption=Codage
+FImpex.SGImpex.Col0.Title=Champ
+FImpex.SGImpex.Col1.Title=Données
+FImpex.OD1.Title=Ouvrir un fichier existant
+FImpex.SD1.Title=Enregistrer le fichier
+FImpex.ImportBtn.Caption=Importation
+FImpex.ExportBtn.Caption=Exportation
+
+MnuRetrieveGPSCaption=Récupérer les coordonnées GPS de %s
+MnuLocateCaption=Localiser %s sur une carte
+MnuCopyCaption=Copier les données de %s
+MnuDeleteCaption=Supprimer le contact %s
+MnuSendmailCaption=Envoyer un courriel privé à %s
+MnuVisitwebCaption=Visister le site Web personnel de %s
+
+;lazbbosver
+Home=Famille
+Professional=Entreprise
+Server=Serveur
+00000=Version inconnue
+10240=v 1507 "Juillet 2015"
+10586=v 1511 "Novembre 2015"
+14393=v 1607 "Juillet 2016 (Màj Anniversaire)"
+15063=v 1703 "Avril 2017 (Màj Createurs)"
+16299=v 1709 "Octobre 2017(Màj Fall Créateurs)"
+17134=v 1803 "Avril 2018"
+17763=v 1809 "Octobre 2018"
+18362=v 1903 "Mai 2019"
+18363=v 1909 "Novembre 2019"
+19041=v 2004 "Mai 2020"
+19042=v 20H2 "Octobre 2020"
+19043=v 21H1 "Mai 2021"
+19044=v 21H2 "Octobre 2021"
+19045=v 22H2 "Octobre 2022"
+22000=v 21H2 "Octobre 2021 Version initiale"
+22621=v 22H2 "Septembre 2022"
+
+
+
+

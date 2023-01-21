@@ -1,6 +1,6 @@
 //******************************************************************************
 // Contacts manager main form
-//- bb - sdtp - october 2022
+// bb - sdtp - january 2023
 //*******************************************************************************
 
 unit contactmgr1;
@@ -13,7 +13,7 @@ uses
   {$IFDEF WINDOWS}
   Win32Proc,
   {$ENDIF} LMessages, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types,
+  StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types, FileUtil,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
   strutils, lazbbaboutupdate, settings1, lazbbinifiles, LazUTF8, Clipbrd,
   UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion,
@@ -321,8 +321,8 @@ begin
   {$ENDIF}
   //GetSysInfo(OsInfo);
   ProgName := 'ContactMgr';
-  // Chargement des chaînes de langue...
-  LangFile := TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'contactmgr.lng');
+  // Loading default language file..
+  LangFile:= TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'lang'+PathDelim+'fr.lng');
   LangNums := TStringList.Create;
   ContactMgrAppsData := UserAppsDataPath + PathDelim + ProgName + PathDelim;
   if not DirectoryExists(ContactMgrAppsData) then
@@ -436,7 +436,7 @@ begin
   AboutBox.LCopyright.Caption :=
     GetVersionInfo.CompanyName + ' - ' + DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
-  AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
+  //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);  // In Modlangue
 
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
@@ -632,7 +632,7 @@ begin
   if Settings.StartWin and settings.StartMini then StartMini:= true; //Application.Minimize;
   // Détermination de la langue (si pas dans settings, langue par défaut)
   if Settings.LangStr = '' then Settings.LangStr := LangStr;
-  LangFile.ReadSections(LangNums);
+  {LangFile.ReadSections(LangNums);
   if LangNums.Count > 1 then
     for i := 0 to LangNums.Count - 1 do
     begin
@@ -640,7 +640,22 @@ begin
         'Aucune'));
       if LangNums.Strings[i] = Settings.LangStr then
         LangFound := True;
+    end;  }
+  try
+    FindAllFiles(LangNums, ExtractFilePath(Application.ExeName) + 'lang', '*.lng', true); //find all language files
+    if LangNums.count > 0 then
+    begin
+      for i:= 0 to LangNums.count-1 do
+      begin
+        LangFile:= TBbInifile.Create(LangNums.Strings[i]);
+        LangNums.Strings[i]:= TrimFileExt(ExtractFileName(LangNums.Strings[i]));
+        FSettings.CBLangue.Items.Add(LangFile.ReadString(LangNums.Strings[i], 'Language', 'Inconnu'));
+        if LangNums.Strings[i] = Settings.LangStr then LangFound := True;
+      end;
     end;
+  except
+    LangFound := false;
+  end;
   // Si la langue n'est pas traduite, alors on passe en Anglais
   if not LangFound then
   begin
@@ -1534,14 +1549,21 @@ end;
 procedure TFContactManager.ModLangue;
 const
   dquot = '"';     // Double quote
-  dquotv = '","';   // Double cote  plus comma plus double quote
+  dquotv = '","';   // Double quote  plus comma plus double quote
 var
   i: Integer;
   A: TStringArray;
+  prgName: String;
 begin
   LangStr:=Settings.LangStr;
+  // Get selected language file
+  LangFile:= TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'lang'+PathDelim+LangStr+'.lng');
   with LangFile do
   begin
+    prgName:= ReadString(LangStr, 'ProgName', 'Erreur');
+    if prgName<>ProgName then
+    ShowMessage('Fichier de langue erroné. Réinstallez le programme');
+   {$IFDEF WINDOWS}
     with OsVersion do
     begin
       ProdStrs.Strings[1]:= ReadString(LangStr,'Home','Famille'); ;
@@ -1558,6 +1580,7 @@ begin
         Win11Strs.Strings[i]:= A[0]+'='+ReadString(LangStr,A[0],A[1]);
       end;
     end;
+   {$ENDIF}
     //Main Form
     Caption:=ReadString(LangStr,'Caption','Gestionnaire de Contacts');
     // Components
@@ -1674,7 +1697,7 @@ begin
       if AboutBox.NewVersion then AboutBox.LUpdate.Caption:= Format(AboutBox.sUpdateAvailable, [AboutBox.LastVersion])
       else AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
     end;
-
+    AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
    // AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
 
 

@@ -1,11 +1,12 @@
 ;------------------------------------------------------------------------------------------
 ; NSIS Installation script for 32/64 bit ContactsMgr
-; bb - sdtp - October 2022
+; bb - sdtp - January 2023
 ;
 ; 25/10/2022 Replaced onInit with a custom page to check running app and previous versions
+; 20/01/2023 Changed for new langage files install
 ;------------------------------------------------------------------------------------------
 
-!define FileVersion "1.0.0.2"
+!define FileVersion "1.0.0.3"
 
  Unicode true
 
@@ -231,8 +232,16 @@ Section "" ;No components page, name is not important
   File "${source_dir}\license.txt"
   File "${source_dir}\history.txt"
   File "${source_dir}\${prog_name}.txt"
-  File "${source_dir}\${prog_name}.lng"
-
+  ; delete old lng file
+  IfFileExists "$INSTDIR\${prog_name}.lng" 0 +2
+  Delete "$INSTDIR\${prog_name}.lng"
+  ; Install language files
+  CreateDirectory "$INSTDIR\lang"
+  SetOutPath "$INSTDIR\lang"
+  File "${source_dir}\lang\en.lng"
+  File "${source_dir}\lang\fr.lng"
+  ; restore install directory variable
+  SetOutPath "$INSTDIR"
   ; write out uninstaller
   WriteUninstaller "$INSTDIR\uninst.exe"
   

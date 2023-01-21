@@ -1,5 +1,6 @@
 backup/**
 lib/
-InstallContactsmgr.exe
+lang/backup/**
+InstallContactmgr.exe
 contactmgrwin32.exe
 contactmgrwin64.exe

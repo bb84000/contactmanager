@@ -1,0 +1,189 @@
+;Languages File
+;It is possible to create a new language file using its ID as name (example it.lng)
+;Danish	[da], Dutch [nl], Finnish [fi], German [de], Greek [el], Hungarian [hu]
+;Icelandic [is], Italian [it], Norwegian [no], Polish [pl], Portuguese [pt]
+;Russian [ru], Serbo Croatian [sr], Slovak [sk], Swedish [sv], Turkish [tr]
+
+; Section name must be the same as the file name : [en] for en.lng file
+; ProgName must be the same as defined in the application code
+
+; Save the file in a secure place as it can be replaced by any update !
+
+;Submit your translation on GitHub
+
+; English
+[en]
+;General
+ProgName=ContactMgr
+Language=English
+Caption=Contacts Manager
+OKBtn=OK
+YesBtn=Yes
+NoBtn=No
+CancelBtn=Cancel
+
+Aboutbox.Caption=About Contacts Manager
+AboutBox.LUpdate.Caption=Search update
+PPerso.Caption=Private
+PWork.Caption=Work and other
+GBOrder.Caption=Sort order
+RBNone.Caption=No sort
+RBTown.Caption=Town
+RBNameSurname.Caption=Name, surname
+RBCountry.Caption=Country
+RBSurnameName.Caption=Surname, name
+RBPostcode.Caption=Post code
+RBlongit.Caption=Longitude
+RBLatit.Caption=Latitude
+BtnImport.Hint=Contacts import and export
+BtnFirst.Hint=First contact
+BtnPrev.Hint=Previous contact
+BtnNext.Hint=Next contact
+BtnLast.Hint=Last contact
+BtnDelete.Hint=Delete selected contact
+BtnAdd.Hint=Add contact
+BtnValid.Hint=Save selected contact change
+BtnCancel.Hint=Cancel selected contact change
+BtnCoord.Hint=Retreive selected contact GPS coordinates
+BtnLocate.Hint=Locate selected contact on a map
+BtnPrefs.Hint=Change program settings
+BtnAbout.Hint=About Contacts Manager
+BtnQuit.Hint=Quit Contacts Manager
+BtnSearch.Hint=Search contact
+LName.Caption=Name
+LSurname.Caption=Surname
+LStreet.Caption=Street
+BPCaption=PO Box
+LieuditCaption=ext. address
+CPCaption=PostCode
+TownCaption=Town
+LCountry.Caption=Country
+LPhone.Caption=Phone
+LBox.Caption=Box phone
+LMobile.Caption=Mobile phone
+LAutre.Caption=Other phone
+LEmail.Caption=Email
+LWeb.Caption=Web site
+LLongitude.Caption=Longitude
+LLatitude.Caption=Latitude
+LDateCre.Caption=Creation date
+LDatemodif.Caption=Change date
+CommentCaption=Comment
+ImageFileCaption=Image file
+LFonction.Caption=Function
+LCompany.Caption=Company
+LStreetWk.Caption=Work address
+BPWkCaption=Work POBox
+LieuditWkCaption=Work ext.
+CPWkCaption=Work PC
+TownWkCaption=Work Town
+LCountryWk.Caption=Work country
+LPhoneWk.Caption=Work phone
+LBoxWk.Caption=Work box
+LMobileWk.Caption=Work mobile
+LAutreWk.Caption=Work oth. phone
+LEmailWk.Caption=Work email
+LWebWk.Caption=Work Web site
+LLongitudeWk.Caption=Work longitude
+LLatitudeWk.Caption=Work latitude
+PMnuChoose.Caption=Select an image
+PMnuChange.Caption=Change image
+PMnuDelete.Caption=Delete image
+OPictDialog.Title=Open existing file
+ImgContactHintEmpty=Click the right mouse button to add an image
+ImgContactHintFull=Click the right mouse button to change or delete the image.%sImage file: %s
+ContactNotFound=Contact not found
+ContactNoOtherFound=No other contact found
+CntImportd=%d imported %s contact
+CntExportd=%d exported %s contact
+CntImportds=%d imported %s contacts
+CntExportds=%d exported %s contacts
+MailSubject=Mail from Contacts Manager
+ConfirmDeleteContact=Do you really want to delete the contact %s ?
+CanCloseMsg=A change is pending.%sTo validate the change and quit, click on the "Yes" button.%To cancel the change and quit, click on the "No" button.%sTo return to the program, click on the "Cancel" button.
+Use64bitcaption=Use the 64bit version of the program
+AboutBox.UpdateAvailable=New version %s available
+NoLongerChkUpdates=No longer check updates
+AboutBox.LastUpdateSearch=Last update check
+AboutBox.NoUpdateAvailable=Contacts manager is up to date
+AboutBox.UrlProgSite=https://github.com/bb84000/contactmanager/wiki
+AboutBox.LProgPage.Caption=Program home page
+AboutBox.LWebSite.Caption=Web site home page
+AboutBox.LSourceCode.Caption=Source code Web page
+UpdateAlertBox=Current version: %sA new version %s is available
+CannotGetNewVerList=Cannot get new versions list
+
+;Settings
+FSettings.Caption=Contact Manager settings
+FSettings.GroupBox1.Caption=System
+FSettings.LDataFolder.Caption=Data folder
+FSettings.CBStartup.Caption=Launch at system startup
+FSettings.CBMinimized.Caption=Launch minimized
+FSettings.CBSavePos.Caption=Save size and position
+FSettings.CBUpdate.Caption=Don't search update
+FSettings.LLangue.Caption=Language
+
+;Http error messages
+SErrInvalidProtocol=Invalid protocol "%s"
+SErrReadingSocket=Error reading data from socket
+SErrInvalidProtocolVersion=Invalid protocol version in response: %s
+SErrInvalidStatusCode=Invalid response status code: %s
+SErrUnexpectedResponse=Unexpected response status code: %s
+SErrChunkTooBig=Chunk too big
+SErrChunkLineEndMissing=Chunk line end missing
+SErrMaxRedirectsReached=Maximum allowed redirects reached: %s
+
+;Socket error messages
+strHostNotFound=Host name resolution for "%s" failed.
+strSocketCreationFailed=Creation of socket failed: %s
+strSocketBindFailed=Binding of socket failed: %s
+strSocketListenFailed=Listening on port #%s failed, error: %s
+strSocketConnectFailed=Connect to %s failed
+strSocketAcceptFailed=Could not accept a client connection on socket: %s, error %s
+strSocketAcceptWouldBlock=Accept would block on socket: %s
+strSocketIOTimeOut=Failed to set IO Timeout to %s
+strErrNoStream=Socket stream not assigned
+
+;FImpex
+FImpex.Caption=Contacts import and export
+FImpex.RBImport.Caption=Import
+Fimpex.RBExport.Caption=Export
+FImpex.LSepar.Caption=Separator
+FImpex.LDelim.Caption=Delimiter
+FImpex.LFilename.Caption=File
+FImpex.LCode.Caption=Code
+FImpex.SGImpex.Col0.Title=Field
+FImpex.SGImpex.Col1.Title=Data
+FImpex.OD1.Title=Open existing file
+FImpex.SD1.Title=Save file
+FImpex.ImportBtn.Caption=Import
+FImpex.ExportBtn.Caption=Export
+FImpex.BtnCancel.Caption=Cancel
+MnuRetrieveGPSCaption=Retrieve %s GPS coordinates
+MnuLocateCaption=Locate %s on a map
+MnuCopyCaption=Copy %s data
+MnuDeleteCaption=Delete %s contact
+MnuSendmailCaption=Send a private email to %s
+MnuVisitwebCaption=Visist the %s private Web site
+
+;lazbbosver
+Home=Home
+Professional=Professional
+Server=Server
+00000=Unknown version
+10240=v 1507 "July 2015 update"
+10586=v 1511 "November 2015 update"
+14393=v 1607 "July 2016 (Anniversary update)"
+15063=v 1703 "April 2017 (Creators update)"
+16299=v 1709 "October 2017 (Fall Creators update)"
+17134=v 1803 "April 2018 update"
+17763=v 1809 "October 2018 update"
+18362=v 1903 "May 2019 update"
+18363=v 1909 "November 2019 update"
+19041=v 2004 "May 2020 update"
+19042=v 20H2 "October 2020 update"
+19043=v 21H1 "May 2021 updsate"
+19044=v 21H2 "October 2021 update"
+19045=v 22H2 "October 2022 update"
+22000=v 21H2 "October 2021 Initial Version"
+22621=v 22H2 "September 2022 update"  

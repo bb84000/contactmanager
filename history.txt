@@ -297,6 +297,8 @@ Version 1.0.1.7 - 02/11/2022
   procedure to minimize when the form is shown
 - Installer rewritten : better older versions management
 
+Version 1.0.2.0 - 20/01/2023
+- Changed unique language file to multiple language files in "lang" directory
 
 
 
