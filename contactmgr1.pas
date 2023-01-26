@@ -15,7 +15,7 @@ uses
   {$ENDIF} LMessages, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types, FileUtil,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
-  strutils, lazbbaboutupdate, settings1, lazbbinifiles, LazUTF8, Clipbrd,
+  strutils, lazbbaboutdlg, settings1, lazbbinifiles, LazUTF8, Clipbrd,
   UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion,
   opensslsockets;
 
@@ -212,7 +212,7 @@ type
     LieuditWkCaption, BPWkCaption: string;
     CPWkCaption, TownWkCaption: string;
     settings: TConfig;
-    LangStr: string;
+    CurLangStr: string;
     SettingsChanged: boolean;
     ContactsChanged: boolean;
     LangFile: TBbIniFile;
@@ -250,7 +250,8 @@ type
     procedure SettingsOnChange(Sender: TObject);
     procedure SettingsOnStateChange(Sender: TObject);
     procedure ContactsOnChange(Sender: TObject);
-    procedure ModLangue;
+    //procedure ModLangue;
+    procedure Translate(LngFile: TBbInifile);
     procedure SetEditState(val: boolean);
     function ShowAlert(Title, AlertStr, StReplace, NoShow: string;
       var Alert: boolean): boolean;
@@ -296,9 +297,9 @@ begin
   {$IFDEF Linux}
     OS := 'Linux';
     CRLF := #10;
-    LangStr := GetEnvironmentVariable('LANG');
-    x := pos('.', LangStr);
-    LangStr := Copy(LangStr, 0, 2);
+    CurLangStr := GetEnvironmentVariable('LANG');
+    x := pos('.', CurLangStr);
+    CurLangStr := Copy(CurLangStr, 0, 2);
     wxbitsrun := 0;
     OSTarget:= '';
   {$ENDIF}
@@ -311,7 +312,7 @@ begin
       UserAppsDataPath := s                     // NT to XP
     else
     UserAppsDataPath := ExtractFilePath(ExcludeTrailingPathDelimiter(s)) + 'Roaming'; // Vista to W10
-    LazGetShortLanguageID(LangStr);
+    LazGetShortLanguageID(CurLangStr);
     {$IFDEF CPU32}
        OSTarget := '32 bits';
     {$ENDIF}
@@ -499,6 +500,7 @@ begin
   alertmsg:= '';
   if not visible then alertpos:= poDesktopCenter
   else alertpos:= poMainFormCenter;
+  AboutBox.LastUpdate:= Trunc(Settings.LastUpdChk);
   if (Trunc(Now)>Trunc(Settings.LastUpdChk)+days) and (not Settings.NoChkNewVer) then
   begin
      Settings.LastUpdChk := Trunc(Now);
@@ -534,9 +536,14 @@ begin
    begin
     if VersionToInt(Settings.LastVersion)>VersionToInt(version) then
        AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [Settings.LastVersion]) else
-       AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
+    begin
+      AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
+      // Already checked the same day
+      if Trunc(Settings.LastUpdChk) = Trunc(now) then AboutBox.checked:= true;
+    end;
    end;
-   AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
+   //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
+   AboutBox.Translate(LangFile);
 end;
 
 procedure TFContactManager.EnableEdits(Enable: Boolean);
@@ -631,7 +638,7 @@ begin
     end;
   if Settings.StartWin and settings.StartMini then StartMini:= true; //Application.Minimize;
   // Détermination de la langue (si pas dans settings, langue par défaut)
-  if Settings.LangStr = '' then Settings.LangStr := LangStr;
+  if Settings.LangStr = '' then Settings.LangStr := CurLangStr;
   {LangFile.ReadSections(LangNums);
   if LangNums.Count > 1 then
     for i := 0 to LangNums.Count - 1 do
@@ -649,7 +656,7 @@ begin
       begin
         LangFile:= TBbInifile.Create(LangNums.Strings[i]);
         LangNums.Strings[i]:= TrimFileExt(ExtractFileName(LangNums.Strings[i]));
-        FSettings.CBLangue.Items.Add(LangFile.ReadString(LangNums.Strings[i], 'Language', 'Inconnu'));
+        FSettings.CBLangue.Items.Add(LangFile.ReadString('common', 'Language', 'Inconnu'));
         if LangNums.Strings[i] = Settings.LangStr then LangFound := True;
       end;
     end;
@@ -663,7 +670,8 @@ begin
   end;
   ListeContacts.Reset;
   ListeContacts.LoadXMLfile(filename);
-  Modlangue;
+  LangFile:= TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'lang'+PathDelim+Settings.LangStr+'.lng');
+  Translate(LangFile);
   SettingsChanged := False;
 end;
 
@@ -1455,7 +1463,10 @@ begin
     Settings.NoChkNewVer := FSettings.CBUpdate.Checked;
     Settings.LangStr := LangNums.Strings[FSettings.CBLangue.ItemIndex];
     if FSettings.CBLangue.ItemIndex <> oldndx then
-      ModLangue;
+    begin
+      LangFile:= TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'lang'+PathDelim+Settings.LangStr+'.lng');
+      Translate(LangFile);
+    end;
     DisplayContact;                                // Needed to change language on hints
   end;
 end;
@@ -1546,235 +1557,179 @@ end;
 // To be called in form activation routine of loadconfig routine or when language
 // is changed in preferences
 
-procedure TFContactManager.ModLangue;
+procedure TFContactManager.Translate(LngFile: TBbInifile);
 const
   dquot = '"';     // Double quote
   dquotv = '","';   // Double quote  plus comma plus double quote
 var
-  i: Integer;
-  A: TStringArray;
+
   prgName: String;
 begin
-  LangStr:=Settings.LangStr;
-  // Get selected language file
-  LangFile:= TBbIniFile.Create(ExtractFilePath(Application.ExeName) + 'lang'+PathDelim+LangStr+'.lng');
-  with LangFile do
+  if Assigned(LngFile) then
+  with LngFile do
   begin
-    prgName:= ReadString(LangStr, 'ProgName', 'Erreur');
+    prgName:= ReadString('Common', 'ProgName', 'Erreur');
     if prgName<>ProgName then
     ShowMessage('Fichier de langue erroné. Réinstallez le programme');
-   {$IFDEF WINDOWS}
-    with OsVersion do
-    begin
-      ProdStrs.Strings[1]:= ReadString(LangStr,'Home','Famille'); ;
-      ProdStrs.Strings[2]:= ReadString(LangStr,'Professional','Entreprise');
-      ProdStrs.Strings[3]:= ReadString(LangStr,'Server','Serveur');
-      for i:= 0 to Win10Strs.count-1 do
-      begin
-        A:= Win10Strs.Strings[i].split('=');
-        Win10Strs.Strings[i]:= A[0]+'='+ReadString(LangStr,A[0],A[1]);
-      end;
-      for i:= 0 to Win11Strs.count-1 do
-      begin
-        A:= Win11Strs.Strings[i].split('=');
-        Win11Strs.Strings[i]:= A[0]+'='+ReadString(LangStr,A[0],A[1]);
-      end;
-    end;
-   {$ENDIF}
+    OsVersion.Translate(LangFile);
     //Main Form
-    Caption:=ReadString(LangStr,'Caption','Gestionnaire de Contacts');
+    Caption:=ReadString('Common','DefaultCaption','Gestionnaire de Contacts');
     // Components
-    OKBtn:= ReadString(Settings.LangStr, 'OKBtn', 'OK');
-    YesBtn:=ReadString(LangStr,'YesBtn','Oui');
-    NoBtn:=ReadString(LangStr,'NoBtn','Non');
-    CancelBtn:=ReadString(LangStr,'CancelBtn','Annuler');
-    // AboutBox
-    Aboutbox.Caption:=ReadString(LangStr,'Aboutbox.Caption','A propos du Gestionnaire de Contacts');
-    AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption','Recherche de mise à jour');
+    OKBtn:= ReadString('Common', 'OKBtn', 'OK');
+    YesBtn:=ReadString('Common','YesBtn','Oui');
+    NoBtn:=ReadString('Common','NoBtn','Non');
+    CancelBtn:=ReadString('Common','CancelBtn','Annuler');
+
+
     // Main form
-    PPerso.Caption:=ReadString(LangStr,'PPerso.Caption',PPerso.Caption);
-    PWork.Caption:=ReadString(LangStr,'PWork.Caption',PWork.Caption);
-    GBOrder.Caption:=ReadString(LangStr,'GBOrder.Caption',GBOrder.Caption);
-    RBNone.Caption:=ReadString(LangStr,'RBNone.Caption',RBNone.Caption);
-    RBTown.Caption:=ReadString(LangStr,'RBTown.Caption',RBTown.Caption);
-    RBNameSurname.Caption:=ReadString(LangStr,'RBNameSurname.Caption',RBNameSurname.Caption);
-    RBCountry.Caption:=ReadString(LangStr,'RBCountry.Caption',RBCountry.Caption);
-    RBSurnameName.Caption:=ReadString(LangStr,'RBSurnameName.Caption',RBSurnameName.Caption);
-    RBPostcode.Caption:=ReadString(LangStr,'RBPostcode.Caption',RBPostcode.Caption);
-    RBlongit.Caption:=ReadString(LangStr,'RBlongit.Caption',RBlongit.Caption);
-    RBLatit.Caption:=ReadString(LangStr,'RBLatit.Caption',RBLatit.Caption);
-    BtnImport.Hint:=ReadString(LangStr,'BtnImport.Hint',BtnImport.Hint);
-    BtnFirst.Hint:=ReadString(LangStr,'BtnFirst.Hint',BtnFirst.Hint);
-    BtnPrev.Hint:=ReadString(LangStr,'BtnPrev.Hint',BtnPrev.Hint);
-    BtnNext.Hint:=ReadString(LangStr,'BtnNext.Hint',BtnNext.Hint);
-    BtnLast.Hint:=ReadString(LangStr,'BtnLast.Hint',BtnLast.Hint);
-    BtnDelete.Hint:=ReadString(LangStr,'BtnDelete.Hint',BtnDelete.Hint);
-    BtnAdd.Hint:=ReadString(LangStr,'BtnAdd.Hint',BtnAdd.Hint);
-    BtnValid.Hint:=ReadString(LangStr,'BtnValid.Hint',BtnValid.Hint);
-    BtnCancel.Hint:=ReadString(LangStr,'BtnCancel.Hint',BtnCancel.Hint);
-    BtnCoord.Hint:=ReadString(LangStr,'BtnCoord.Hint',BtnCoord.Hint);
-    BtnLocate.Hint:=ReadString(LangStr,'BtnLocate.Hint',BtnLocate.Hint);
-    BtnPrefs.Hint:=ReadString(LangStr,'BtnPrefs.Hint',BtnPrefs.Hint);
-    BtnAbout.Hint:=ReadString(LangStr,'BtnAbout.Hint',BtnAbout.Hint);
-    BtnQuit.Hint:=ReadString(LangStr,'BtnQuit.Hint',BtnQuit.Hint);
-    BtnSearch.Hint:=ReadString(LangStr,'BtnSearch.Hint',BtnSearch.Hint);
-    LName.Caption:=ReadString(LangStr,'LName.Caption',LName.Caption);
-    LSurname.Caption:=ReadString(LangStr,'LSurname.Caption',LSurname.Caption);
-    LStreet.Caption:=ReadString(LangStr,'LStreet.Caption', LStreet.Caption);
-    BPCaption:=ReadString(LangStr,'BPCaption','BP');
-    LieuditCaption:=ReadString(LangStr,'LieuditCaption','Lieudit');
+    PPerso.Caption:=ReadString('main','PPerso.Caption',PPerso.Caption);
+    PWork.Caption:=ReadString('main','PWork.Caption',PWork.Caption);
+    GBOrder.Caption:=ReadString('main','GBOrder.Caption',GBOrder.Caption);
+    RBNone.Caption:=ReadString('main','RBNone.Caption',RBNone.Caption);
+    RBTown.Caption:=ReadString('main','RBTown.Caption',RBTown.Caption);
+    RBNameSurname.Caption:=ReadString('main','RBNameSurname.Caption',RBNameSurname.Caption);
+    RBCountry.Caption:=ReadString('main','RBCountry.Caption',RBCountry.Caption);
+    RBSurnameName.Caption:=ReadString('main','RBSurnameName.Caption',RBSurnameName.Caption);
+    RBPostcode.Caption:=ReadString('main','RBPostcode.Caption',RBPostcode.Caption);
+    RBlongit.Caption:=ReadString('main','RBlongit.Caption',RBlongit.Caption);
+    RBLatit.Caption:=ReadString('main','RBLatit.Caption',RBLatit.Caption);
+    BtnImport.Hint:=ReadString('main','BtnImport.Hint',BtnImport.Hint);
+    BtnFirst.Hint:=ReadString('main','BtnFirst.Hint',BtnFirst.Hint);
+    BtnPrev.Hint:=ReadString('main','BtnPrev.Hint',BtnPrev.Hint);
+    BtnNext.Hint:=ReadString('main','BtnNext.Hint',BtnNext.Hint);
+    BtnLast.Hint:=ReadString('main','BtnLast.Hint',BtnLast.Hint);
+    BtnDelete.Hint:=ReadString('main','BtnDelete.Hint',BtnDelete.Hint);
+    BtnAdd.Hint:=ReadString('main','BtnAdd.Hint',BtnAdd.Hint);
+    BtnValid.Hint:=ReadString('main','BtnValid.Hint',BtnValid.Hint);
+    BtnCancel.Hint:=ReadString('main','BtnCancel.Hint',BtnCancel.Hint);
+    BtnCoord.Hint:=ReadString('main','BtnCoord.Hint',BtnCoord.Hint);
+    BtnLocate.Hint:=ReadString('main','BtnLocate.Hint',BtnLocate.Hint);
+    BtnPrefs.Hint:=ReadString('main','BtnPrefs.Hint',BtnPrefs.Hint);
+    BtnAbout.Hint:=ReadString('main','BtnAbout.Hint',BtnAbout.Hint);
+    BtnQuit.Hint:=ReadString('main','BtnQuit.Hint',BtnQuit.Hint);
+    BtnSearch.Hint:=ReadString('main','BtnSearch.Hint',BtnSearch.Hint);
+    LName.Caption:=ReadString('main','LName.Caption',LName.Caption);
+    LSurname.Caption:=ReadString('main','LSurname.Caption',LSurname.Caption);
+    LStreet.Caption:=ReadString('main','LStreet.Caption', LStreet.Caption);
+    BPCaption:=ReadString('main','BPCaption','BP');
+    LieuditCaption:=ReadString('main','LieuditCaption','Lieudit');
     LBP.Caption:=BPCaption+', '+LieuditCaption;
-    CPCaption:=ReadString(LangStr,'CPCaption','CP');
-    TownCaption:=ReadString(LangStr,'TownCaption','Ville');
+    CPCaption:=ReadString('main','CPCaption','CP');
+    TownCaption:=ReadString('main','TownCaption','Ville');
     LCP.Caption:=CPCaption+', '+TownCaption;
-    LCountry.Caption:=ReadString(LangStr,'LCountry.Caption',LCountry.Caption);
-    LPhone.Caption:=ReadString(LangStr,'LPhone.Caption',LPhone.Caption);
-    LBox.Caption:=ReadString(LangStr,'LBox.Caption',LBox.Caption);
-    LMobile.Caption:=ReadString(LangStr,'LMobile.Caption',LMobile.Caption);
-    LAutre.Caption:=ReadString(LangStr,'LAutre.Caption',LAutre.Caption);
-    LEmail.Caption:=ReadString(LangStr,'LEmail.Caption',LEmail.Caption);
-    LWeb.Caption:=ReadString(LangStr,'LWeb.Caption',LWeb.Caption);
-    LLongitude.Caption:=ReadString(LangStr,'LLongitude.Caption',LLongitude.Caption);
-    LLatitude.Caption:=ReadString(LangStr,'LLatitude.Caption',LLatitude.Caption);
-    LDateCre.Caption:=ReadString(LangStr,'LDateCre.Caption',LDateCre.Caption);
-    LDatemodif.Caption:=ReadString(LangStr,'LDatemodif.Caption',LDatemodif.Caption);
-    CommentCaption:=ReadString(LangStr,'CommentCaption','Commentaire');
-    ImageFileCaption:=ReadString(LangStr,'ImageFileCaption','Fichier image');
-    LFonction.Caption:= ReadString(LangStr,'LFonction.Caption',LFonction.Caption);
-    LCompany.Caption:=ReadString(LangStr,'LCompany.Caption',LCompany.Caption);
-    LStreetWk.Caption:=ReadString(LangStr,'LStreetWk.Caption',LStreetWk.Caption);
-    BPWkCaption:=ReadString(LangStr,'BPWkCaption','BP Pro');
-    LieuditWkCaption := ReadString(LangStr, 'LieuditWkCaption', 'Lieudit pro');
+    LCountry.Caption:=ReadString('main','LCountry.Caption',LCountry.Caption);
+    LPhone.Caption:=ReadString('main','LPhone.Caption',LPhone.Caption);
+    LBox.Caption:=ReadString('main','LBox.Caption',LBox.Caption);
+    LMobile.Caption:=ReadString('main','LMobile.Caption',LMobile.Caption);
+    LAutre.Caption:=ReadString('main','LAutre.Caption',LAutre.Caption);
+    LEmail.Caption:=ReadString('main','LEmail.Caption',LEmail.Caption);
+    LWeb.Caption:=ReadString('main','LWeb.Caption',LWeb.Caption);
+    LLongitude.Caption:=ReadString('main','LLongitude.Caption',LLongitude.Caption);
+    LLatitude.Caption:=ReadString('main','LLatitude.Caption',LLatitude.Caption);
+    LDateCre.Caption:=ReadString('main','LDateCre.Caption',LDateCre.Caption);
+    LDatemodif.Caption:=ReadString('main','LDatemodif.Caption',LDatemodif.Caption);
+    CommentCaption:=ReadString('main','CommentCaption','Commentaire');
+    ImageFileCaption:=ReadString('main','ImageFileCaption','Fichier image');
+    LFonction.Caption:= ReadString('main','LFonction.Caption',LFonction.Caption);
+    LCompany.Caption:=ReadString('main','LCompany.Caption',LCompany.Caption);
+    LStreetWk.Caption:=ReadString('main','LStreetWk.Caption',LStreetWk.Caption);
+    BPWkCaption:=ReadString('main','BPWkCaption','BP Pro');
+    LieuditWkCaption := ReadString('main', 'LieuditWkCaption', 'Lieudit pro');
     LBPWk.Caption:=BPWkCaption+', '+LieuditWkCaption;
-    CPWkCaption:=ReadString(LangStr,'CPWkCaption','CP pro');
-    TownWkCaption:=ReadString(LangStr,'TownWkCaption','Ville pro');
+    CPWkCaption:=ReadString('main','CPWkCaption','CP pro');
+    TownWkCaption:=ReadString('main','TownWkCaption','Ville pro');
     LCPWk.Caption:=CPWkCaption+', '+TownWkCaption;
-    LCountryWk.Caption:=ReadString(LangStr,'LCountryWk.Caption',LCountryWk.Caption);
-    LPhoneWk.Caption:=ReadString(LangStr,'LPhoneWk.Caption',LPhoneWk.Caption);
-    LBoxWk.Caption:=ReadString(LangStr,'LBoxWk.Caption',LBoxWk.Caption);
-    LMobileWk.Caption:=ReadString(LangStr,'LMobileWk.Caption',LMobileWk.Caption);
-    LAutreWk.Caption:=ReadString(LangStr,'LAutreWk.Caption',LAutreWk.Caption);
-    LEmailWk.Caption:=ReadString(LangStr,'LEmailWk.Caption',LEmailWk.Caption);
-    LWebWk.Caption:=ReadString(LangStr,'LWebWk.Caption',LWebWk.Caption);
-    LLongitudeWk.Caption:=ReadString(LangStr,'LLongitudeWk.Caption',LLongitudeWk.Caption);
-    LLatitudeWk.Caption:=ReadString(LangStr,'LLatitudeWk.Caption',LLatitudeWk.Caption);
-    ImgContactHintEmpty:=ReadString(LangStr,'ImgContactHintEmpty',
+    LCountryWk.Caption:=ReadString('main','LCountryWk.Caption',LCountryWk.Caption);
+    LPhoneWk.Caption:=ReadString('main','LPhoneWk.Caption',LPhoneWk.Caption);
+    LBoxWk.Caption:=ReadString('main','LBoxWk.Caption',LBoxWk.Caption);
+    LMobileWk.Caption:=ReadString('main','LMobileWk.Caption',LMobileWk.Caption);
+    LAutreWk.Caption:=ReadString('main','LAutreWk.Caption',LAutreWk.Caption);
+    LEmailWk.Caption:=ReadString('main','LEmailWk.Caption',LEmailWk.Caption);
+    LWebWk.Caption:=ReadString('main','LWebWk.Caption',LWebWk.Caption);
+    LLongitudeWk.Caption:=ReadString('main','LLongitudeWk.Caption',LLongitudeWk.Caption);
+    LLatitudeWk.Caption:=ReadString('main','LLatitudeWk.Caption',LLatitudeWk.Caption);
+    ImgContactHintEmpty:=ReadString('main','ImgContactHintEmpty',
       'Cliquez avec le bouton droit de la souris pour ajouter une image');
-    ImgContactHintFull:=ReadString(LangStr,'ImgContactHintFull',
+    ImgContactHintFull:=ReadString('main','ImgContactHintFull',
       'Cliquez avec le bouton droit de la souris pour changer ou supprimer cette image%sFichier image: %s');
-    OPictDialog.Title:=ReadString(LangStr,'OPictDialog.Title',OPictDialog.Title);
-    ContactNotFound:=ReadString(LangStr,'ContactNotFound','Pas de contact trouvé');
-    ContactNoOtherFound:=ReadString(LangStr,'ContactNoOtherFound','Pas d''autre contact trouvé');
-    CntImportd:=ReadString(LangStr,'CntImportd','%d contact %s importé');
-    CntExportd:=ReadString(LangStr,'CntExportd','%d contact %s exporté');
-    CntImportds:=ReadString(LangStr,'CntImportds','%d contacts %s importés ');
-    CntExportds:=ReadString(LangStr,'CntExportds','%d contacts %s exportés');
-    MailSubject:=ReadString(LangStr,'MailSubject','Courrier du gestionnaire de contacts');
-    ConfirmDeleteContact:=ReadString(LangStr,'ConfirmDeleteContact',
+    OPictDialog.Title:=ReadString('main','OPictDialog.Title',OPictDialog.Title);
+    ContactNotFound:=ReadString('main','ContactNotFound','Pas de contact trouvé');
+    ContactNoOtherFound:=ReadString('main','ContactNoOtherFound','Pas d''autre contact trouvé');
+    CntImportd:=ReadString('main','CntImportd','%d contact %s importé');
+    CntExportd:=ReadString('main','CntExportd','%d contact %s exporté');
+    CntImportds:=ReadString('main','CntImportds','%d contacts %s importés ');
+    CntExportds:=ReadString('main','CntExportds','%d contacts %s exportés');
+    MailSubject:=ReadString('main','MailSubject','Courrier du gestionnaire de contacts');
+    ConfirmDeleteContact:=ReadString('main','ConfirmDeleteContact',
       'Voulez-vous vraiment supprimer le contact %s ?');
-    CanCloseMsg:=ReadString(LangStr, 'CanCloseMsg',
+    CanCloseMsg:=ReadString('main', 'CanCloseMsg',
       'Une modification est en cours.%s' +
       'Pour la valider et quitter, cliquez sur le bouton "Oui".%s' +
       'Pour l''annuler et quitter, cliquer sur le bouton "Non".%s' +
       'Pour revenir au programme, cliquer sur le bouton "Annuler".');
-    Use64bitcaption:=ReadString(LangStr,'Use64bitcaption','Utilisez la version 64 bits de ce programme');
-    sNoLongerChkUpdates:=ReadString(LangStr,'NoLongerChkUpdates','Ne plus rechercher les mises à jour');
-    UpdateAlertBox:=ReadString(LangStr,'UpdateAlertBox',
+    Use64bitcaption:=ReadString('main','Use64bitcaption','Utilisez la version 64 bits de ce programme');
+    sNoLongerChkUpdates:=ReadString('main','NoLongerChkUpdates','Ne plus rechercher les mises à jour');
+    UpdateAlertBox:=ReadString('main','UpdateAlertBox',
       'Version actuelle: %sUne nouvelle version %s est disponible');
-    sCannotGetNewVerList:=ReadString(LangStr,'CannotGetNewVerList','Liste des nouvelles versions indisponible');
-    AboutBox.sLastUpdateSearch:=ReadString(LangStr,'AboutBox.LastUpdateSearch','Dernière recherche de mise à jour');
-    AboutBox.sUpdateAvailable:=ReadString(LangStr,'AboutBox.UpdateAvailable','Nouvelle version %s disponible');
-    AboutBox.sNoUpdateAvailable:=ReadString(LangStr,'AboutBox.NoUpdateAvailable','Gestionnaire de contacts est à jour');
-    Aboutbox.Caption:=ReadString(LangStr,'Aboutbox.Caption','A propos du Gestionnaire de contacts');
-    AboutBox.LProductName.Caption:= caption;
-    AboutBox.UrlProgSite:= ReadString(LangStr,'AboutBox.UrlProgSite','https://github.com/bb84000/contactmanager/wiki/Accueil');
-    AboutBox.LProgPage.Caption:= ReadString(LangStr,'AboutBox.LProgPage.Caption', AboutBox.LProgPage.Caption);
-    AboutBox.LWebSite.Caption:= ReadString(LangStr,'AboutBox.LWebSite.Caption', AboutBox.LWebSite.Caption);
-    AboutBox.LSourceCode.Caption:= ReadString(LangStr,'AboutBox.LSourceCode.Caption', AboutBox.LSourceCode.Caption);
-    AboutBox.LVersion.Hint:= OSVersion.VerDetail;
-    if not AboutBox.checked then AboutBox.LUpdate.Caption:=ReadString(LangStr,'AboutBox.LUpdate.Caption',AboutBox.LUpdate.Caption) else
-    begin
-      if AboutBox.NewVersion then AboutBox.LUpdate.Caption:= Format(AboutBox.sUpdateAvailable, [AboutBox.LastVersion])
-      else AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
-    end;
-    AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
-   // AboutBox.UrlProgSite:= 'https://github.com/bb84000/contactmanager/wiki';
+    sCannotGetNewVerList:=ReadString('main','CannotGetNewVerList','Liste des nouvelles versions indisponible');
 
+    // AboutBox
+    AboutBox.Translate(LangFile);
+    AboutBox.LVersion.Hint:= OSVersion.VerDetail;
 
     // Settings
-    FSettings.Caption:=ReadString(LangStr,'FSettings.Caption',FSettings.Caption);
-    FSettings.GroupBox1.Caption:=ReadString(LangStr,'FSettings.GroupBox1.Caption',FSettings.GroupBox1.Caption);
-    FSettings.LDataFolder.Caption:=ReadString(LangStr,'FSettings.LDataFolder.Caption',FSettings.LDataFolder.Caption);
-    FSettings.CBStartup.Caption:=ReadString(LangStr,'FSettings.CBStartup.Caption',FSettings.CBStartup.Caption);
-    FSettings.CBMinimized.Caption:=ReadString(LangStr,'FSettings.CBMinimized.Caption',FSettings.CBMinimized.Caption);
-    FSettings.CBSavePos.Caption:=ReadString(LangStr,'FSettings.CBSavePos.Caption',FSettings.CBSavePos.Caption);
-    FSettings.CBUpdate.Caption:=ReadString(LangStr,'FSettings.CBUpdate.Caption',FSettings.CBUpdate.Caption);
-    FSettings.LLangue.Caption:=ReadString(LangStr,'FSettings.LLangue.Caption',FSettings.LLangue.Caption);
-    FSettings.BtnCancel.Caption:=CancelBtn;
+    FSettings.Translate(LangFile);
     FSettings.LStatus.Caption := OsVersion.VerDetail;
+
     // Import/export
-    FImpex.Caption:=ReadString(LangStr,'FImpex.Caption',FImpex.Caption);
-    FImpex.RBImport.Caption:=ReadString(LangStr,'FImpex.RBImport.Caption',FImpex.RBImport.Caption);
-    Fimpex.RBExport.Caption:=ReadString(LangStr,'Fimpex.RBExport.Caption',Fimpex.RBExport.Caption);
-    FImpex.LSepar.Caption:=ReadString(LangStr,'FImpex.LSepar.Caption',FImpex.LSepar.Caption);
-    FImpex.LDelim.Caption:=ReadString(LangStr,'FImpex.LDelim.Caption',FImpex.LDelim.Caption);
-    FImpex.LFilename.Caption:=ReadString(LangStr,'FImpex.LFilename.Caption',FImpex.LFilename.Caption);
-    FImpex.LCode.Caption:=ReadString(LangStr,'FImpex.LCode.Caption',FImpex.LCode.Caption);
-    FImpex.SGImpex.Columns[0].Title.Caption:=ReadString(LangStr,'FImpex.SGImpex.Col0.Title',
-      FImpex.SGImpex.Columns[0].Title.Caption);
-    FImpex.SGImpex.Columns[1].Title.Caption:=ReadString(LangStr,'FImpex.SGImpex.Col1.Title',
-      FImpex.SGImpex.Columns[1].Title.Caption);
-    FImpex.OD1.Title:=ReadString(LangStr,'FImpex.OD1.Title',FImpex.OD1.Title);
-    FImpex.SD1.Title:=ReadString(LangStr,'FImpex.SD1.Title',FImpex.SD1.Title);
-    FImpex_ImportBtn_Caption:=ReadString(LangStr,'FImpex.ImportBtn.Caption','Importation');
-    FImpex_ExportBtn_Caption:=ReadString(LangStr,'FImpex.ExportBtn.Caption','Exportation');
-    FImpex.BtnCancel.Caption:=FSettings.BtnCancel.Caption;
+    FIMpex.Translate(LangFile);
+
     // popup menus
-    MnuRetrieveGPSCaption:=ReadString(LangStr,'MnuRetrieveGPSCaption','Récupérer les données GPS de %s');
-    MnuLocateCaption:=ReadString(LangStr,'MnuLocateCaption','Localiser %s sur une carte');
-    MnuCopyCaption:=ReadString(LangStr, 'MnuCopyCaption','Copier les données de %s');
-    MnuDeleteCaption:=ReadString(LangStr,'MnuDeleteCaption','Supprimer le contact %s');
-    MnuSendmailCaption:=ReadString(LangStr,'MnuSendmail','Envoyer un courriel personnel à %s');
-    MnuVisitwebCaption:=ReadString(LangStr,'MnuVisitwebCaption','Visister le site Web personnel de %s');
-    PMnuChooseImg.Caption:=ReadString(LangStr,'PMnuChoose.Caption',PMnuChooseImg.Caption);
-    PMnuChangeImg.Caption:=ReadString(LangStr,'PMnuChange.Caption',PMnuChangeImg.Caption);
-    PMnuDeleteImg.Caption:=ReadString(LangStr,'PMnuDelete.Caption',PMnuDeleteImg.Caption);
+    MnuRetrieveGPSCaption:=ReadString('main','MnuRetrieveGPSCaption','Récupérer les données GPS de %s');
+    MnuLocateCaption:=ReadString('main','MnuLocateCaption','Localiser %s sur une carte');
+    MnuCopyCaption:=ReadString('main', 'MnuCopyCaption','Copier les données de %s');
+    MnuDeleteCaption:=ReadString('main','MnuDeleteCaption','Supprimer le contact %s');
+    MnuSendmailCaption:=ReadString('main','MnuSendmail','Envoyer un courriel personnel à %s');
+    MnuVisitwebCaption:=ReadString('main','MnuVisitwebCaption','Visister le site Web personnel de %s');
+    PMnuChooseImg.Caption:=ReadString('main','PMnuChoose.Caption',PMnuChooseImg.Caption);
+    PMnuChangeImg.Caption:=ReadString('main','PMnuChange.Caption',PMnuChangeImg.Caption);
+    PMnuDeleteImg.Caption:=ReadString('main','PMnuDelete.Caption',PMnuDeleteImg.Caption);
 
     // HTTP Error messages
-    HttpErrMsgNames[0] := ReadString(LangStr, 'SErrInvalidProtocol',
+    HttpErrMsgNames[0] := ReadString('HttpErr', 'SErrInvalidProtocol',
       'Protocole "%s" invalide');
-    HttpErrMsgNames[1] := ReadString(LangStr, 'SErrReadingSocket',
+    HttpErrMsgNames[1] := ReadString('HttpErr', 'SErrReadingSocket',
       'Erreur de lecture des données à partir du socket');
-    HttpErrMsgNames[2] := ReadString(LangStr, 'SErrInvalidProtocolVersion',
+    HttpErrMsgNames[2] := ReadString('HttpErr', 'SErrInvalidProtocolVersion',
       'Version de protocole invalide en réponse: %s');
-    HttpErrMsgNames[3] := ReadString(LangStr, 'SErrInvalidStatusCode',
+    HttpErrMsgNames[3] := ReadString('HttpErr', 'SErrInvalidStatusCode',
       'Code de statut de réponse invalide: %s');
-    HttpErrMsgNames[4] := ReadString(LangStr, 'SErrUnexpectedResponse',
+    HttpErrMsgNames[4] := ReadString('HttpErr', 'SErrUnexpectedResponse',
       'Code de statut de réponse non prévu: %s');
-    HttpErrMsgNames[5] := ReadString(LangStr, 'SErrChunkTooBig',
+    HttpErrMsgNames[5] := ReadString('HttpErr', 'SErrChunkTooBig',
       'Bloc trop grand');
-    HttpErrMsgNames[6] := ReadString(LangStr, 'SErrChunkLineEndMissing',
+    HttpErrMsgNames[6] := ReadString('HttpErr', 'SErrChunkLineEndMissing',
       'Fin de ligne du bloc manquante');
-    HttpErrMsgNames[7] := ReadString(LangStr, 'SErrMaxRedirectsReached',
+    HttpErrMsgNames[7] := ReadString('HttpErr', 'SErrMaxRedirectsReached',
       'Nombre maximum de redirections atteint: %s');
     // Socket error messages
-    HttpErrMsgNames[8] := ReadString(LangStr, 'strHostNotFound',
+    HttpErrMsgNames[8] := ReadString('HttpErr', 'strHostNotFound',
       'Résolution du nom d''hôte pour "%s" impossible.');
-    HttpErrMsgNames[9] := ReadString(LangStr, 'strSocketCreationFailed',
+    HttpErrMsgNames[9] := ReadString('HttpErr', 'strSocketCreationFailed',
       'Echec de la création du socket: %s');
-    HttpErrMsgNames[10] := ReadString(LangStr, 'strSocketBindFailed',
+    HttpErrMsgNames[10] := ReadString('HttpErr', 'strSocketBindFailed',
       'Echec de liaison du socket: %s');
-    HttpErrMsgNames[11] := ReadString(LangStr, 'strSocketListenFailed',
+    HttpErrMsgNames[11] := ReadString('HttpErr', 'strSocketListenFailed',
       'Echec de l''écoute sur le port n° %s, erreur %s');
-    HttpErrMsgNames[12]:=ReadString(LangStr,'strSocketConnectFailed',
+    HttpErrMsgNames[12]:=ReadString('HttpErr','strSocketConnectFailed',
       'Echec de la connexion à %s');
-    HttpErrMsgNames[13]:=ReadString(LangStr, 'strSocketAcceptFailed',
+    HttpErrMsgNames[13]:=ReadString('HttpErr', 'strSocketAcceptFailed',
       'Connexion refusée d''un client sur le socket: %s, erreur %s');
-    HttpErrMsgNames[14]:=ReadString(LangStr,'strSocketAcceptWouldBlock',
+    HttpErrMsgNames[14]:=ReadString('HttpErr','strSocketAcceptWouldBlock',
       'La connexion pourrait bloquer le socket: %s');
-    HttpErrMsgNames[15]:=ReadString(LangStr,'strSocketIOTimeOut',
+    HttpErrMsgNames[15]:=ReadString('HttpErr','strSocketIOTimeOut',
       'Impossible de fixer le timeout E/S à %s');
-    HttpErrMsgNames[16]:=ReadString(LangStr,'strErrNoStream',
+    HttpErrMsgNames[16]:=ReadString('HttpErr','strErrNoStream',
       'Flux du socket non assigné');
     // Translate default header of csv export
     csvheader := dquot+

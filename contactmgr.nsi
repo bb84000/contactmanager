@@ -299,6 +299,7 @@ Delete "$INSTDIR\licensf.txt"
 Delete "$INSTDIR\license.txt"
 Delete "$INSTDIR\OpenSSL License.txt"
 Delete "$INSTDIR\uninst.exe"
+RMDir /r "$INSTDIR\lang"
 
 ; remove shortcuts, if any.
   Delete  "$SMPROGRAMS\$(RemoveStr)\$(ProgramLnkStr)"
@@ -308,6 +309,7 @@ Delete "$INSTDIR\uninst.exe"
 
 ; remove directories used.
   RMDir "$SMPROGRAMS\$(RemoveStr)"
+  
   RMDir "$INSTDIR"
 
 DeleteRegKey HKCU "Software\SDTP\${prog_name}"

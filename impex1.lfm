@@ -12,7 +12,7 @@ object FImpex: TFImpex
   OnActivate = FormActivate
   OnDeactivate = FormDeactivate
   Position = poMainFormCenter
-  LCLVersion = '2.0.4.0'
+  LCLVersion = '2.2.4.0'
   object PnlTop: TPanel
     Left = 0
     Height = 35
@@ -553,11 +553,11 @@ object FImpex: TFImpex
   end
   object OD1: TOpenDialog
     Filter = 'CSV|*.csv;*.txt'
-    left = 16
-    top = 288
+    Left = 16
+    Top = 288
   end
   object SD1: TSaveDialog
-    left = 56
-    top = 288
+    Left = 56
+    Top = 288
   end
 end

@@ -12,18 +12,18 @@
 ;Submit your translation on GitHub
 
 ; English
-[en]
-;General
+[common]
 ProgName=ContactMgr
 Language=English
 Caption=Contacts Manager
+DefaultCaption=Contacts Manager
 OKBtn=OK
 YesBtn=Yes
 NoBtn=No
 CancelBtn=Cancel
 
-Aboutbox.Caption=About Contacts Manager
-AboutBox.LUpdate.Caption=Search update
+[main]
+;General
 PPerso.Caption=Private
 PWork.Caption=Work and other
 GBOrder.Caption=Sort order
@@ -112,17 +112,14 @@ AboutBox.LWebSite.Caption=Web site home page
 AboutBox.LSourceCode.Caption=Source code Web page
 UpdateAlertBox=Current version: %sA new version %s is available
 CannotGetNewVerList=Cannot get new versions list
+MnuRetrieveGPSCaption=Retrieve %s GPS coordinates
+MnuLocateCaption=Locate %s on a map
+MnuCopyCaption=Copy %s data
+MnuDeleteCaption=Delete %s contact
+MnuSendmailCaption=Send a private email to %s
+MnuVisitwebCaption=Visist the %s private Web site
 
-;Settings
-FSettings.Caption=Contact Manager settings
-FSettings.GroupBox1.Caption=System
-FSettings.LDataFolder.Caption=Data folder
-FSettings.CBStartup.Caption=Launch at system startup
-FSettings.CBMinimized.Caption=Launch minimized
-FSettings.CBSavePos.Caption=Save size and position
-FSettings.CBUpdate.Caption=Don't search update
-FSettings.LLangue.Caption=Language
-
+[HttpErr]
 ;Http error messages
 SErrInvalidProtocol=Invalid protocol "%s"
 SErrReadingSocket=Error reading data from socket
@@ -144,28 +141,10 @@ strSocketAcceptWouldBlock=Accept would block on socket: %s
 strSocketIOTimeOut=Failed to set IO Timeout to %s
 strErrNoStream=Socket stream not assigned
 
-;FImpex
-FImpex.Caption=Contacts import and export
-FImpex.RBImport.Caption=Import
-Fimpex.RBExport.Caption=Export
-FImpex.LSepar.Caption=Separator
-FImpex.LDelim.Caption=Delimiter
-FImpex.LFilename.Caption=File
-FImpex.LCode.Caption=Code
-FImpex.SGImpex.Col0.Title=Field
-FImpex.SGImpex.Col1.Title=Data
-FImpex.OD1.Title=Open existing file
-FImpex.SD1.Title=Save file
-FImpex.ImportBtn.Caption=Import
-FImpex.ExportBtn.Caption=Export
-FImpex.BtnCancel.Caption=Cancel
-MnuRetrieveGPSCaption=Retrieve %s GPS coordinates
-MnuLocateCaption=Locate %s on a map
-MnuCopyCaption=Copy %s data
-MnuDeleteCaption=Delete %s contact
-MnuSendmailCaption=Send a private email to %s
-MnuVisitwebCaption=Visist the %s private Web site
 
+
+
+[OSVersion]
 ;lazbbosver
 Home=Home
 Professional=Professional
@@ -186,4 +165,48 @@ Server=Server
 19044=v 21H2 "October 2021 update"
 19045=v 22H2 "October 2022 update"
 22000=v 21H2 "October 2021 Initial Version"
-22621=v 22H2 "September 2022 update"  
+22621=v 22H2 "September 2022 update"
+
+[AboutBox]
+Caption=About %s
+sLastUpdateSearch=Last update check
+sUpdateAvailable=New version %s available. Click to download it
+sNoUpdateAvailable=%s is up to date.
+LUpdate.Caption=Search update
+LProgPage.Caption=Program home page
+UrlProgSite=/wiki
+LWebSite.Caption=Web site home page
+LSourceCode.Caption=Source code Web page
+
+[FSettings]
+;Settings
+Caption=%s settings
+GroupBox1.Caption=System
+LDataFolder.Caption=Data folder
+CBStartup.Caption=Launch at system startup
+CBMinimized.Caption=Launch minimized
+CBSavePos.Caption=Save size and position
+CBUpdate.Caption=Don't search update
+LLangue.Caption=Language
+
+[FImpex]
+;FImpex
+Caption=Contacts import and export
+RBImport.Caption=Import
+RBExport.Caption=Export
+LSepar.Caption=Separator
+LDelim.Caption=Delimiter
+LFilename.Caption=File
+LCode.Caption=Code
+SGImpex.Col0.Title=Field
+SGImpex.Col1.Title=Data
+OD1.Title=Open existing file
+SD1.Title=Save file
+CBFirstline.Caption=1st line
+BtnUp.Caption=Up
+BtnDown.Caption=Down
+BtnEmpty.Caption=Empty
+ImportBtn.Caption=Import
+ExportBtn.Caption=Export
+
+

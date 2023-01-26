@@ -10,8 +10,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-
-  Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils, math, FileUtil;
+  Buttons, Grids, contacts1, laz2_DOM , laz2_XMLRead, csvdocument, lazbbutils,
+  math, FileUtil, lazbbinifiles;
 
 type
 
@@ -69,9 +69,12 @@ type
     function getcsvdate(doc: TCSVDocument; fld, ndx: integer) : TDateTime;
     procedure SGImpexPopulate(linecur: integer);
     procedure EnableCsvControls;
-   public
+  public
     ImpexContacts: TContactsList;
     ImpexSelcount: integer;
+    ImportBtn_Caption: String;
+    ExportBtn_Caption: String;
+    procedure Translate(LngFile: TBbIniFile);
   end;
 
 var
@@ -98,7 +101,7 @@ begin
   with FContactManager do
   begin
     csvheaderdoc.CSVText:= csvheader;
-    BtnImpex.Caption:= FImpex_ImportBtn_Caption;
+    BtnImpex.Caption:= ImportBtn_Caption;
   end;
   csvsheadercount:= csvheaderdoc.ColCount[0];
   csvdoc:= TCSVDocument.Create;
@@ -196,7 +199,7 @@ begin
   begin
     // IMport PNG from resource
     ResPngToGlyph(HInstance,'FILEOPEN', SBFileOpen.Glyph);
-    BtnImpex.Caption:= FContactManager.FImpex_ImportBtn_Caption;
+    BtnImpex.Caption:= ImportBtn_Caption;
     BtnImpex.ModalResult:= mrOK;              // Import
     CBType.Items.Text:='CSV'+#10+'vCard'+#10+'Contacts';
     CBType.ItemIndex:=0;
@@ -204,7 +207,7 @@ begin
   end else
   begin
     ResPngToGlyph(HInstance,'FILESAVE', SBFileOpen.Glyph);
-    BtnImpex.Caption:= FContactManager.FImpex_ExportBtn_Caption;
+    BtnImpex.Caption:= ExportBtn_Caption;
     BtnImpex.ModalResult:= mrYes;            // Export
     sgImpex.RowCount:= csvsheadercount+1;
     for i:= 1 to csvsheadercount do
@@ -603,14 +606,37 @@ begin
           end;
           ImpexContacts.SaveToVCardfile(EFileName.text, selection)
         end;
-
-    end;
+     end;
   end;
-
 end;
 
-
-
+procedure TFImpex.Translate(LngFile: TBbIniFile);
+begin
+  if Assigned(LngFile) then
+  with LngFile Do
+  begin
+    BtnCancel.Caption:= ReadString('Common', 'CancelBtn', BtnCancel.Caption);
+    Caption:=ReadString('FImpex', 'Caption',Caption);
+    RBImport.Caption:=ReadString('FImpex', 'RBImport.Caption',RBImport.Caption);
+    RBExport.Caption:=ReadString('Fimpex', 'RBExport.Caption',RBExport.Caption);
+    LSepar.Caption:=ReadString('FImpex', 'LSepar.Caption',LSepar.Caption);
+    LDelim.Caption:=ReadString('FImpex', 'LDelim.Caption',LDelim.Caption);
+    LFilename.Caption:=ReadString('FImpex', 'LFilename.Caption',LFilename.Caption);
+    LCode.Caption:=ReadString('FImpex', 'LCode.Caption',LCode.Caption);
+    SGImpex.Columns[0].Title.Caption:=ReadString('FImpex', 'SGImpex.Col0.Title',
+                                       SGImpex.Columns[0].Title.Caption);
+    SGImpex.Columns[1].Title.Caption:=ReadString('FImpex', 'SGImpex.Col1.Title',
+                                       SGImpex.Columns[1].Title.Caption);
+    OD1.Title:=ReadString('FImpex', 'OD1.Title',OD1.Title);
+    SD1.Title:=ReadString('FImpex', 'SD1.Title',SD1.Title);
+    CBFirstline.Caption:= ReadString('FImpex', 'CBFirstline.Caption',CBFirstline.Caption);
+    BtnUp.Caption:= ReadString('FImpex', 'BtnUp.Caption', BtnUp.Caption);
+    BtnDown.Caption:= ReadString('FImpex', 'BtnDown.Caption', BtnDown.Caption);
+    BtnEmpty.Caption:= ReadString('FImpex', 'BtnEmpty.Caption', BtnEmpty.Caption);
+    ImportBtn_Caption:=ReadString('FImpex', 'ImportBtn.Caption','Importation');
+    ExportBtn_Caption:=ReadString('FImpex', 'ExportBtn.Caption','Exportation');
+  end;
+end;
 
 
 

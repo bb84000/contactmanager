@@ -12,18 +12,17 @@
 ;proposez votre traduction sur GitHub
 
 ;Français
-[fr]
-;General
+[common]
 ProgName=ContactMgr
 Language=Français
 Caption=Gestionnaire de Contacts
+DefaultCaption=Gestionnaire de Contacts
 OKBtn=OK
 YesBtn=Oui
 NoBtn=Non
 CancelBtn=Annuler
 
-Aboutbox.Caption=A propos du Gestionnaire de Contacts
-AboutBox.LUpdate.Caption=Recherche de mise à jour
+[main]
 PPerso.Caption=Personnel
 PWork.Caption=Travail et autres
 GBOrder.Caption=Ordre de tri
@@ -104,26 +103,17 @@ CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez 
 Use64bitcaption=Utilisez la version 64 bits de ce programme
 AboutBox.UpdateAvailable=Nouvelle version %s disponible
 NoLongerChkUpdates=Ne plus rechercher de mise à jour
-AboutBox.LastUpdateSearch=Dernière recherche de mise à jour
-AboutBox.NoUpdateAvailable=Gestionnaire de contacts est à jour
-AboutBox.UrlProgSite=https://github.com/bb84000/contactmanager/wiki/Accueil
-AboutBox.LProgPage.Caption=Page d'accueil du programme
-AboutBox.LWebSite.Caption=Page d'accueil du site Web
-AboutBox.LSourceCode.Caption=Page Web du code source
 UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
 CannotGetNewVerList=Liste des nouvelles versions indisponible
 
-;Settings
-FSettings.Caption=Préférences du gestionnaire de contacts
-FSettings.GroupBox1.Caption=Système
-FSettings.LDataFolder.Caption=Dossier de données
-FSettings.CBStartup.Caption=Lancer au démarrage du système
-FSettings.CBMinimized.Caption=Démarrage minimisé
-FSettings.CBSavePos.Caption=Sauvegarde taille et position
-FSettings.CBUpdate.Caption=Ne pas rechercher de mise à jour
-FSettings.LLangue.Caption=Langue
-FSettings.BtnCancel.Caption=Annuler
+MnuRetrieveGPSCaption=Récupérer les coordonnées GPS de %s
+MnuLocateCaption=Localiser %s sur une carte
+MnuCopyCaption=Copier les données de %s
+MnuDeleteCaption=Supprimer le contact %s
+MnuSendmailCaption=Envoyer un courriel privé à %s
+MnuVisitwebCaption=Visister le site Web personnel de %s
 
+[HttpErr]
 ;Http error messages
 SErrInvalidProtocol=Protocole "%s" invalide
 SErrReadingSocket=Erreur de lecture des données à partir du socket
@@ -133,7 +123,6 @@ SErrUnexpectedResponse=Code de statut de réponse non prévu: %s
 SErrChunkTooBig=Bloc trop grand
 SErrChunkLineEndMissing=Fin de ligne du bloc manquante
 SErrMaxRedirectsReached=Nombre maximum de redirections atteint: %s
-
 ;Socket error messages
 strHostNotFound=Résolution du nom d'hôte pour "%s" impossible.
 strSocketCreationFailed=Echec de la création du socket: %s
@@ -145,28 +134,7 @@ strSocketAcceptWouldBlock=La connexion pourrait bloquer le socket: %s
 strSocketIOTimeOut=Impossible de fixer le timeout E/S à %s
 strErrNoStream=Flux du socket non assigné
 
-;FImpex
-FImpex.Caption=Importation et exportation de contacts
-FImpex.RBImport.Caption=Importation
-Fimpex.RBExport.Caption=Exportation
-FImpex.LSepar.Caption=Séparateur
-FImpex.LDelim.Caption=Délimiteur
-FImpex.LFilename.Caption=Fichier
-FImpex.LCode.Caption=Codage
-FImpex.SGImpex.Col0.Title=Champ
-FImpex.SGImpex.Col1.Title=Données
-FImpex.OD1.Title=Ouvrir un fichier existant
-FImpex.SD1.Title=Enregistrer le fichier
-FImpex.ImportBtn.Caption=Importation
-FImpex.ExportBtn.Caption=Exportation
-
-MnuRetrieveGPSCaption=Récupérer les coordonnées GPS de %s
-MnuLocateCaption=Localiser %s sur une carte
-MnuCopyCaption=Copier les données de %s
-MnuDeleteCaption=Supprimer le contact %s
-MnuSendmailCaption=Envoyer un courriel privé à %s
-MnuVisitwebCaption=Visister le site Web personnel de %s
-
+[OSVersion]
 ;lazbbosver
 Home=Famille
 Professional=Entreprise
@@ -189,6 +157,46 @@ Server=Serveur
 22000=v 21H2 "Octobre 2021 Version initiale"
 22621=v 22H2 "Septembre 2022"
 
+[AboutBox]
+Caption=A propos de %s
+sLastUpdateSearch=Dernière recherche de mise à jour
+sUpdateAvailable=Nouvelle version %s disponible. Cliquer pour la télécharger
+sNoUpdateAvailable=Le Tuner radio Web est à jour.
+LUpdate.Caption=Recherche de mise à jour
+LProgPage.Caption=Page d'accueil du programme
+LWebSite.Caption=Page d'accueil du site Web
+LSourceCode.Caption=Page Web du code source
+UrlProgSite=/wiki/Accueil
 
+[FSettings]
+;Settings
+Caption=Préférences de %s
+GroupBox1.Caption=Système
+LDataFolder.Caption=Dossier de données
+CBStartup.Caption=Lancer au démarrage du système
+CBMinimized.Caption=Démarrage minimisé
+CBSavePos.Caption=Sauvegarde taille et position
+CBUpdate.Caption=Ne pas rechercher de mise à jour
+LLangue.Caption=Langue
+
+[FImpex]
+;FImpex
+Caption=Importation et exportation de contacts
+RBImport.Caption=Importation
+RBExport.Caption=Exportation
+LSepar.Caption=Séparateur
+LDelim.Caption=Délimiteur
+LFilename.Caption=Fichier
+LCode.Caption=Codage
+SGImpex.Col0.Title=Champ
+SGImpex.Col1.Title=Données
+OD1.Title=Ouvrir un fichier existant
+SD1.Title=Enregistrer le fichier
+CBFirstline.Caption=1ère ligne
+BtnUp.Caption=Haut
+BtnDown.Caption=Bas
+BtnEmpty.Caption=Vide
+ImportBtn.Caption=Importation
+ExportBtn.Caption=Exportation
 
 

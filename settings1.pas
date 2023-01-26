@@ -11,7 +11,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  Buttons, laz2_DOM, laz2_XMLRead, laz2_XMLWrite, lazbbutils;
+  Buttons, laz2_DOM, laz2_XMLRead, laz2_XMLWrite, lazbbutils, lazbbinifiles;
 
 type
 
@@ -89,7 +89,7 @@ end;
   private
 
   public
-
+    procedure Translate(LngFile: TBbIniFile);
   end;
 
 var
@@ -294,7 +294,26 @@ begin
   CBMinimized.Enabled:= CBStartup.Checked;
 end;
 
-
+procedure TFSettings.Translate(LngFile: TBbIniFile);
+var
+  DefaultCaption: String;
+begin
+  if assigned (Lngfile) then
+  with LngFile do
+  begin
+    BtnOK.Caption:= ReadString('Common', 'OKBtn', BtnOK.Caption);
+    BtnCancel.Caption:= ReadString('Common', 'CancelBtn', BtnCancel.Caption);
+    DefaultCaption:= ReadString('Common', 'Caption', '...');
+    Caption:=Format(ReadString('FSettings','Caption','Préférences de %s'), [DefaultCaption]);
+    GroupBox1.Caption:=ReadString('FSettings', 'GroupBox1.Caption',GroupBox1.Caption);
+    LDataFolder.Caption:=ReadString('FSettings', 'LDataFolder.Caption',LDataFolder.Caption);
+    CBStartup.Caption:=ReadString('FSettings', 'CBStartup.Caption',CBStartup.Caption);
+    CBMinimized.Caption:=ReadString('FSettings', 'CBMinimized.Caption',CBMinimized.Caption);
+    CBSavePos.Caption:=ReadString('FSettings', 'CBSavePos.Caption',CBSavePos.Caption);
+    CBUpdate.Caption:=ReadString('FSettings', 'CBUpdate.Caption',CBUpdate.Caption);
+    LLangue.Caption:=ReadString('FSettings', 'LLangue.Caption',LLangue.Caption);
+  end;
+end;
 
 end.
 
