@@ -4,7 +4,6 @@
 ;Icelandic [is], Italian [it], Norwegian [no], Polish [pl], Portuguese [pt]
 ;Russian [ru], Serbo Croatian [sr], Slovak [sk], Swedish [sv], Turkish [tr]
 
-; Section name must be the same as the file name : [en] for en.lng file
 ; ProgName must be the same as defined in the application code
 
 ; Save the file in a secure place as it can be replaced by any update !
@@ -102,14 +101,8 @@ MailSubject=Mail from Contacts Manager
 ConfirmDeleteContact=Do you really want to delete the contact %s ?
 CanCloseMsg=A change is pending.%sTo validate the change and quit, click on the "Yes" button.%To cancel the change and quit, click on the "No" button.%sTo return to the program, click on the "Cancel" button.
 Use64bitcaption=Use the 64bit version of the program
-AboutBox.UpdateAvailable=New version %s available
+
 NoLongerChkUpdates=No longer check updates
-AboutBox.LastUpdateSearch=Last update check
-AboutBox.NoUpdateAvailable=Contacts manager is up to date
-AboutBox.UrlProgSite=https://github.com/bb84000/contactmanager/wiki
-AboutBox.LProgPage.Caption=Program home page
-AboutBox.LWebSite.Caption=Web site home page
-AboutBox.LSourceCode.Caption=Source code Web page
 UpdateAlertBox=Current version: %sA new version %s is available
 CannotGetNewVerList=Cannot get new versions list
 MnuRetrieveGPSCaption=Retrieve %s GPS coordinates
@@ -166,6 +159,7 @@ Server=Server
 19045=v 22H2 "October 2022 update"
 22000=v 21H2 "October 2021 Initial Version"
 22621=v 22H2 "September 2022 update"
+22631=v 23H2 "October 2023 update"
 
 [AboutBox]
 Caption=About %s

@@ -4,7 +4,6 @@
 ;Islandais [is], Italien [it], Norvégien [no], Polonais [pl], Portugais [pt]
 ;Russe [ru], Serbo Croate [sr], Slovaque [sk], Suedois [sv], Turc [tr]
 
-; Le nom de la section doit être le même que celui du fichier : [fr] pour le fichier fr.lng
 ; ProgName doit correspondre à la variable du même nom dans le code de l'application
 
 ; Sauvegardez votre fichier, il peut être remplacé ou effacé lors d'une msie à jour !
@@ -101,7 +100,6 @@ MailSubject=Courrier du gestionnaire de contacts
 ConfirmDeleteContact=Voulez-vous vraiment supprimer le contact %s ?
 CanCloseMsg=Une modification est en cours.%sPour la valider et quitter, cliquez sur le bouton 'Oui'.%sPour l'annuler et quitter, cliquer sur le bouton 'Non'.%sPour revenir au programme, cliquer sur le bouton 'Annuler'.
 Use64bitcaption=Utilisez la version 64 bits de ce programme
-AboutBox.UpdateAvailable=Nouvelle version %s disponible
 NoLongerChkUpdates=Ne plus rechercher de mise à jour
 UpdateAlertBox=Version actuelle: %sUne nouvelle version %s est disponible
 CannotGetNewVerList=Liste des nouvelles versions indisponible
@@ -156,12 +154,13 @@ Server=Serveur
 19045=v 22H2 "Octobre 2022"
 22000=v 21H2 "Octobre 2021 Version initiale"
 22621=v 22H2 "Septembre 2022"
+22631=v 23H2 "Octobre 2023"
 
 [AboutBox]
 Caption=A propos de %s
 sLastUpdateSearch=Dernière recherche de mise à jour
 sUpdateAvailable=Nouvelle version %s disponible. Cliquer pour la télécharger
-sNoUpdateAvailable=Le Tuner radio Web est à jour.
+sNoUpdateAvailable=%s est à jour.
 LUpdate.Caption=Recherche de mise à jour
 LProgPage.Caption=Page d'accueil du programme
 LWebSite.Caption=Page d'accueil du site Web

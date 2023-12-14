@@ -639,15 +639,6 @@ begin
   if Settings.StartWin and settings.StartMini then StartMini:= true; //Application.Minimize;
   // Détermination de la langue (si pas dans settings, langue par défaut)
   if Settings.LangStr = '' then Settings.LangStr := CurLangStr;
-  {LangFile.ReadSections(LangNums);
-  if LangNums.Count > 1 then
-    for i := 0 to LangNums.Count - 1 do
-    begin
-      FSettings.CBLangue.Items.Add(LangFile.ReadString(LangNums.Strings[i], 'Language',
-        'Aucune'));
-      if LangNums.Strings[i] = Settings.LangStr then
-        LangFound := True;
-    end;  }
   try
     FindAllFiles(LangNums, ExtractFilePath(Application.ExeName) + 'lang', '*.lng', true); //find all language files
     if LangNums.count > 0 then
