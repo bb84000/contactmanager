@@ -303,6 +303,10 @@ Version 1.0.2.0 - 20/01/2023
 Version 1.0.2.1 - 26/01/2023
 - Self translation of different application's forms
 
+Version 1.0.2.2 - 21/06/2024
+- Replaced iDays with PtrInt
+- Changed OSVersion code
+
 
 
 

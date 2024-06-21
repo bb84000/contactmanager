@@ -25,13 +25,6 @@ const
 
 type
 
-    { int64 or longint type for Application.QueueAsyncCall }
-  {$IFDEF CPU32}
-    iDays= LongInt;
-  {$ENDIF}
-  {$IFDEF CPU64}
-    iDays= Int64;
-  {$ENDIF}
   TSaveMode = (None, Setting, All);
   { TFContactManager }
 
@@ -257,7 +250,7 @@ type
       var Alert: boolean): boolean;
     procedure EnableLocBtns;
     procedure EnableEdits(Enable: Boolean);
-    procedure CheckUpdate(days: iDays);
+    procedure CheckUpdate(days: PtrInt);
     procedure OnFormShown(var Msg: TLMessage); message WM_FORMSHOWN;
   public
     FImpex_ImportBtn_Caption: string;
@@ -487,7 +480,7 @@ begin
 
 //Dernière recherche il y a "days" jours ou plus ?
 
-procedure TFContactManager.CheckUpdate(days: iDays);
+procedure TFContactManager.CheckUpdate(days: PtrInt);
 var
   errmsg: string;
   sNewVer: string;

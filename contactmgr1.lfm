@@ -14,7 +14,7 @@ object FContactManager: TFContactManager
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poDesktopCenter
-  LCLVersion = '2.2.4.0'
+  LCLVersion = '3.4.0.0'
   object PnlOrder: TPanel
     Left = 0
     Height = 70
@@ -42,8 +42,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Aucun ordre'
-        OnClick = RBSortClick
         TabOrder = 1
+        OnClick = RBSortClick
       end
       object RBTown: TRadioButton
         Left = 16
@@ -52,8 +52,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Ville'
-        OnClick = RBSortClick
         TabOrder = 2
+        OnClick = RBSortClick
       end
       object RBNameSurname: TRadioButton
         Left = 166
@@ -63,9 +63,9 @@ object FContactManager: TFContactManager
         AutoSize = False
         Caption = 'Nom, prénom'
         Checked = True
-        OnClick = RBSortClick
         TabOrder = 0
         TabStop = True
+        OnClick = RBSortClick
       end
       object RBCountry: TRadioButton
         Left = 166
@@ -74,8 +74,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Pays'
-        OnClick = RBSortClick
         TabOrder = 3
+        OnClick = RBSortClick
       end
       object RBSurnameName: TRadioButton
         Left = 316
@@ -84,8 +84,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Prénom, nom'
-        OnClick = RBSortClick
         TabOrder = 4
+        OnClick = RBSortClick
       end
       object RBPostcode: TRadioButton
         Left = 466
@@ -94,8 +94,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Code postal'
-        OnClick = RBSortClick
         TabOrder = 5
+        OnClick = RBSortClick
       end
       object RBlongit: TRadioButton
         Left = 316
@@ -104,8 +104,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Longitude'
-        OnClick = RBSortClick
         TabOrder = 6
+        OnClick = RBSortClick
       end
       object RBLatit: TRadioButton
         Left = 466
@@ -114,8 +114,8 @@ object FContactManager: TFContactManager
         Width = 120
         AutoSize = False
         Caption = 'Latitude'
-        OnClick = RBSortClick
         TabOrder = 7
+        OnClick = RBSortClick
       end
     end
   end
@@ -1243,8 +1243,8 @@ object FContactManager: TFContactManager
       Top = 8
       Width = 174
       AutoSize = False
-      OnChange = ESearchChange
       TabOrder = 0
+      OnChange = ESearchChange
     end
     object BtnSearch: TSpeedButton
       Left = 633
@@ -2253,6 +2253,7 @@ object FContactManager: TFContactManager
       BevelOuter = bvNone
       Caption = 'Travail et autres'
       Color = clInactiveBorder
+      ParentBackground = False
       ParentColor = False
       TabOrder = 1
       OnClick = PWorkClick
@@ -2265,6 +2266,7 @@ object FContactManager: TFContactManager
       BevelOuter = bvNone
       Caption = 'Personnel'
       Color = clGradientActiveCaption
+      ParentBackground = False
       ParentColor = False
       TabOrder = 2
       OnClick = PPersoClick
@@ -2287,12 +2289,12 @@ object FContactManager: TFContactManager
       Width = 220
       Align = alClient
       ItemHeight = 0
-      OnMouseMove = LBContactsMouseMove
-      OnSelectionChange = LBContactsSelectionChange
       ParentShowHint = False
       PopupMenu = PMnuList
       ShowHint = True
       TabOrder = 0
+      OnMouseMove = LBContactsMouseMove
+      OnSelectionChange = LBContactsSelectionChange
     end
   end
   object PMnuImg: TPopupMenu
@@ -2502,28 +2504,6 @@ object FContactManager: TFContactManager
       'Home'
       'Professional'
       'Server'
-    )
-    Win10Strs.Strings = (
-      '00000=Unknown version'
-      '10240=v 1507 "July 2015 update"'
-      '10586=v 1511 "November 2015 update"'
-      '14393=v 1607 "July 2016 (Anniversary update)"'
-      '15063=v 1703 "April 2017 (Creators update)"'
-      '16299=v 1709 "October 2017 (Fall Creators update)"'
-      '17134=v 1803 "April 2018 update"'
-      '17763=v 1809 "October 2018 update"'
-      '18362=v 1903 "May 2019 update"'
-      '18363=v 1909 "November 2019 update"'
-      '19041=v 2004 "May 2020 update"'
-      '19042=v 20H2 "October 2020 update"'
-      '19043=v 21H1 "May 2021 update"'
-      '19044=v 21H2 "November 2021 update"'
-      '19045=v 22H2 "October 2022 update"'
-    )
-    Win11Strs.Strings = (
-      '00000=Unknown version'
-      '22000=v 21H2 "October 2021 Initial version"'
-      '22621=v 22H2 "September 2022 update"'
     )
     Left = 102
     Top = 232
