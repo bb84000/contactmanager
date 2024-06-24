@@ -19,8 +19,7 @@
         <ComponentName Value="FContactManager"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="467"/>
-        <CursorPos X="52" Y="483"/>
+        <CursorPos X="25" Y="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -96,8 +95,8 @@
       <Unit9>
         <Filename Value="contacts1.pas"/>
         <EditorIndex Value="9"/>
-        <TopLine Value="9"/>
-        <CursorPos X="51" Y="103"/>
+        <TopLine Value="63"/>
+        <CursorPos X="29" Y="72"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -273,8 +272,8 @@
         <Filename Value="history.txt"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="13"/>
-        <TopLine Value="277"/>
-        <CursorPos X="25" Y="308"/>
+        <TopLine Value="278"/>
+        <CursorPos Y="312"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Text"/>
@@ -518,8 +517,7 @@
       <Unit65>
         <Filename Value="lang\en.lng"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="147"/>
-        <CursorPos Y="163"/>
+        <CursorPos Y="231"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -527,8 +525,8 @@
       <Unit66>
         <Filename Value="lang\fr.lng"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="139"/>
-        <CursorPos X="27" Y="157"/>
+        <TopLine Value="113"/>
+        <CursorPos Y="134"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>

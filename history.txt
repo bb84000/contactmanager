@@ -307,6 +307,10 @@ Version 1.0.2.2 - 21/06/2024
 - Replaced iDays with PtrInt
 - Changed OSVersion code
 
+Version 1.0.2.3 - 24/06/2024
+- Added SSL verification
+
+
 
 
 

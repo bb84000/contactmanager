@@ -132,6 +132,9 @@ strSocketAcceptWouldBlock=La connexion pourrait bloquer le socket: %s
 strSocketIOTimeOut=Impossible de fixer le timeout E/S à %s
 strErrNoStream=Flux du socket non assigné
 
+; SSL Error
+sNoInstallledSSL=Bibliothèques SSL non installées
+
 [OSVersion]
 ;lazbbosver
 Home=Famille
@@ -197,5 +200,8 @@ BtnDown.Caption=Bas
 BtnEmpty.Caption=Vide
 ImportBtn.Caption=Importation
 ExportBtn.Caption=Exportation
+
+
+
 
 

@@ -1,6 +1,6 @@
 //******************************************************************************
 // Contacts manager main form
-// bb - sdtp - january 2023
+// bb - sdtp - june 2024
 //*******************************************************************************
 
 unit contactmgr1;
@@ -228,7 +228,7 @@ type
     canCloseMsg: string;
     OKBtn, YesBtn, NoBtn, CancelBtn: string;
     Use64bitcaption: string;
-    HttpErrMsgNames: array [0..16] of string;
+    HttpErrMsgNames: array [0..17] of string;
     sCannotGetNewVerList: string;
     ChkVerInterval: Int64;
     StartMini: Boolean;
@@ -1715,6 +1715,8 @@ begin
       'Impossible de fixer le timeout E/S à %s');
     HttpErrMsgNames[16]:=ReadString('HttpErr','strErrNoStream',
       'Flux du socket non assigné');
+    HttpErrMsgNames[17]:=ReadString('HttpErr','sNoInstallledSSL', 'Bibliothèques SSL non installées');
+
     // Translate default header of csv export
     csvheader := dquot+
                        LName.Caption+dquotv+
