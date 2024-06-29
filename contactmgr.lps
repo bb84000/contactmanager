@@ -19,6 +19,7 @@
         <ComponentName Value="FContactManager"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <CursorPos X="25" Y="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -270,10 +271,9 @@
       </Unit31>
       <Unit32>
         <Filename Value="history.txt"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="13"/>
-        <TopLine Value="278"/>
-        <CursorPos Y="312"/>
+        <TopLine Value="281"/>
+        <CursorPos Y="315"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Text"/>
@@ -504,7 +504,7 @@
         <UnitName Value="lazbbOsVersion"/>
         <EditorIndex Value="2"/>
         <TopLine Value="285"/>
-        <CursorPos X="56" Y="305"/>
+        <CursorPos Y="305"/>
         <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit63>
@@ -517,6 +517,7 @@
       <Unit65>
         <Filename Value="lang\en.lng"/>
         <EditorIndex Value="7"/>
+        <TopLine Value="136"/>
         <CursorPos Y="231"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
@@ -525,8 +526,8 @@
       <Unit66>
         <Filename Value="lang\fr.lng"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="113"/>
-        <CursorPos Y="134"/>
+        <TopLine Value="144"/>
+        <CursorPos Y="158"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>

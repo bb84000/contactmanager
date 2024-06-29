@@ -310,6 +310,9 @@ Version 1.0.2.2 - 21/06/2024
 Version 1.0.2.3 - 24/06/2024
 - Added SSL verification
 
+Version 1.0.2.4 - 29/06/2024
+- Changed OSVersion
+
 
 
 
