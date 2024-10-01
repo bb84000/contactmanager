@@ -20,7 +20,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="25" Y="3"/>
+        <CursorPos X="23" Y="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -272,8 +272,8 @@
       <Unit32>
         <Filename Value="history.txt"/>
         <EditorIndex Value="13"/>
-        <TopLine Value="281"/>
-        <CursorPos Y="315"/>
+        <TopLine Value="284"/>
+        <CursorPos Y="318"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Text"/>
@@ -518,7 +518,7 @@
         <Filename Value="lang\en.lng"/>
         <EditorIndex Value="7"/>
         <TopLine Value="136"/>
-        <CursorPos Y="231"/>
+        <CursorPos Y="165"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -527,7 +527,7 @@
         <Filename Value="lang\fr.lng"/>
         <EditorIndex Value="8"/>
         <TopLine Value="144"/>
-        <CursorPos Y="158"/>
+        <CursorPos Y="163"/>
         <UsageCount Value="17"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>

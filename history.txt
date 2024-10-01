@@ -313,6 +313,10 @@ Version 1.0.2.3 - 24/06/2024
 Version 1.0.2.4 - 29/06/2024
 - Changed OSVersion
 
+Version 1.0.2.5 - 01/10/2024
+- Updated to Windows 11 24H2
+
+
 
 
 
