@@ -316,6 +316,10 @@ Version 1.0.2.4 - 29/06/2024
 Version 1.0.2.5 - 01/10/2024
 - Updated to Windows 11 24H2
 
+Version 1.0.3.0 - 23/03/2025
+- Added update download and install (Experimental, Windows only)
+
+
 
 
 

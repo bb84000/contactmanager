@@ -14,7 +14,7 @@ object FContactManager: TFContactManager
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poDesktopCenter
-  LCLVersion = '3.4.0.0'
+  LCLVersion = '3.8.0.0'
   object PnlOrder: TPanel
     Left = 0
     Height = 70

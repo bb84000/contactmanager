@@ -16,7 +16,7 @@ uses
   StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types, FileUtil,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
   strutils, lazbbaboutdlg, settings1, lazbbinifiles, LazUTF8, Clipbrd,
-  UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion,
+  UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion, lazbbupdatedlg,
   opensslsockets;
 
 const
@@ -419,6 +419,7 @@ begin
   // AboutBox.UrlUpdate:= BaseUpdateURl+Version+'&language='+Settings.LangStr;    // In Modlang
   // AboutBox.LUpdate.Caption:= 'Recherche de mise à jour';      // in Modlangue
   // Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
+  AboutBox.ProgName:= ProgName;
   AboutBox.Version:= Version;
   AboutBox.ChkVerURL := 'https://github.com/bb84000/contactmanager/releases/latest';
   AboutBox.UrlWebsite:= 'https://www.sdtp.com';
@@ -431,7 +432,13 @@ begin
     GetVersionInfo.CompanyName + ' - ' + DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
   //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);  // In Modlangue
+  // Populate UpdateBox
+  UpdateBox.ProgName:= ProgName;
+  UpdateBox.ZipInstall:= AboutBox.UrlSourceCode+'/raw/master/contactmanager.zip';   // Installer url for the updater
+  UpdateBox.ExeInstall:= 'InstallContactmgr.exe';
+  UpdateBox.sNewVer:= AboutBox.sNoUpdateAvailable;
 
+ //  if UpdateBox.ShowModal = mryes then close;
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
   else
@@ -519,7 +526,9 @@ begin
        Settings.LastVersion:= sNewVer;
        AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [sNewVer]);
        AboutBox.NewVersion:= true;
-       AboutBox.ShowModal;
+       UpdateBox.sNewVer:= sNewVer;
+       //AboutBox.ShowModal;                         // New version install experimental
+       if UpdateBox.ShowModal = mryes then close;
      end else
      begin
        AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
