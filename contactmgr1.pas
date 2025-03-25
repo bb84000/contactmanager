@@ -1,6 +1,6 @@
 //******************************************************************************
 // Contacts manager main form
-// bb - sdtp - october 2024
+// bb - sdtp - march 2025
 //*******************************************************************************
 
 unit contactmgr1;
@@ -16,7 +16,7 @@ uses
   StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types, FileUtil,
   lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
   strutils, lazbbaboutdlg, settings1, lazbbinifiles, LazUTF8, Clipbrd,
-  UniqueInstance, lazbbchknewver, lazbbautostart, lazbbOsVersion, lazbbupdatedlg,
+  UniqueInstance, lazbbautostart, lazbbOsVersion, lazbbupdatedlg,
   opensslsockets;
 
 const
@@ -432,13 +432,11 @@ begin
     GetVersionInfo.CompanyName + ' - ' + DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
   //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);  // In Modlangue
-  // Populate UpdateBox
-  UpdateBox.ProgName:= ProgName;
-  UpdateBox.ZipInstall:= AboutBox.UrlSourceCode+'/raw/master/contactmanager.zip';   // Installer url for the updater
-  UpdateBox.ExeInstall:= 'InstallContactmgr.exe';
-  UpdateBox.sNewVer:= AboutBox.sNoUpdateAvailable;
-
- //  if UpdateBox.ShowModal = mryes then close;
+  // Populate UpdateBox with proper variables
+  UpdateDlg.ProgName:= ProgName;
+  UpdateDlg.UrlInstall:= AboutBox.UrlSourceCode+'/raw/master/contactmanager.zip';   // Installer url for the updater
+  UpdateDlg.ExeInstall:= 'InstallContactmgr.exe';       // Installer executable
+  UpdateDlg.NewVersion:= false;
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
   else
@@ -526,9 +524,13 @@ begin
        Settings.LastVersion:= sNewVer;
        AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [sNewVer]);
        AboutBox.NewVersion:= true;
-       UpdateBox.sNewVer:= sNewVer;
-       //AboutBox.ShowModal;                         // New version install experimental
-       if UpdateBox.ShowModal = mryes then close;
+       UpdateDlg.sNewVer:= version;
+       UpdateDlg.NewVersion:= true;
+       {$IFDEF WINDOWS}
+          if UpdateDlg.ShowModal = mryes then close;    // New version install experimental
+       {$ELSE}
+         AboutBox.ShowModal;
+       {$ENDIF}
      end else
      begin
        AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
@@ -622,7 +624,6 @@ var
   winstate: TWindowState;
   i: integer;
 begin
-
   Settings.LoadXMLFile(filename);
   if Settings.SavSizePos then
     try
@@ -1669,6 +1670,9 @@ begin
     // AboutBox
     AboutBox.Translate(LangFile);
     AboutBox.LVersion.Hint:= OSVersion.VerDetail;
+
+    // UpdateDlg
+    UpdateDlg.Translate (LangFile);
 
     // Settings
     FSettings.Translate(LangFile);

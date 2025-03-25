@@ -4,14 +4,13 @@
     <PathDelim Value="\"/>
     <Version Value="12"/>
     <BuildModes Active="Default"/>
-    <Units Count="74">
+    <Units Count="77">
       <Unit0>
         <Filename Value="contactmgr.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="62" Y="25"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="contactmgr1.pas"/>
@@ -19,8 +18,8 @@
         <ComponentName Value="FContactManager"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="163"/>
-        <CursorPos X="58" Y="179"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="17" Y="8"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -50,10 +49,8 @@
         <ComponentName Value="FSettings"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="93"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="105"/>
       </Unit4>
       <Unit5>
         <Filename Value="vcards1.pas"/>
@@ -76,132 +73,138 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="lazbbChkNewVer"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="48"/>
-        <CursorPos X="10" Y="16"/>
-        <UsageCount Value="137"/>
+        <UsageCount Value="149"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\lazbbunits\lazbbautostart.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="72" Y="2"/>
-        <UsageCount Value="123"/>
+        <UsageCount Value="135"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="UpdateBox"/>
+        <ComponentName Value="UpdateDlg"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="7"/>
-        <TopLine Value="151"/>
-        <CursorPos Y="170"/>
-        <UsageCount Value="28"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="121"/>
+        <CursorPos X="64" Y="153"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit9>
       <Unit10>
+        <Filename Value="..\lazbbunits\lazbbaboutdlg.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutDlg"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="55"/>
+        <UsageCount Value="23"/>
+      </Unit10>
+      <Unit11>
         <Filename Value="..\filedownload\unit_download.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="21"/>
         <UsageCount Value="20"/>
-      </Unit10>
-      <Unit11>
+      </Unit11>
+      <Unit12>
         <Filename Value="contacts1.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="63"/>
         <CursorPos X="29" Y="72"/>
         <UsageCount Value="200"/>
-      </Unit11>
-      <Unit12>
+      </Unit12>
+      <Unit13>
         <Filename Value="..\bbunits\jpgplus.pas"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="65" Y="8"/>
         <UsageCount Value="198"/>
-      </Unit12>
-      <Unit13>
+      </Unit13>
+      <Unit14>
         <Filename Value="config1.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="149"/>
         <CursorPos X="8" Y="189"/>
         <UsageCount Value="198"/>
-      </Unit13>
-      <Unit14>
+      </Unit14>
+      <Unit15>
         <Filename Value="vcarray.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="45"/>
         <CursorPos X="3" Y="51"/>
         <UsageCount Value="198"/>
-      </Unit14>
-      <Unit15>
+      </Unit15>
+      <Unit16>
         <Filename Value="chknewversion.pas"/>
         <ComponentName Value="Form2"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ChkNewVersion"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="62"/>
-      </Unit15>
-      <Unit16>
+      </Unit16>
+      <Unit17>
         <Filename Value="C:\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1826"/>
         <CursorPos X="3" Y="1848"/>
         <UsageCount Value="5"/>
-      </Unit16>
-      <Unit17>
+      </Unit17>
+      <Unit18>
         <Filename Value="C:\lazarus\lcl\include\custompage.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="239"/>
         <CursorPos Y="266"/>
         <UsageCount Value="2"/>
-      </Unit17>
-      <Unit18>
+      </Unit18>
+      <Unit19>
         <Filename Value="C:\lazarus\lcl\interfaces\win32\win32proc.pp"/>
         <UnitName Value="Win32Proc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="143"/>
         <CursorPos X="3" Y="172"/>
         <UsageCount Value="2"/>
-      </Unit18>
-      <Unit19>
+      </Unit19>
+      <Unit20>
         <Filename Value="C:\lazarus\components\lazutils\laz2_dom.pas"/>
         <UnitName Value="Laz2_DOM"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="276"/>
         <CursorPos X="109" Y="283"/>
         <UsageCount Value="11"/>
-      </Unit19>
-      <Unit20>
+      </Unit20>
+      <Unit21>
         <Filename Value="contactmgr1.rc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="18"/>
         <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="None"/>
-      </Unit20>
-      <Unit21>
+      </Unit21>
+      <Unit22>
         <Filename Value="C:\lazarus\lcl\lclintf.pas"/>
         <UnitName Value="LCLIntf"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
-      </Unit21>
-      <Unit22>
+      </Unit22>
+      <Unit23>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\rtl-objpas\src\inc\strutils.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="823"/>
         <CursorPos X="64" Y="859"/>
         <UsageCount Value="5"/>
-      </Unit22>
-      <Unit23>
+      </Unit23>
+      <Unit24>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysstrh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="139"/>
         <CursorPos X="10" Y="161"/>
         <UsageCount Value="11"/>
-      </Unit23>
-      <Unit24>
+      </Unit24>
+      <Unit25>
         <Filename Value="..\lazbbunits\lazbbutils.pas"/>
         <ComponentName Value="AboutBox"/>
         <HasResources Value="True"/>
@@ -210,16 +213,16 @@
         <TopLine Value="110"/>
         <CursorPos X="6" Y="229"/>
         <UsageCount Value="59"/>
-      </Unit24>
-      <Unit25>
+      </Unit25>
+      <Unit26>
         <Filename Value="C:\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="21"/>
         <CursorPos X="24" Y="35"/>
         <UsageCount Value="20"/>
-      </Unit25>
-      <Unit26>
+      </Unit26>
+      <Unit27>
         <Filename Value="..\lazbbunits\lazbbabout.pas"/>
         <ComponentName Value="AboutBox"/>
         <HasResources Value="True"/>
@@ -227,139 +230,139 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="36"/>
         <UsageCount Value="38"/>
-      </Unit26>
-      <Unit27>
+      </Unit27>
+      <Unit28>
         <Filename Value="contactmgr.lng"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="287"/>
         <CursorPos X="76" Y="347"/>
         <UsageCount Value="99"/>
         <DefaultSyntaxHighlighter Value="None"/>
-      </Unit27>
-      <Unit28>
+      </Unit28>
+      <Unit29>
         <Filename Value="..\lazbbunits\lazbbinifiles.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="4"/>
         <CursorPos X="75" Y="17"/>
         <UsageCount Value="12"/>
-      </Unit28>
-      <Unit29>
+      </Unit29>
+      <Unit30>
         <Filename Value="..\lazbbunits\lazbbosversion.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="265"/>
         <CursorPos X="3" Y="363"/>
         <UsageCount Value="12"/>
-      </Unit29>
-      <Unit30>
+      </Unit30>
+      <Unit31>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\fileinfo.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="31"/>
         <CursorPos X="3" Y="51"/>
         <UsageCount Value="1"/>
-      </Unit30>
-      <Unit31>
+      </Unit31>
+      <Unit32>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="32"/>
         <CursorPos X="51" Y="44"/>
         <UsageCount Value="2"/>
-      </Unit31>
-      <Unit32>
+      </Unit32>
+      <Unit33>
         <Filename Value="C:\lazarus\components\lazutils\uitypes.pas"/>
         <UnitName Value="UITypes"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="21" Y="13"/>
         <UsageCount Value="9"/>
-      </Unit32>
-      <Unit33>
+      </Unit33>
+      <Unit34>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1203"/>
         <CursorPos X="17" Y="1225"/>
         <UsageCount Value="10"/>
-      </Unit33>
-      <Unit34>
+      </Unit34>
+      <Unit35>
         <Filename Value="history.txt"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="287"/>
-        <CursorPos Y="321"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="290"/>
+        <CursorPos X="96" Y="324"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Text"/>
-      </Unit34>
-      <Unit35>
+      </Unit35>
+      <Unit36>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-base\src\base64.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="54"/>
         <CursorPos X="10" Y="89"/>
         <UsageCount Value="13"/>
-      </Unit35>
-      <Unit36>
+      </Unit36>
+      <Unit37>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\objpash.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="173"/>
         <CursorPos X="23" Y="194"/>
         <UsageCount Value="4"/>
-      </Unit36>
-      <Unit37>
+      </Unit37>
+      <Unit38>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\win\wininc\defines.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1200"/>
         <CursorPos X="44" Y="1221"/>
         <UsageCount Value="3"/>
-      </Unit37>
-      <Unit38>
+      </Unit38>
+      <Unit39>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\inc\resh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="35"/>
         <CursorPos X="10" Y="56"/>
         <UsageCount Value="1"/>
-      </Unit38>
-      <Unit39>
+      </Unit39>
+      <Unit40>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="796"/>
         <CursorPos X="55" Y="816"/>
         <UsageCount Value="1"/>
-      </Unit39>
-      <Unit40>
+      </Unit40>
+      <Unit41>
         <Filename Value="..\..\..\AppData\Local\lazarus\onlinepackagemanager\packages\uniqueinstance\uniqueinstance.pas"/>
         <UnitName Value="UniqueInstance"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="43"/>
         <CursorPos X="3" Y="52"/>
         <UsageCount Value="10"/>
-      </Unit40>
-      <Unit41>
-        <Filename Value="contactmgr.txt"/>
-        <EditorIndex Value="4"/>
-        <CursorPos X="43"/>
-        <UsageCount Value="24"/>
-        <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Text"/>
       </Unit41>
       <Unit42>
+        <Filename Value="contactmgr.txt"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="43"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Text"/>
+      </Unit42>
+      <Unit43>
         <Filename Value="C:\lazarus\components\lazutils\maps.pp"/>
         <UnitName Value="Maps"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="69" Y="3"/>
         <UsageCount Value="4"/>
-      </Unit42>
-      <Unit43>
+      </Unit43>
+      <Unit44>
         <Filename Value="C:\lazarus\lcl\include\lclintfh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <UsageCount Value="4"/>
-      </Unit43>
-      <Unit44>
+      </Unit44>
+      <Unit45>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\objpas.pp"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="8" Y="35"/>
         <UsageCount Value="7"/>
-      </Unit44>
-      <Unit45>
+      </Unit45>
+      <Unit46>
         <Filename Value="..\lazbbunits\lazbbalert.pas"/>
         <ComponentName Value="AlertBox"/>
         <HasResources Value="True"/>
@@ -368,16 +371,16 @@
         <TopLine Value="64"/>
         <CursorPos X="9" Y="85"/>
         <UsageCount Value="9"/>
-      </Unit45>
-      <Unit46>
+      </Unit46>
+      <Unit47>
         <Filename Value="C:\lazarus\lcl\extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="106"/>
         <CursorPos X="3" Y="192"/>
         <UsageCount Value="5"/>
-      </Unit46>
-      <Unit47>
+      </Unit47>
+      <Unit48>
         <Filename Value="..\bbunits\chknewver.pas"/>
         <ComponentName Value="FChkNewVer"/>
         <HasResources Value="True"/>
@@ -385,60 +388,60 @@
         <UnitName Value="ChkNewVer"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="5"/>
-      </Unit47>
-      <Unit48>
+      </Unit48>
+      <Unit49>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-web\src\base\fphttpclient.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="353"/>
         <CursorPos X="27" Y="27"/>
         <UsageCount Value="26"/>
-      </Unit48>
-      <Unit49>
+      </Unit49>
+      <Unit50>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\openssl\src\fpopenssl.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="4"/>
         <UsageCount Value="9"/>
-      </Unit49>
-      <Unit50>
+      </Unit50>
+      <Unit51>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\openssl\src\openssl.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="4623"/>
         <CursorPos X="67" Y="4632"/>
         <UsageCount Value="10"/>
-      </Unit50>
-      <Unit51>
+      </Unit51>
+      <Unit52>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-web\src\base\httpdefs.pp"/>
         <UnitName Value="HTTPDefs"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="40" Y="32"/>
         <UsageCount Value="6"/>
-      </Unit51>
-      <Unit52>
+      </Unit52>
+      <Unit53>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-web\src\base\httpprotocol.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <UsageCount Value="6"/>
-      </Unit52>
-      <Unit53>
+      </Unit53>
+      <Unit54>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-net\src\ssockets.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="258"/>
         <CursorPos X="30" Y="264"/>
         <UsageCount Value="17"/>
-      </Unit53>
-      <Unit54>
+      </Unit54>
+      <Unit55>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\packages\fcl-registry\src\registry.pp"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="46" Y="6"/>
         <UsageCount Value="10"/>
-      </Unit54>
-      <Unit55>
+      </Unit55>
+      <Unit56>
         <Filename Value="..\foxbirdbackup\foxbirdbackup.lpr"/>
         <UnitName Value="FoxBirdBackup"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="9"/>
-      </Unit55>
-      <Unit56>
+      </Unit56>
+      <Unit57>
         <Filename Value="..\foxbirdbackup\foxbirdbackup1.pas"/>
         <ComponentName Value="FoxBirdBack"/>
         <HasResources Value="True"/>
@@ -448,28 +451,28 @@
         <TopLine Value="111"/>
         <CursorPos X="26" Y="138"/>
         <UsageCount Value="9"/>
-      </Unit56>
-      <Unit57>
+      </Unit57>
+      <Unit58>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\finah.inc"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="36"/>
         <UsageCount Value="22"/>
-      </Unit57>
-      <Unit58>
+      </Unit58>
+      <Unit59>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\datih.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="114"/>
         <CursorPos X="75" Y="153"/>
         <UsageCount Value="10"/>
-      </Unit58>
-      <Unit59>
+      </Unit59>
+      <Unit60>
         <Filename Value="C:\lazarus\fpc\3.0.4\source\rtl\objpas\sysutils\sysinth.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="144"/>
         <CursorPos X="3" Y="33"/>
         <UsageCount Value="10"/>
-      </Unit59>
-      <Unit60>
+      </Unit60>
+      <Unit61>
         <Filename Value="C:\lazarus\lcl\comctrls.pp"/>
         <UnitName Value="ComCtrls"/>
         <EditorIndex Value="-1"/>
@@ -477,87 +480,77 @@
         <TopLine Value="496"/>
         <CursorPos X="3" Y="518"/>
         <UsageCount Value="9"/>
-      </Unit60>
-      <Unit61>
+      </Unit61>
+      <Unit62>
         <Filename Value="C:\lazarus\lcl\menus.pp"/>
         <UnitName Value="Menus"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="373"/>
         <CursorPos X="3" Y="388"/>
         <UsageCount Value="9"/>
-      </Unit61>
-      <Unit62>
+      </Unit62>
+      <Unit63>
         <Filename Value="..\foxbirdbackup\History.txt"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="87"/>
         <CursorPos X="36" Y="113"/>
         <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Text"/>
-      </Unit62>
-      <Unit63>
+      </Unit63>
+      <Unit64>
         <Filename Value="..\lazbbunits\lazbbaboutupdate.pas"/>
         <ComponentName Value="AboutBox"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="13"/>
-      </Unit63>
-      <Unit64>
+      </Unit64>
+      <Unit65>
         <Filename Value="..\lazbbunits\lazbbosver.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="318"/>
         <CursorPos X="79" Y="336"/>
         <UsageCount Value="9"/>
-      </Unit64>
-      <Unit65>
+      </Unit65>
+      <Unit66>
         <Filename Value="..\Packets\Lazbbcomponents\lazbbosversion.pas"/>
         <UnitName Value="lazbbOsVersion"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="285"/>
         <CursorPos Y="305"/>
         <UsageCount Value="13"/>
-      </Unit65>
-      <Unit66>
+      </Unit66>
+      <Unit67>
         <Filename Value="C:\lazarus\components\lazutils\lazfileutils.pas"/>
         <UnitName Value="LazFileUtils"/>
         <EditorIndex Value="-1"/>
         <UsageCount Value="11"/>
-      </Unit66>
-      <Unit67>
-        <Filename Value="lang\en.lng"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="136"/>
-        <CursorPos Y="165"/>
-        <UsageCount Value="17"/>
-        <DefaultSyntaxHighlighter Value="None"/>
       </Unit67>
       <Unit68>
-        <Filename Value="lang\fr.lng"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="144"/>
-        <CursorPos Y="163"/>
-        <UsageCount Value="17"/>
+        <Filename Value="lang\en.lng"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="210"/>
+        <CursorPos X="34" Y="240"/>
+        <UsageCount Value="19"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit68>
       <Unit69>
+        <Filename Value="lang\fr.lng"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="182"/>
+        <CursorPos Y="212"/>
+        <UsageCount Value="19"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit69>
+      <Unit70>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\fcl-base\src\inifiles.pp"/>
         <UnitName Value="IniFiles"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="221"/>
         <CursorPos X="3" Y="215"/>
         <UsageCount Value="9"/>
-      </Unit69>
-      <Unit70>
-        <Filename Value="..\lazbbunits\lazbbaboutdlg.pas"/>
-        <ComponentName Value="AboutDlg"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="261"/>
-        <CursorPos X="45" Y="295"/>
-        <UsageCount Value="14"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit70>
       <Unit71>
         <Filename Value="C:\lazarus\components\lazutils\lazutf8.pas"/>
@@ -574,134 +567,152 @@
       </Unit72>
       <Unit73>
         <Filename Value="..\Packets\Lazbbcomponents\lazbbcontrols.pas"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="37" Y="20"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="11"/>
       </Unit73>
+      <Unit74>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\fcl-web\src\base\fphttpclient.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="177"/>
+        <CursorPos X="15" Y="189"/>
+        <UsageCount Value="10"/>
+      </Unit74>
+      <Unit75>
+        <Filename Value="..\filedownload\main.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="42"/>
+        <CursorPos X="91" Y="53"/>
+        <UsageCount Value="11"/>
+      </Unit75>
+      <Unit76>
+        <Filename Value="..\..\..\AppData\Local\Temp\7zO0F6E1B57\unit1.pas"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit76>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="117" Column="75" TopLine="7"/>
+        <Caret Line="163" Column="8" TopLine="140"/>
       </Position1>
       <Position2>
-        <Filename Value="contactmgr1.pas"/>
-        <Caret Line="527" Column="25" TopLine="501"/>
+        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
+        <Caret Line="162" Column="8" TopLine="139"/>
       </Position2>
       <Position3>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="47" Column="13" TopLine="33"/>
+        <Caret Line="65" Column="83" TopLine="59"/>
       </Position3>
       <Position4>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="438" Column="59" TopLine="422"/>
+        <Caret Line="18" Column="13"/>
       </Position4>
       <Position5>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="139" TopLine="108"/>
+        <Caret Line="89" Column="22" TopLine="72"/>
       </Position5>
       <Position6>
-        <Filename Value="contactmgr1.pas"/>
-        <Caret Line="18" Column="37"/>
+        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
+        <Caret Line="93" Column="21" TopLine="64"/>
       </Position6>
       <Position7>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="133" Column="68" TopLine="110"/>
+        <Caret Line="92" Column="21" TopLine="63"/>
       </Position7>
       <Position8>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="134" Column="68" TopLine="111"/>
+        <Caret Line="98" Column="96" TopLine="77"/>
       </Position8>
       <Position9>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="133" Column="68" TopLine="110"/>
+        <Caret Line="93" Column="6" TopLine="76"/>
       </Position9>
       <Position10>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="132" Column="68" TopLine="109"/>
+        <Caret Line="64" Column="22" TopLine="47"/>
       </Position10>
       <Position11>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="166" Column="50" TopLine="139"/>
+        <Caret Line="63" Column="22" TopLine="46"/>
       </Position11>
       <Position12>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="165" Column="23" TopLine="149"/>
+        <Caret Line="89" Column="30" TopLine="89"/>
       </Position12>
       <Position13>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="9" Column="57"/>
+        <Caret Line="90" Column="30" TopLine="90"/>
       </Position13>
       <Position14>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="163" Column="60" TopLine="144"/>
+        <Caret Line="137" Column="3" TopLine="134"/>
       </Position14>
       <Position15>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="9" Column="59"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="585" Column="29" TopLine="576"/>
       </Position15>
       <Position16>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="164" Column="3" TopLine="144"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="420" Column="25" TopLine="404"/>
       </Position16>
       <Position17>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="168" TopLine="143"/>
+        <Filename Value="lang\fr.lng"/>
+        <Caret Line="9" Column="77"/>
       </Position17>
       <Position18>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="175" Column="34" TopLine="145"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="526" Column="68" TopLine="515"/>
       </Position18>
       <Position19>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="151" Column="5" TopLine="133"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="543" Column="68" TopLine="515"/>
       </Position19>
       <Position20>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="149" TopLine="144"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="526" Column="68" TopLine="515"/>
       </Position20>
       <Position21>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="9" Column="61"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="543" Column="68" TopLine="515"/>
       </Position21>
       <Position22>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="174" Column="35" TopLine="146"/>
+        <Caret Line="161" Column="61" TopLine="139"/>
       </Position22>
       <Position23>
         <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="170" Column="65" TopLine="155"/>
+        <Caret Line="38" Column="19" TopLine="21"/>
       </Position23>
       <Position24>
-        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
-        <Caret Line="174" Column="3" TopLine="155"/>
+        <Filename Value="contactmgr1.pas"/>
+        <Caret Line="439" Column="3"/>
       </Position24>
       <Position25>
-        <Filename Value="contactmgr1.pas"/>
-        <Caret Line="440" Column="28" TopLine="423"/>
+        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
+        <Caret Line="78" Column="32" TopLine="57"/>
       </Position25>
       <Position26>
-        <Filename Value="contactmgr.lpr"/>
-        <Caret Line="10" Column="44"/>
+        <Filename Value="history.txt"/>
+        <Caret Line="324" Column="96" TopLine="290"/>
       </Position26>
       <Position27>
-        <Filename Value="contactmgr1.pas"/>
-        <Caret Line="504" Column="5" TopLine="485"/>
+        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
+        <Caret Line="84" TopLine="67"/>
       </Position27>
       <Position28>
-        <Filename Value="contactmgr1.pas"/>
-        <Caret Line="530" Column="89" TopLine="506"/>
+        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
+        <Caret Line="138" Column="15" TopLine="107"/>
       </Position28>
       <Position29>
-        <Filename Value="..\Packets\Lazbbcomponents\lazbbcontrols.pas"/>
-        <Caret Line="20" Column="37" TopLine="3"/>
+        <Filename Value="..\lazbbunits\lazbbupdatedlg.pas"/>
+        <Caret Line="153" Column="64" TopLine="121"/>
       </Position29>
       <Position30>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="179" Column="58" TopLine="163"/>
+        <Caret Line="177" Column="52" TopLine="161"/>
       </Position30>
     </JumpHistory>
     <RunParams>
