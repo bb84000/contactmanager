@@ -232,6 +232,7 @@ Section "" ;No components page, name is not important
   File "${source_dir}\license.txt"
   File "${source_dir}\history.txt"
   File "${source_dir}\${prog_name}.txt"
+  File "${source_dir}\${prog_name}.ini"
   ; delete old lng file
   IfFileExists "$INSTDIR\${prog_name}.lng" 0 +2
   Delete "$INSTDIR\${prog_name}.lng"

@@ -393,6 +393,7 @@ end;
 procedure TFContactManager.FormActivate(Sender: TObject);
 var
   i: integer;
+  IniFile: TBbInifile;
 begin
   inherited;
 
@@ -413,29 +414,28 @@ begin
             ContactMgrAppsData + ProgName + '.bk' + IntToStr(i - 1));
     end else SaveConfig(All);
   end;
+  // Check inifile with URLs, if not present, then use default
+  IniFile:= TBbInifile.Create('contactmgr.ini');
+  AboutBox.ChkVerURL := IniFile.ReadString('urls', 'ChkVerURL','https://github.com/bb84000/contactmanager/releases/latest');
+  AboutBox.UrlWebsite:= IniFile.ReadString('urls', 'UrlWebSite','https://www.sdtp.com');
+  AboutBox.UrlSourceCode:= IniFile.ReadString('urls', 'UrlSourceCode','https://github.com/bb84000/contactmanager');
+  UpdateDlg.UrlInstall:= IniFile.ReadString('urls', 'UrlInstall', 'https://github.com/bb84000/contactmanager/raw/refs/heads/master/contactmanager.zip');
+  UpdateDlg.ExeInstall:= IniFile.ReadString('urls', 'ExeInstall', 'InstallContactmgr.exe');
+  ChkVerInterval:= IniFile.ReadInt64('urls', 'ChkVerInterval', 3);
+  if Assigned(IniFile) then IniFile.free;
   version := GetVersionInfo.ProductVersion;
   LoadCfgFile(ConfigFile);
-   if length(Settings.LastVersion)=0 then Settings.LastVersion:= version;
-  // AboutBox.UrlUpdate:= BaseUpdateURl+Version+'&language='+Settings.LangStr;    // In Modlang
-  // AboutBox.LUpdate.Caption:= 'Recherche de mise à jour';      // in Modlangue
-  // Aboutbox.Caption:= 'A propos du Gestionnaire de contacts';            // in ModLangue
+  if length(Settings.LastVersion)=0 then Settings.LastVersion:= version;
   AboutBox.ProgName:= ProgName;
   AboutBox.Version:= Version;
-  AboutBox.ChkVerURL := 'https://github.com/bb84000/contactmanager/releases/latest';
-  AboutBox.UrlWebsite:= 'https://www.sdtp.com';
-  AboutBox.UrlSourceCode:= 'https://github.com/bb84000/contactmanager';
-  ChkVerInterval:=  3;
   AboutBox.Width:= 340; // to have more place for the long product name
   AboutBox.Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
   AboutBox.LProductName.Caption := GetVersionInfo.FileDescription;
   AboutBox.LCopyright.Caption :=
     GetVersionInfo.CompanyName + ' - ' + DateTimeToStr(CompileDateTime);
   AboutBox.LVersion.Caption := 'Version: ' + Version + ' (' + OS + OSTarget + ')';
-  //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);  // In Modlangue
   // Populate UpdateBox with proper variables
   UpdateDlg.ProgName:= ProgName;
-  UpdateDlg.UrlInstall:= AboutBox.UrlSourceCode+'/raw/master/contactmanager.zip';   // Installer url for the updater
-  UpdateDlg.ExeInstall:= 'InstallContactmgr.exe';       // Installer executable
   UpdateDlg.NewVersion:= false;
   CurIndex := 0;
   if ListeContacts.Count > 0 then DisplayList
@@ -524,7 +524,7 @@ begin
        Settings.LastVersion:= sNewVer;
        AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [sNewVer]);
        AboutBox.NewVersion:= true;
-       UpdateDlg.sNewVer:= version;
+       UpdateDlg.sNewVer:= sNewVer;
        UpdateDlg.NewVersion:= true;
        {$IFDEF WINDOWS}
           if UpdateDlg.ShowModal = mryes then close;    // New version install experimental
