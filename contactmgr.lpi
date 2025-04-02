@@ -22,9 +22,9 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="2"/>
+      <BuildNr Value="3"/>
       <Language Value="040C"/>
-      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.3.2"/>
+      <StringTable Comments="www.sdtp.com" CompanyName="sdtp" FileDescription="Gestionnaire de contacts/Contacts Manager" InternalName="contactmgr" LegalCopyright="sdtp - bb95" LegalTrademarks="sdtp - bb95" OriginalFilename="contactmgr.exe" ProductName="contactmgr" ProductVersion="1.0.3.3"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
@@ -140,6 +140,7 @@
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="False"/>
+        <RunWithoutDebug Value="True"/>
         <DebugInfoType Value="dsDwarf2Set"/>
         <UseLineInfoUnit Value="False"/>
       </Debugging>

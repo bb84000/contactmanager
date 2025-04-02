@@ -1,6 +1,6 @@
 //******************************************************************************
 // Contacts manager main form
-// bb - sdtp - march 2025
+// bb - sdtp - april 2025
 //*******************************************************************************
 
 unit contactmgr1;
@@ -416,9 +416,10 @@ begin
   end;
   // Check inifile with URLs, if not present, then use default
   IniFile:= TBbInifile.Create('contactmgr.ini');
-  AboutBox.ChkVerURL := IniFile.ReadString('urls', 'ChkVerURL','https://github.com/bb84000/contactmanager/releases/latest');
+  AboutBox.ChkVerURL := IniFile.ReadString('urls', 'ChkVerURL','https://api.github.com/repos/bb84000/contactmanager/releases/latest');
   AboutBox.UrlWebsite:= IniFile.ReadString('urls', 'UrlWebSite','https://www.sdtp.com');
   AboutBox.UrlSourceCode:= IniFile.ReadString('urls', 'UrlSourceCode','https://github.com/bb84000/contactmanager');
+  AboutBox.autoUpdate:= true;          // enable auto update on Aboutbox new version click
   UpdateDlg.UrlInstall:= IniFile.ReadString('urls', 'UrlInstall', 'https://github.com/bb84000/contactmanager/raw/refs/heads/master/contactmanager.zip');
   UpdateDlg.ExeInstall:= IniFile.ReadString('urls', 'ExeInstall', 'InstallContactmgr.exe');
   ChkVerInterval:= IniFile.ReadInt64('urls', 'ChkVerInterval', 3);
@@ -428,6 +429,7 @@ begin
   if length(Settings.LastVersion)=0 then Settings.LastVersion:= version;
   AboutBox.ProgName:= ProgName;
   AboutBox.Version:= Version;
+  AboutBox.LastVersion:= Settings.LastVersion;
   AboutBox.Width:= 340; // to have more place for the long product name
   AboutBox.Image1.Picture.Icon.LoadFromResourceName(HInstance, 'MAINICON');
   AboutBox.LProductName.Caption := GetVersionInfo.FileDescription;
@@ -538,16 +540,19 @@ begin
      Settings.LastUpdChk:= now;
    end else
    begin
-    if VersionToInt(Settings.LastVersion)>VersionToInt(version) then
-       AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [Settings.LastVersion]) else
-    begin
-      AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
-      // Already checked the same day
-      if Trunc(Settings.LastUpdChk) = Trunc(now) then AboutBox.checked:= true;
+     if VersionToInt(Settings.LastVersion)>VersionToInt(version) then
+       begin
+         AboutBox.LUpdate.Caption := Format(AboutBox.sUpdateAvailable, [Settings.LastVersion]);
+         AboutBox.NewVersion:= true ;
+       end else
+       begin
+         AboutBox.LUpdate.Caption:= AboutBox.sNoUpdateAvailable;
+        // Already checked the same day
+        if Trunc(Settings.LastUpdChk) = Trunc(now) then AboutBox.checked:= true;
+      end;
     end;
-   end;
    //AboutBox.LUpdate.Hint:= AboutBox.sLastUpdateSearch + ': ' + DateToStr(Settings.LastUpdChk);
-   AboutBox.Translate(LangFile);
+   //AboutBox.Translate(LangFile);
 end;
 
 procedure TFContactManager.EnableEdits(Enable: Boolean);
@@ -1401,7 +1406,17 @@ begin
   AboutBox.LastUpdate:= Settings.LastUpdChk;
   chked:= AboutBox.Checked;
   AboutBox.ErrorMessage:='';
-  AboutBox.ShowModal;
+  if AboutBox.ShowModal= mrLast then
+  begin
+    UpdateDlg.sNewVer:= AboutBox.LastVersion;
+    UpdateDlg.NewVersion:= true;
+    {$IFDEF WINDOWS}
+      if UpdateDlg.ShowModal = mryes then close;    // New version install experimental
+    {$ELSE}
+      OpenURL(AboutBox.UrlProgSite);
+    {$ENDIF}
+  end;
+  Settings.LastVersion:= AboutBox.LastVersion ;
   // If we have checked update and got an error
   if length(AboutBox.ErrorMessage)>0 then
   begin

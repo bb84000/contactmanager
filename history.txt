@@ -325,6 +325,10 @@ Version 1.0.3.1 - 25/03/2025
 Version 1.0.3.2 - 30/03/2025
 - Autoupdate refined with URL in ini file
 
+Version 1.0.3.3 - 02/04/2025
+- AboutBox compatible with auto update
+
+
 
 
 
