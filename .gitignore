@@ -4,3 +4,5 @@ lang/backup/**
 InstallContactmgr.exe
 contactmgrwin32.exe
 contactmgrwin64.exe
+libcrypto-3-x64.dll
+libssl-3-x64.dll

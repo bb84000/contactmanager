@@ -111,6 +111,13 @@ MnuDeleteCaption=Supprimer le contact %s
 MnuSendmailCaption=Envoyer un courriel privé à %s
 MnuVisitwebCaption=Visister le site Web personnel de %s
 
+[idHttpErr]
+idSSLLibraryNotFound=Impossible de charger la bibibliothèque SSL
+IdUnknownProtocol=Protocole inconnu
+IdHostNotFound=Hôte non trouvé
+idHTTP302=Page redirigée provisoirement (302)
+IdUnknownError=Erreur inconnue: %s
+
 [HttpErr]
 ;Http error messages
 SErrInvalidProtocol=Protocole "%s" invalide

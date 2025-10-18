@@ -328,6 +328,11 @@ Version 1.0.3.2 - 30/03/2025
 Version 1.0.3.3 - 02/04/2025
 - AboutBox compatible with auto update
 
+Version 1.0.4.0 - 17/10/2025
+- Updated for OpenSSL 3
+- Updated 25H2 info
+
+
 
 
 

@@ -7,8 +7,8 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, contactmgr1, impex1, lazbbaboutdlg, settings1, lazbbcomponents,
-  lazbbupdatedlg;
+  Forms, indylaz, contactmgr1, impex1, lazbbaboutdlg, settings1,
+  lazbbcomponents, lazbbupdatedlg;
 
 {$R *.res}
 {$R contactmgr1.rc}

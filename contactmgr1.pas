@@ -1,6 +1,6 @@
 //******************************************************************************
 // Contacts manager main form
-// bb - sdtp - april 2025
+// bb - sdtp - october 2025
 //*******************************************************************************
 
 unit contactmgr1;
@@ -12,12 +12,12 @@ interface
 uses
   {$IFDEF WINDOWS}
   Win32Proc,
-  {$ENDIF} LMessages, Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead, Types, FileUtil,
-  lazbbutils, impex1, lclintf, Menus, ExtDlgs, fphttpclient, fpopenssl, openssl,
-  strutils, lazbbaboutdlg, settings1, lazbbinifiles, LazUTF8, Clipbrd,
-  UniqueInstance, lazbbautostart, lazbbOsVersion, lazbbupdatedlg,
-  opensslsockets;
+  {$ENDIF} LMessages, Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
+  ExtCtrls, StdCtrls, ComCtrls, Buttons, contacts1, laz2_DOM, laz2_XMLRead,
+  Types, FileUtil, lazbbutils, impex1, lclintf, Menus, ExtDlgs, {fphttpclient,
+  fpopenssl, openssl,} strutils, lazbbaboutdlg, settings1, lazbbinifiles,
+  LazUTF8, Clipbrd, UniqueInstance, TaurusTLS, IdHTTP, lazbbautostart,
+  lazbbOsVersion, lazbbupdatedlg{, opensslsockets}, httpprotocol;
 
 const
   // Message post at the end of activation procedure, processed once the form is shown
@@ -29,6 +29,7 @@ type
   { TFContactManager }
 
   TFContactManager = class(TForm)
+    IdHTTP1: TIdHTTP;
     OsVersion: TbbOsVersion;
     BtnDelete: TSpeedButton;
     BtnAbout: TSpeedButton;
@@ -151,6 +152,7 @@ type
     BtnImport: TSpeedButton;
     BtnFirst: TSpeedButton;
     BtnEmail: TSpeedButton;
+    TaurusTLSIOHandlerSocket1: TTaurusTLSIOHandlerSocket;
     TSPerso: TTabSheet;
     TSWork: TTabSheet;
     UniqueInstance1: TUniqueInstance;
@@ -229,6 +231,7 @@ type
     OKBtn, YesBtn, NoBtn, CancelBtn: string;
     Use64bitcaption: string;
     HttpErrMsgNames: array [0..17] of string;
+    idHttpErrMsgNames: array [0..17] of string;
     sCannotGetNewVerList: string;
     ChkVerInterval: Int64;
     StartMini: Boolean;
@@ -511,7 +514,7 @@ begin
      if length(sNewVer)=0 then
      begin
        if length(errmsg)=0 then alertmsg:= sCannotGetNewVerList
-       else alertmsg:= TranslateHttpErrorMsg(errmsg, HttpErrMsgNames);
+       else alertmsg:= TranslateidHttpErrorMsg(errmsg, idHttpErrMsgNames);
        if AlertDlg(Caption,  alertmsg, [OKBtn, CancelBtn, sNoLongerChkUpdates],
                     true, mtError, alertpos)= mrYesToAll then Settings.NoChkNewVer:= true;
        exit;
@@ -1191,61 +1194,66 @@ end;
 // Geolocalisation function using google maps search
 // Coordinates retrieval is experimental and based on google maps
 // analysed answer page; no warranty !
+// Uses httpEncode finction from httpprotocol unit
 
 procedure TFContactManager.BtnLocateClick(Sender: TObject);
 var
   smap, stmp: string;
-  HTTPCli1: TFPHTTPClient;
+  //HTTPCli1: TFPHTTPClient;
   p: integer;
   sstreet, slieu, spost, stown, scountry: string;
   A: TStringArray;
 begin
-  //smap := 'https://www.google.fr/maps/search/';
+  //smap := 'https://www.google.fr/maps/search/';  Deprecated
+  // For json result, can use
+  // https://nominatim.openstreetmap.org/search?q=Address_to_find&format=json
   smap := 'https://www.google.fr/maps/place/';
   // check if perso or work
   if PCtrl1.ActivePage = TSPerso then
   begin
-    sstreet := EStreet.Text;
-    slieu := ELieudit.Text;
-    spost := EPostcode.Text;
-    stown := ETown.Text;
-    scountry := ECountry.Text;
+    sstreet := HttpEncode(EStreet.Text);
+    slieu := HttpEncode(ELieudit.Text);
+    spost := HttpEncode(EPostcode.Text);
+    stown := HttpEncode(ETown.Text);
+    scountry := HttpEncode(ECountry.Text);
   end
   else
   begin
-    sstreet := EStreetWk.Text;
-    slieu := ELieuditWk.Text;
-    spost := EPostcodeWK.Text;
-    stown := ETownWk.Text;
-    scountry := ECountryWk.Text;
+    sstreet := HttpEncode(EStreetWk.Text);
+    slieu := HttpEncode(ELieuditWk.Text);
+    spost := HttpEncode(EPostcodeWK.Text);
+    stown := HttpEncode(ETownWk.Text);
+    scountry := HttpEncode(ECountryWk.Text);
   end;
-  if length(sstreet) > 0 then
-    smap := smap + sstreet + '+'
+  if length(sstreet) > 0 then smap := smap + sstreet + '+'
   else
   begin
-    if length(slieu) > 0 then
-      smap := smap + slieu + '+';
+    if length(slieu) > 0 then smap := smap + slieu + '+';
   end;
   smap := smap + ',';
-  if length(spost) > 0 then
-    smap := smap + spost + '+';
-  if length(stown) > 0 then
-    smap := smap + stown;
-  if length(scountry) > 0 then
-    smap := smap + ',' + scountry;
-  smap := StringReplace(smap, ' ', '+', [rfReplaceAll]);
+  if length(spost) > 0 then smap := smap + spost + '+';
+  if length(stown) > 0 then smap := smap + stown;
+  if length(scountry) > 0 then smap := smap + ',' + scountry;
+  {smap:= StringReplace(smap, ' ', '+', [rfReplaceAll]);
+  smap:= StringReplace(smap, 'é', '%C3%A9', [rfReplaceAll]);
+  smap:= StringReplace(smap, 'è', '%C3%A8', [rfReplaceAll]);  }
+  //smap:= encodeURL(smap);
+
   // Display location on the map
   if (TSpeedButton(Sender) = BtnLocate) or (TMenuItem(Sender) = MnuLocate) then
     OpenURL(smap);
   // Try to retrieve coordinates
   if (TSpeedButton(Sender) = BtnCoord) or (TMenuItem(Sender) = MnuCoord) then
   begin
-    { SSL initialization has to be done by hand here }
-    InitSSLInterface;
-    HTTPCli1 := TFPHTTPClient.Create(nil);
-    HTTPCli1.AllowRedirect := True;
+    { SSL Initialization  has to be done by hand here }
+    //InitSSLInterface;
+    //HTTPCli1 := TFPHTTPClient.Create(nil);
+    //HTTPCli1.AllowRedirect := True;
+
     try
-      stmp := HTTPCli1.get(smap);
+      //stmp := HTTPCli1.get(smap);
+      IdHTTP1.Request.UserAgent:= 'Mozilla 5.0 (bb84000 '+ProgName+')';
+      stmp:= IdHTTP1.get(smap);
       p := pos('/@', stmp);
       stmp := copy(stmp, p + 2, 30);
       A := stmp.Split(',');
@@ -1261,9 +1269,9 @@ begin
       end;
     except
       on e: Exception do
-        ShowMessage(TranslateHttpErrorMsg(e.message, HttpErrMsgNames));
+        ShowMessage(TranslateidHttpErrorMsg(e.message, idHttpErrMsgNames));
     end;
-    HTTPCli1.Free;
+    //HTTPCli1.Free;
   end;
 end;
 
@@ -1420,7 +1428,7 @@ begin
   // If we have checked update and got an error
   if length(AboutBox.ErrorMessage)>0 then
   begin
-    alertmsg := TranslateHttpErrorMsg(AboutBox.ErrorMessage, HttpErrMsgNames);
+    alertmsg := TranslateidHttpErrorMsg(AboutBox.ErrorMessage, idHttpErrMsgNames);
     if AlertDlg(Caption,  alertmsg, [OKBtn, CancelBtn, sNoLongerChkUpdates],
                     true, mtError)= mrYesToAll then Settings.NoChkNewVer:= true;
   end;
@@ -1706,6 +1714,13 @@ begin
     PMnuChooseImg.Caption:=ReadString('main','PMnuChoose.Caption',PMnuChooseImg.Caption);
     PMnuChangeImg.Caption:=ReadString('main','PMnuChange.Caption',PMnuChangeImg.Caption);
     PMnuDeleteImg.Caption:=ReadString('main','PMnuDelete.Caption',PMnuDeleteImg.Caption);
+
+        // indy Error messages
+    idHttpErrMsgNames[0]:= ReadString('idHttpErr','idSSLLibraryNotFound','Bibliothèque SSL introuvable');
+    idHttpErrMsgNames[1]:= ReadString('idHttpErr','IdUnknownProtocol', 'Protocole inconnu');
+    idHttpErrMsgNames[2]:= ReadString('idHttpErr','IdHostNotFound', 'Hôte non trouvé');
+    idHttpErrMsgNames[3]:= ReadString('idHttpErr','idHTTP302','Page redirigée provisoirement (302)');
+    idHttpErrMsgNames[10]:= ReadString('idHttpErr','IdUnknownError', 'Erreur inconnue: %s');
 
     // HTTP Error messages
     HttpErrMsgNames[0] := ReadString('HttpErr', 'SErrInvalidProtocol',

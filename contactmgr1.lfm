@@ -1,24 +1,24 @@
 object FContactManager: TFContactManager
-  Left = 456
-  Height = 500
-  Top = 180
+  Left = 519
+  Height = 501
+  Top = 149
   Width = 685
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Gestionnaire de contacts'
-  ClientHeight = 500
+  ClientHeight = 501
   ClientWidth = 685
+  Position = poDesktopCenter
+  LCLVersion = '4.2.0.0'
   OnActivate = FormActivate
   OnChangeBounds = FormChangeBounds
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  Position = poDesktopCenter
-  LCLVersion = '3.8.0.0'
   object PnlOrder: TPanel
     Left = 0
     Height = 70
-    Top = 430
+    Top = 431
     Width = 685
     Align = alBottom
     BevelOuter = bvNone
@@ -204,9 +204,9 @@ object FContactManager: TFContactManager
         7FFF808080008080800080808000808080008080800080808000
       }
       NumGlyphs = 2
-      OnClick = BtnImportClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnImportClick
     end
     object BtnFirst: TSpeedButton
       Left = 38
@@ -283,9 +283,9 @@ object FContactManager: TFContactManager
         0000000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnNavClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnNavClick
     end
     object BtnPrev: TSpeedButton
       Left = 68
@@ -362,9 +362,9 @@ object FContactManager: TFContactManager
         0000000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnNavClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnNavClick
     end
     object BtnNext: TSpeedButton
       Left = 98
@@ -441,9 +441,9 @@ object FContactManager: TFContactManager
         0000000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnNavClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnNavClick
     end
     object BtnLast: TSpeedButton
       Left = 128
@@ -520,9 +520,9 @@ object FContactManager: TFContactManager
         0000000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnNavClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnNavClick
     end
     object BtnDelete: TSpeedButton
       Left = 160
@@ -599,9 +599,9 @@ object FContactManager: TFContactManager
         7FFF808080008080800080808000808080008080800080808000
       }
       NumGlyphs = 2
-      OnClick = BtnDeleteClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnDeleteClick
     end
     object BtnAdd: TSpeedButton
       Left = 188
@@ -678,9 +678,9 @@ object FContactManager: TFContactManager
         7FFF808080008080800080808000808080008080800080808000
       }
       NumGlyphs = 2
-      OnClick = BtnAddClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnAddClick
     end
     object BtnValid: TSpeedButton
       Left = 218
@@ -758,9 +758,9 @@ object FContactManager: TFContactManager
         87FF000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnValidClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnValidClick
     end
     object BtnCancel: TSpeedButton
       Left = 248
@@ -838,12 +838,12 @@ object FContactManager: TFContactManager
         7FFF808080008080800080808000808080008080800080808000
       }
       NumGlyphs = 2
-      OnClick = BtnCancelClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnCancelClick
     end
     object BtnCoord: TSpeedButton
-      Left = 278
+      Left = 280
       Height = 24
       Hint = 'Récupérer les coordonnées GPS du contact sélectionné'
       Top = 6
@@ -917,9 +917,9 @@ object FContactManager: TFContactManager
         0000000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnLocateClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnLocateClick
     end
     object BtnLocate: TSpeedButton
       Left = 308
@@ -996,9 +996,9 @@ object FContactManager: TFContactManager
         DAFF808080008080800080808000808080008080800080808000
       }
       NumGlyphs = 2
-      OnClick = BtnLocateClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnLocateClick
     end
     object BtnPrefs: TSpeedButton
       Left = 338
@@ -1075,9 +1075,9 @@ object FContactManager: TFContactManager
         A1FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00
       }
       NumGlyphs = 2
-      OnClick = BtnPrefsClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnPrefsClick
     end
     object BtnAbout: TSpeedButton
       Left = 368
@@ -1154,9 +1154,9 @@ object FContactManager: TFContactManager
         C4FF000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnAboutClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnAboutClick
     end
     object BtnQuit: TSpeedButton
       Left = 400
@@ -1233,9 +1233,9 @@ object FContactManager: TFContactManager
         FFFF000000000000000000000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnQuitClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnQuitClick
     end
     object ESearch: TEdit
       Left = 453
@@ -1321,25 +1321,25 @@ object FContactManager: TFContactManager
         A8FFA8A8A8FFA3A2A2FF00000000000000000000000000000000
       }
       NumGlyphs = 2
-      OnClick = BtnSearchClick
       ShowHint = True
       ParentShowHint = False
+      OnClick = BtnSearchClick
     end
   end
   object PnlInfos: TPanel
     Left = 222
-    Height = 394
+    Height = 395
     Top = 36
     Width = 463
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 394
+    ClientHeight = 395
     ClientWidth = 463
     ParentColor = False
     TabOrder = 2
     object PCtrl1: TPageControl
       Left = 0
-      Height = 394
+      Height = 395
       Top = 0
       Width = 463
       ActivePage = TSPerso
@@ -1349,18 +1349,18 @@ object FContactManager: TFContactManager
       TabOrder = 0
       object TSPerso: TTabSheet
         Caption = 'Perso'
-        ClientHeight = 366
+        ClientHeight = 367
         ClientWidth = 455
         ParentFont = False
         object PnlPerso: TPanel
           Left = 0
-          Height = 366
+          Height = 367
           Top = 0
           Width = 455
           Align = alClient
           BevelColor = clNone
           BevelOuter = bvNone
-          ClientHeight = 366
+          ClientHeight = 367
           ClientWidth = 455
           ParentColor = False
           TabOrder = 0
@@ -1839,16 +1839,16 @@ object FContactManager: TFContactManager
       end
       object TSWork: TTabSheet
         Caption = 'Travail'
-        ClientHeight = 366
+        ClientHeight = 367
         ClientWidth = 455
         object PnlWork: TPanel
           Left = 0
-          Height = 366
+          Height = 367
           Top = 0
           Width = 455
           Align = alClient
           BevelOuter = bvNone
-          ClientHeight = 366
+          ClientHeight = 367
           ClientWidth = 455
           ParentColor = False
           ParentFont = False
@@ -2261,7 +2261,7 @@ object FContactManager: TFContactManager
     object PPerso: TPanel
       Left = 208
       Height = 22
-      Top = 1
+      Top = 0
       Width = 100
       BevelOuter = bvNone
       Caption = 'Personnel'
@@ -2274,17 +2274,17 @@ object FContactManager: TFContactManager
   end
   object PListBox: TPanel
     Left = 0
-    Height = 394
+    Height = 395
     Top = 36
     Width = 222
     Align = alLeft
     Caption = 'PListBox'
-    ClientHeight = 394
+    ClientHeight = 395
     ClientWidth = 222
     TabOrder = 3
     object LBContacts: TListBox
       Left = 1
-      Height = 392
+      Height = 393
       Top = 1
       Width = 220
       Align = alClient
@@ -2507,5 +2507,36 @@ object FContactManager: TFContactManager
     )
     Left = 102
     Top = 232
+  end
+  object IdHTTP1: TIdHTTP
+    IOHandler = TaurusTLSIOHandlerSocket1
+    AllowCookies = False
+    HandleRedirects = True
+    ProxyParams.BasicAuthentication = False
+    ProxyParams.ProxyPort = 0
+    Request.CharSet = 'utf-8'
+    Request.ContentLength = -1
+    Request.ContentRangeEnd = -1
+    Request.ContentRangeStart = -1
+    Request.ContentRangeInstanceLength = -1
+    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    Request.BasicAuthentication = False
+    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.Ranges.Units = 'bytes'
+    Request.Ranges = <>
+    HTTPOptions = [hoForceEncodeParams]
+    Left = 37
+    Top = 301
+  end
+  object TaurusTLSIOHandlerSocket1: TTaurusTLSIOHandlerSocket
+    MaxLineAction = maException
+    Port = 0
+    DefaultPort = 0
+    SSLOptions.MinTLSVersion = TLSv1_1
+    SSLOptions.Mode = sslmUnassigned
+    SSLOptions.VerifyMode = []
+    SSLOptions.VerifyDepth = 0
+    Left = 123
+    Top = 306
   end
 end
