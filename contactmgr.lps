@@ -19,8 +19,7 @@
         <ComponentName Value="FContactManager"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="3"/>
+        <TopLine Value="1571"/>
         <CursorPos Y="11"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -291,7 +290,7 @@
         <Filename Value="history.txt"/>
         <EditorIndex Value="9"/>
         <TopLine Value="308"/>
-        <CursorPos Y="334"/>
+        <CursorPos X="15" Y="336"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Text"/>
@@ -327,6 +326,7 @@
       </Unit39>
       <Unit40>
         <Filename Value="contactmgr.txt"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <CursorPos X="43"/>
         <UsageCount Value="34"/>
@@ -519,8 +519,8 @@
       <Unit66>
         <Filename Value="lang\en.lng"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="194"/>
-        <CursorPos X="33" Y="213"/>
+        <TopLine Value="146"/>
+        <CursorPos X="27" Y="166"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -528,8 +528,8 @@
       <Unit67>
         <Filename Value="lang\fr.lng"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="104"/>
-        <CursorPos X="35" Y="119"/>
+        <TopLine Value="156"/>
+        <CursorPos X="27" Y="171"/>
         <UsageCount Value="18"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -597,7 +597,7 @@
         <Loaded Value="True"/>
       </Unit76>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="contactmgr1.pas"/>
         <Caret Line="1746" Column="20" TopLine="1718"/>
@@ -708,16 +708,12 @@
       </Position27>
       <Position28>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="3" Column="23" TopLine="362"/>
+        <Caret Line="1209" Column="78" TopLine="1196"/>
       </Position28>
       <Position29>
         <Filename Value="contactmgr1.pas"/>
-        <Caret Line="1209" Column="78" TopLine="1196"/>
-      </Position29>
-      <Position30>
-        <Filename Value="contactmgr1.pas"/>
         <Caret Line="20" Column="3" TopLine="3"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

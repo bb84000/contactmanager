@@ -215,7 +215,7 @@ Section "" ;No components page, name is not important
   ; delete non used files
   Delete "$INSTDIR\${prog_name}win$exe_to_del"
   ; Install other files
-  File "${lazarus_dir}\openssl\OpenSSL License.txt"
+  File "${lazarus_dir}\openssl\OpenSSL3 License.txt"
   File "${source_dir}\licensf.txt"
   File "${source_dir}\license.txt"
   File "${source_dir}\history.txt"
@@ -274,19 +274,23 @@ SectionEnd
 
 Section Uninstall
 SetShellVarContext all
-${If} ${RunningX64}
-  SetRegView 64    ; change registry entries and install dir for 64 bit
-${EndIf}
+  ${If} ${RunningX64}
+    SetRegView 64    ; change registry entries and install dir for 64 bit
+    Delete "$INSTDIR\libssl-3-x64.dll"
+    Delete "$INSTDIR\libcrypto-3-x64.dll"
+  ${Else}
+    Delete "$INSTDIR\libssl-3.dll"
+    Delete "$INSTDIR\libcrypto-3.dll"
+  ${EndIf}
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
 Delete /REBOOTOK "$INSTDIR\${prog_name}.exe"
 Delete "$INSTDIR\history.txt"
 Delete "$INSTDIR\${prog_name}.txt"
 Delete "$INSTDIR\${prog_name}.lng"
-Delete "$INSTDIR\libeay32.dll"
-Delete "$INSTDIR\ssleay32.dll"
 Delete "$INSTDIR\licensf.txt"
 Delete "$INSTDIR\license.txt"
 Delete "$INSTDIR\OpenSSL License.txt"
+Delete "$INSTDIROpenSSL3 License.txt"
 Delete "$INSTDIR\uninst.exe"
 RMDir /r "$INSTDIR\lang"
 

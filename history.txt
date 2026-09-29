@@ -332,6 +332,8 @@ Version 1.0.4.0 - 17/10/2025
 - Updated for OpenSSL 3
 - Updated 25H2 info
 
+Version 1.0.4.1 - 29/09/2026
+- Updated W11 26H2 info
 
 
 
